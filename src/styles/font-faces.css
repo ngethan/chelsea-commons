@@ -1,0 +1,74 @@
+/* Neue Montreal Font Family */
+@font-face {
+	font-family: "Neue Montreal";
+	font-style: normal;
+	font-weight: 300;
+	font-display: swap;
+	src: url("/fonts/NeueMontreal-Light.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Neue Montreal";
+	font-style: italic;
+	font-weight: 300;
+	font-display: swap;
+	src: url("/fonts/NeueMontreal-LightItalic.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Neue Montreal";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/NeueMontreal-Regular.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Neue Montreal";
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/NeueMontreal-Italic.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Neue Montreal";
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url("/fonts/NeueMontreal-Medium.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Neue Montreal";
+	font-style: italic;
+	font-weight: 500;
+	font-display: swap;
+	src: url("/fonts/NeueMontreal-MediumItalic.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Neue Montreal";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("/fonts/NeueMontreal-Bold.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Neue Montreal";
+	font-style: italic;
+	font-weight: 700;
+	font-display: swap;
+	src: url("/fonts/NeueMontreal-BoldItalic.woff2") format("woff2");
+}
+
+/* Geist Mono Font Family (Variable Font) */
+@font-face {
+	font-family: "Geist Mono";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("geist/dist/fonts/geist-mono/GeistMono-Variable.woff2")
+		format("woff2");
+}
