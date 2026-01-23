@@ -22,11 +22,11 @@ function App() {
 						A house for ambitious people in NYC this summer.
 					</h1>
 					<p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8">
-						12-person house in Chelsea. Founders, operators, creatives, and interns building cool stuff and actually enjoying the summer together.
+						12-person house in Chelsea. Founders, operators, creatives, and
+						interns building cool stuff and actually enjoying the summer
+						together.
 					</p>
-					<p className="text-muted-foreground">
-						5 spots left.
-					</p>
+					<p className="text-muted-foreground">5 spots left.</p>
 				</div>
 			</main>
 		</div>

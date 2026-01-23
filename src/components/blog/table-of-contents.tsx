@@ -13,7 +13,8 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
 		e.preventDefault();
 		const element = document.getElementById(id);
 		if (element) {
-			const offsetTop = element.getBoundingClientRect().top + window.scrollY - 100;
+			const offsetTop =
+				element.getBoundingClientRect().top + window.scrollY - 100;
 			window.scrollTo({
 				top: offsetTop,
 				behavior: "smooth",

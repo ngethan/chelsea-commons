@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Download, Link2, Undo2 } from "lucide-react";
 import { useMemo } from "react";
-import { toast, Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 import { Streamdown } from "streamdown";
 import { TableOfContents } from "../components/blog/table-of-contents";
 import { CustomToast } from "../components/custom-toast";

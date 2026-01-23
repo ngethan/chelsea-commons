@@ -82,7 +82,7 @@ export function Shadow({
 		const duration = mapRange(animation.speed, 1, 100, 20, 2);
 
 		// Restore animation state from sessionStorage
-		const savedState = sessionStorage.getItem('shadow-animation-state');
+		const savedState = sessionStorage.getItem("shadow-animation-state");
 		let startValue = 0;
 		let startTime = Date.now();
 
@@ -91,7 +91,7 @@ export function Shadow({
 				const { value, timestamp } = JSON.parse(savedState);
 				const elapsed = (Date.now() - timestamp) / 1000; // seconds
 				const cycles = elapsed / duration;
-				startValue = (value + (cycles * 360)) % 360;
+				startValue = (value + cycles * 360) % 360;
 			} catch (e) {
 				// Invalid state, start from 0
 			}
@@ -99,27 +99,37 @@ export function Shadow({
 
 		hueRotateMotionValue.set(startValue);
 
-		hueRotateAnimation.current = animate(hueRotateMotionValue, startValue + 360, {
-			duration,
-			repeat: Number.POSITIVE_INFINITY,
-			ease: "linear",
-			onUpdate: (value: number) => {
-				if (feColorMatrixRef.current) {
-					const normalizedValue = value % 360;
-					feColorMatrixRef.current.setAttribute("values", String(normalizedValue));
+		hueRotateAnimation.current = animate(
+			hueRotateMotionValue,
+			startValue + 360,
+			{
+				duration,
+				repeat: Number.POSITIVE_INFINITY,
+				ease: "linear",
+				onUpdate: (value: number) => {
+					if (feColorMatrixRef.current) {
+						const normalizedValue = value % 360;
+						feColorMatrixRef.current.setAttribute(
+							"values",
+							String(normalizedValue),
+						);
 
-					// Periodically save state (every 100ms)
-					const now = Date.now();
-					if (now - startTime > 100) {
-						startTime = now;
-						sessionStorage.setItem('shadow-animation-state', JSON.stringify({
-							value: normalizedValue,
-							timestamp: now,
-						}));
+						// Periodically save state (every 100ms)
+						const now = Date.now();
+						if (now - startTime > 100) {
+							startTime = now;
+							sessionStorage.setItem(
+								"shadow-animation-state",
+								JSON.stringify({
+									value: normalizedValue,
+									timestamp: now,
+								}),
+							);
+						}
 					}
-				}
+				},
 			},
-		});
+		);
 
 		return () => {
 			if (hueRotateAnimation.current) {

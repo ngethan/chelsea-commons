@@ -104,7 +104,7 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en" style={{ backgroundColor: '#1a1a1a' }}>
+		<html lang="en" style={{ backgroundColor: "#1a1a1a" }}>
 			<head>
 				<HeadContent />
 				<SpeedInsights />
@@ -124,8 +124,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					type="image/avif"
 				/>
 			</head>
-			<body style={{ backgroundColor: '#1a1a1a' }}>
-				<div className="fixed inset-0 pointer-events-none" style={{ backgroundColor: '#212121' }}>
+			<body style={{ backgroundColor: "#1a1a1a" }}>
+				<div
+					className="fixed inset-0 pointer-events-none"
+					style={{ backgroundColor: "#212121" }}
+				>
 					<MemoizedShadow />
 				</div>
 				<script
