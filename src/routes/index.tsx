@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { Gallery } from "../components/gallery";
 import { Navbar } from "../components/Navbar";
 import {
 	Accordion,
@@ -22,17 +23,17 @@ export const Route = createFileRoute("/")({
 });
 
 const COMPANIES = [
-	{ name: "Y Combinator", logo: "/assets/yc-logo.svg", invert: false },
-	{ name: "8VC", logo: "/assets/8vc-logo.png", invert: true },
-	{ name: "BlackRock", logo: "/assets/blackrock-logo.png", invert: true },
-	{ name: "JPMorgan Chase", logo: "/assets/jpmc-logo.png", invert: true },
-	{ name: "Ramp", logo: "/assets/ramp-logo.png", invert: true },
+	{ name: "Y Combinator", logo: "/assets/brands/yc-logo.svg", invert: false },
+	{ name: "8VC", logo: "/assets/brands/8vc-logo.png", invert: true },
+	{ name: "BlackRock", logo: "/assets/brands/blackrock-logo.png", invert: true },
+	{ name: "JPMorgan Chase", logo: "/assets/brands/jpmc-logo.png", invert: true },
+	{ name: "Ramp", logo: "/assets/brands/ramp-logo.png", invert: true },
 	{
 		name: "Radial Equity Partners",
-		logo: "/assets/radial-logo.png",
+		logo: "/assets/brands/radial-logo.png",
 	},
-	{ name: "Red Bull", logo: "/assets/redbull-logo.svg", invert: false },
-	{ name: "LA Clippers", logo: "/assets/clippers-logo.svg", invert: false },
+	{ name: "Red Bull", logo: "/assets/brands/redbull-logo.svg", invert: false },
+	{ name: "LA Clippers", logo: "/assets/brands/clippers-logo.svg", invert: false },
 ];
 
 const FAQS = [
@@ -65,6 +66,26 @@ const FAQS = [
 		question: "Is this a hacker house?",
 		answer:
 			"Not in the intense, mandatory-events way. We're not trying to build a brand or force networking. Just a solid group of people who want to live together and enjoy the summer.",
+	},
+	{
+		question: "How do you choose people?",
+		answer:
+			"We're looking for people who are working on something interesting and would genuinely add to the house dynamic. No specific criteria - we know it when we see it.",
+	},
+	{
+		question: "What do people do during the day?",
+		answer:
+			"Most people are working - on their startup, at their internship, on creative projects. Some work from the house, some go to offices. Evenings and weekends are for exploring the city together.",
+	},
+	{
+		question: "Are there organized events?",
+		answer:
+			"Nothing mandatory. Dinners happen organically, people naturally end up doing things together. We might bring in interesting people for conversations but it's all opt-in.",
+	},
+	{
+		question: "What if I don't know anyone?",
+		answer:
+			"That's the point. You'll know everyone by the end of week one. The house is small enough that you can't really avoid becoming friends.",
 	},
 ];
 
@@ -136,8 +157,9 @@ function FitText({
 function FAQSection() {
 	const [openItem, setOpenItem] = useState<string | undefined>(undefined);
 
-	const leftFaqs = FAQS.slice(0, 3);
-	const rightFaqs = FAQS.slice(3);
+	const half = Math.ceil(FAQS.length / 2);
+	const leftFaqs = FAQS.slice(0, half);
+	const rightFaqs = FAQS.slice(half);
 
 	return (
 		<section className="px-6 md:px-12 py-24 border-t border-border min-h-[600px]">
@@ -165,7 +187,7 @@ function FAQSection() {
 					className="w-full"
 				>
 					{rightFaqs.map((faq, index) => (
-						<AccordionItem key={index + 3} value={`item-${index + 3}`}>
+						<AccordionItem key={index + half} value={`item-${index + half}`}>
 							<AccordionTrigger>{faq.question}</AccordionTrigger>
 							<AccordionContent>{faq.answer}</AccordionContent>
 						</AccordionItem>
@@ -182,54 +204,45 @@ function App() {
 			<Navbar />
 
 			{/* Hero Section */}
-			<main className="min-h-[calc(100dvh-72px)] flex items-center px-6 md:px-12">
-				<div className="flex flex-col md:flex-row md:items-center gap-12 md:gap-16 w-full">
-					{/* Left - Content */}
-					<div className="flex-1">
-						<div className="max-w-xl mb-12">
-							<h1 className="text-4xl md:text-5xl font-medium text-white leading-tight mb-6">
-								A house for ambitious people in NYC this summer.
-							</h1>
-							<p className="text-lg text-muted-foreground leading-relaxed mb-8">
-								12-person house in Chelsea. Founders, operators, creatives, and
-								interns building cool stuff and actually enjoying the summer
-								together.
-							</p>
-							<div className="flex items-center gap-6">
-								<Button
-									size="lg"
-									className="bg-white text-black hover:bg-white/90"
-								>
-									APPLY NOW
-								</Button>
-								<p className="text-muted-foreground">5 spots left.</p>
-							</div>
-						</div>
-
-						<div className="flex flex-wrap items-center gap-8 md:gap-10">
-							{COMPANIES.map((company) => (
-								<div
-									key={company.name}
-									className={`grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all duration-300 ${company.invert ? "invert" : ""}`}
-								>
-									<img
-										src={company.logo}
-										alt={company.name}
-										className="h-6 md:h-7 w-auto object-contain"
-									/>
-								</div>
-							))}
-						</div>
+			<main className="min-h-[calc(100dvh-72px)] flex items-center justify-center px-6 md:px-12">
+				<div className="max-w-2xl text-center">
+					<h1 className="text-4xl md:text-5xl font-medium text-white leading-tight mb-6">
+						A house for ambitious people in NYC this summer.
+					</h1>
+					<p className="text-lg text-muted-foreground leading-relaxed mb-8">
+						12-person house in Chelsea. Founders, operators, creatives, and
+						interns building cool stuff and actually enjoying the summer
+						together.
+					</p>
+					<div className="flex items-center justify-center gap-6 mb-12">
+						<Button
+							size="lg"
+							className="bg-white text-black hover:bg-white/90"
+						>
+							APPLY NOW
+						</Button>
+						<p className="text-muted-foreground">Applications open</p>
 					</div>
 
-					{/* Right - Image placeholder */}
-					<div className="hidden md:flex flex-1 items-center justify-center">
-						<div className="w-full aspect-[4/3] border border-border rounded-lg flex items-center justify-center">
-							<p className="text-muted-foreground text-sm">Image here</p>
-						</div>
+					<div className="flex flex-wrap items-center justify-center gap-8 md:gap-10 mt-24">
+						{COMPANIES.map((company) => (
+							<div
+								key={company.name}
+								className={company.invert ? "invert" : ""}
+							>
+								<img
+									src={company.logo}
+									alt={company.name}
+									className="h-6 md:h-7 w-auto object-contain"
+								/>
+							</div>
+						))}
 					</div>
 				</div>
 			</main>
+
+			{/* Gallery Section */}
+			<Gallery />
 
 			{/* FAQ Section */}
 			<FAQSection />
