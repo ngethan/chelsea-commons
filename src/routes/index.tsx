@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Gallery } from "../components/gallery";
 import { Navbar } from "../components/Navbar";
+import { Gallery } from "../components/gallery";
 import {
 	Accordion,
 	AccordionContent,
@@ -25,15 +25,27 @@ export const Route = createFileRoute("/")({
 const COMPANIES = [
 	{ name: "Y Combinator", logo: "/assets/brands/yc-logo.svg", invert: false },
 	{ name: "8VC", logo: "/assets/brands/8vc-logo.png", invert: true },
-	{ name: "BlackRock", logo: "/assets/brands/blackrock-logo.png", invert: true },
-	{ name: "JPMorgan Chase", logo: "/assets/brands/jpmc-logo.png", invert: true },
+	{
+		name: "BlackRock",
+		logo: "/assets/brands/blackrock-logo.png",
+		invert: true,
+	},
+	{
+		name: "JPMorgan Chase",
+		logo: "/assets/brands/jpmc-logo.png",
+		invert: true,
+	},
 	{ name: "Ramp", logo: "/assets/brands/ramp-logo.png", invert: true },
 	{
 		name: "Radial Equity Partners",
 		logo: "/assets/brands/radial-logo.png",
 	},
 	{ name: "Red Bull", logo: "/assets/brands/redbull-logo.svg", invert: false },
-	{ name: "LA Clippers", logo: "/assets/brands/clippers-logo.svg", invert: false },
+	{
+		name: "LA Clippers",
+		logo: "/assets/brands/clippers-logo.svg",
+		invert: false,
+	},
 ];
 
 const FAQS = [
@@ -215,10 +227,7 @@ function App() {
 						together.
 					</p>
 					<div className="flex items-center justify-center gap-6 mb-12">
-						<Button
-							size="lg"
-							className="bg-white text-black hover:bg-white/90"
-						>
+						<Button size="lg" className="bg-white text-black hover:bg-white/90">
 							APPLY NOW
 						</Button>
 						<p className="text-muted-foreground">Applications open</p>
