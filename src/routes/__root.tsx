@@ -8,9 +8,11 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { ReactLenis } from "lenis/react";
 import { AnimatePresence } from "motion/react";
 import React from "react";
 
+import "lenis/dist/lenis.css";
 import { Shadow } from "../components/shadow";
 import { buildSeoTags, siteConfig } from "../site-config";
 import appCss from "../styles.css?url";
@@ -96,15 +98,17 @@ export const Route = createRootRoute({
 
 function RootComponent() {
 	return (
-		<AnimatePresence initial={false}>
-			<Outlet />
-		</AnimatePresence>
+		<ReactLenis root>
+			<AnimatePresence initial={false}>
+				<Outlet />
+			</AnimatePresence>
+		</ReactLenis>
 	);
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en" style={{ backgroundColor: "#1a1a1a" }}>
+		<html lang="en" className="dark" style={{ backgroundColor: "#1a1a1a" }}>
 			<head>
 				<HeadContent />
 				<SpeedInsights />
