@@ -357,12 +357,12 @@ function About() {
 								Twitter
 							</a>
 							<a
-								href="https://instagram.com"
+								href="https://www.linkedin.com/company/the-chelsea-commons/"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="hover:text-foreground transition-colors"
 							>
-								Instagram
+								LinkedIn
 							</a>
 						</div>
 					</div>

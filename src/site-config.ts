@@ -26,12 +26,11 @@ const resolveRuntimeOrigin = () => {
 const getBaseUrl = () => rawSiteUrl ?? resolveRuntimeOrigin() ?? "";
 
 export const siteConfig = {
-	name: "Ethan Ng",
-	shortName: "Ethan Ng",
-	description:
-		"Passionate builder and WashU CS & finance student obsessed with learning, exploring new tech, and turning ideas into reality.",
+	name: "Chelsea Commons",
+	shortName: "Chelsea Commons",
+	description: "A summer house for 12 interns in Chelsea, Manhattan.",
 	url: getBaseUrl(),
-	twitterHandle: "@ethn_ng",
+	twitterHandle: "",
 	defaultOgImagePath: "/og.png",
 	locale: "en_US",
 };

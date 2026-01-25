@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
 	head: () =>
 		buildSeoTags({
 			title: "Chelsea Commons",
-			description: "Chelsea Commons",
+			description: "A summer house for 12 interns in Chelsea, Manhattan.",
 			path: "/",
 		}),
 	component: App,
@@ -353,12 +353,12 @@ function App() {
 								Twitter
 							</a>
 							<a
-								href="https://instagram.com"
+								href="https://www.linkedin.com/company/the-chelsea-commons/"
 								target="_blank"
 								rel="noopener noreferrer"
 								className="hover:text-foreground transition-colors"
 							>
-								Instagram
+								LinkedIn
 							</a>
 						</div>
 					</div>
