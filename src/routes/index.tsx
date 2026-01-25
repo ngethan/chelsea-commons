@@ -36,6 +36,7 @@ const COMPANIES = [
 		invert: true,
 	},
 	{ name: "Ramp", logo: "/assets/brands/ramp-logo.png", invert: true },
+	{ name: "Warp", logo: "/assets/brands/warp-logo.png", invert: true },
 	{
 		name: "Radial Equity Partners",
 		logo: "/assets/brands/radial-logo.png",
@@ -52,7 +53,7 @@ const FAQS = [
 	{
 		question: "What's the cost?",
 		answer:
-			"The house is rent-free. You're responsible for your own food and personal expenses.",
+			"Rent is $2,200 per person per month. We are actively working with partners and sponsors to subsidize rent for residents, and expect final pricing to be significantly lower.",
 	},
 	{
 		question: "How long is the program?",
@@ -67,37 +68,37 @@ const FAQS = [
 	{
 		question: "What's included?",
 		answer:
-			"Furnished rooms, gym, study spaces, rooftop access, and a community of interesting people. Wifi and utilities included.",
+			"Furnished rooms, gym, study spaces, rooftop access. Wifi and utilities included.",
 	},
 	{
-		question: "Who are you looking for?",
+		question: "Who are we looking for?",
 		answer:
-			"Founders, operators, creatives, interns at interesting companies - basically ambitious people who are fun to be around. We want a diverse mix, not just one type.",
+			"Interns interested in entrepreneurship, exploration, and growth. We want a diverse mix of backgrounds and interests - stories are more important than credentials.",
 	},
 	{
 		question: "Is this a hacker house?",
 		answer:
-			"Not in the intense, mandatory-events way. We're not trying to build a brand or force networking. Just a solid group of people who want to live together and enjoy the summer.",
+			"Not in the intense, mandatory-events way. There is no mandatory building or networking, just a solid & ambitious group of people making the most of an amazing summer.",
 	},
 	{
 		question: "How do you choose people?",
 		answer:
-			"We're looking for people who are working on something interesting and would genuinely add to the house dynamic. No specific criteria - we know it when we see it.",
+			"We're looking for people who are scrappy, take initiative, and would genuinely add to the house dynamic. People who think creatively and reach out to make things happen.",
 	},
 	{
 		question: "What do people do during the day?",
 		answer:
-			"Most people are working - on their startup, at their internship, on creative projects. Some work from the house, some go to offices. Evenings and weekends are for exploring the city together.",
+			"Most residents are at their internships during the day. Evenings and weekends are for exploring the city together.",
 	},
 	{
 		question: "Are there organized events?",
 		answer:
-			"Nothing mandatory. Dinners happen organically, people naturally end up doing things together. We might bring in interesting people for conversations but it's all opt-in.",
+			"We want input from all residents, but we're thinking a mandatory Sunday dinner to learn something new or host interesting guests. Details TBD with the group.",
 	},
 	{
-		question: "What if I don't know anyone?",
+		question: "Will there be events outside the house?",
 		answer:
-			"That's the point. You'll know everyone by the end of week one. The house is small enough that you can't really avoid becoming friends.",
+			"Yes. We're planning to throw intern mixers and events throughout the summer. More details once we have everyone selected.",
 	},
 ];
 
@@ -136,7 +137,6 @@ function FitText({
 
 	return (
 		<div ref={containerRef} className="w-full">
-			{/* Hidden measurement element at 10px */}
 			<span
 				ref={measureRef}
 				aria-hidden
@@ -149,7 +149,6 @@ function FitText({
 			>
 				{children}
 			</span>
-			{/* Visible text */}
 			<span
 				className={className}
 				style={{
@@ -174,7 +173,7 @@ function FAQSection() {
 	const rightFaqs = FAQS.slice(half);
 
 	return (
-		<section className="px-6 md:px-12 py-24 border-t border-border min-h-[600px]">
+		<section className="px-6 md:px-12 py-16 border-t border-border min-h-[600px]">
 			<h2 className="text-2xl font-medium text-foreground mb-8">FAQ</h2>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 items-start">
 				<Accordion
@@ -215,22 +214,23 @@ function App() {
 		<div className="relative z-10">
 			<Navbar />
 
-			{/* Hero Section */}
 			<main className="min-h-[calc(100dvh-72px)] flex items-center justify-center px-6 md:px-12">
 				<div className="max-w-2xl text-center">
 					<h1 className="text-4xl md:text-5xl font-medium text-white leading-tight mb-6">
-						A house for ambitious people in NYC this summer.
+						A house for the most ambitious NYC interns this summer.
 					</h1>
 					<p className="text-lg text-muted-foreground leading-relaxed mb-8">
-						12-person house in Chelsea. Founders, operators, creatives, and
-						interns building cool stuff and actually enjoying the summer
-						together.
+						Be surrounded by the smartest kids in the country and explore one of the greatest cities ever built. 12 residents. 1 house in Chelsea.
 					</p>
 					<div className="flex items-center justify-center gap-6 mb-12">
-						<Button size="lg" className="bg-white text-black hover:bg-white/90">
+						<Button
+							size="lg"
+							className="bg-white text-black hover:bg-white/90"
+							onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLSfNAkbsg63FeITIly22gKZf155IrA9UUbXNNH48dR3hEpdD9A/viewform", "_blank")}
+						>
 							APPLY NOW
 						</Button>
-						<p className="text-muted-foreground">Applications open</p>
+						<p className="text-muted-foreground">4 spots left</p>
 					</div>
 
 					<div className="flex flex-wrap items-center justify-center gap-8 md:gap-10 mt-24">
@@ -250,15 +250,11 @@ function App() {
 				</div>
 			</main>
 
-			{/* Gallery Section */}
-			<Gallery />
-
-			{/* FAQ Section */}
 			<FAQSection />
 
-			{/* Footer */}
+			<Gallery />
+
 			<footer className="relative flex flex-col overflow-hidden border-t border-border">
-				{/* Aurora Background - fades in from top */}
 				<div
 					className="absolute inset-0 overflow-hidden"
 					style={
@@ -282,7 +278,6 @@ function App() {
 							backgroundPosition: "50% 50%",
 						}}
 					/>
-					{/* Grain overlay */}
 					<div
 						className="absolute inset-0 opacity-30"
 						style={{
@@ -292,9 +287,7 @@ function App() {
 					/>
 				</div>
 
-				{/* Content */}
 				<div className="relative z-10 flex flex-col flex-1">
-					{/* Top bar with links */}
 					<div className="px-6 md:px-12 py-6 flex items-center justify-between">
 						<div className="text-sm text-muted-foreground">
 							<a
@@ -325,7 +318,6 @@ function App() {
 						</div>
 					</div>
 
-					{/* Large Chelsea text */}
 					<div className="flex flex-col justify-center py-12">
 						<FitText className="font-serif text-8xl tracking-tight text-white opacity-75 leading-none select-none">
 							CHELSEA
@@ -335,7 +327,6 @@ function App() {
 						</FitText>
 					</div>
 
-					{/* Marquee text */}
 					<div className="border-t border-border py-4">
 						<ScrollVelocityRow baseVelocity={3}>
 							<span className="text-sm text-muted-foreground mx-8">
