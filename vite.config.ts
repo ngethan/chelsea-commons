@@ -32,7 +32,7 @@ const config = defineConfig({
     )
     ],
   server: {
-    allowedHosts: ["example.com", "www.example.com"]
+    allowedHosts: ["chelseacommons.co", "www.chelseacommons.co"]
   },
   ssr: {
     noExternal: ['katex', 'streamdown']

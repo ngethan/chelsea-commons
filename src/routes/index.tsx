@@ -57,7 +57,7 @@ const COMPANIES = [
 		name: "Warp",
 		logo: "/assets/brands/warp-logo.png",
 		invert: true,
-		url: "https://warp.dev",
+		url: "https://www.joinwarp.com",
 	},
 	{
 		name: "Radial Equity Partners",
