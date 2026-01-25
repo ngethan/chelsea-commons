@@ -23,29 +23,58 @@ export const Route = createFileRoute("/")({
 });
 
 const COMPANIES = [
-	{ name: "Y Combinator", logo: "/assets/brands/yc-logo.svg", invert: false },
-	{ name: "8VC", logo: "/assets/brands/8vc-logo.png", invert: true },
+	{
+		name: "Y Combinator",
+		logo: "/assets/brands/yc-logo.svg",
+		invert: false,
+		url: "https://ycombinator.com",
+	},
+	{
+		name: "8VC",
+		logo: "/assets/brands/8vc-logo.png",
+		invert: true,
+		url: "https://8vc.com",
+	},
 	{
 		name: "BlackRock",
 		logo: "/assets/brands/blackrock-logo.png",
 		invert: true,
+		url: "https://blackrock.com",
 	},
 	{
 		name: "JPMorgan Chase",
 		logo: "/assets/brands/jpmc-logo.png",
 		invert: true,
+		url: "https://jpmorgan.com",
 	},
-	{ name: "Ramp", logo: "/assets/brands/ramp-logo.png", invert: true },
-	{ name: "Warp", logo: "/assets/brands/warp-logo.png", invert: true },
+	{
+		name: "Ramp",
+		logo: "/assets/brands/ramp-logo.png",
+		invert: true,
+		url: "https://ramp.com",
+	},
+	{
+		name: "Warp",
+		logo: "/assets/brands/warp-logo.png",
+		invert: true,
+		url: "https://warp.dev",
+	},
 	{
 		name: "Radial Equity Partners",
 		logo: "/assets/brands/radial-logo.png",
+		url: "https://www.radialequity.com",
 	},
-	{ name: "Red Bull", logo: "/assets/brands/redbull-logo.svg", invert: false },
+	{
+		name: "Red Bull",
+		logo: "/assets/brands/redbull-logo.svg",
+		invert: false,
+		url: "https://redbull.com",
+	},
 	{
 		name: "LA Clippers",
 		logo: "/assets/brands/clippers-logo.svg",
 		invert: false,
+		url: "https://clippers.com",
 	},
 ];
 
@@ -78,7 +107,7 @@ const FAQS = [
 	{
 		question: "Is this a hacker house?",
 		answer:
-			"Not in the intense, mandatory-events way. There is no mandatory building or networking, just a solid & ambitious group of people making the most of an amazing summer.",
+			"Not in the intense, mandatory-events way. There is no mandatory building or networking. That said, the goal is to connect with each resident, hanging out on weekends while leveraging strengths to build something special.",
 	},
 	{
 		question: "How do you choose people?",
@@ -216,35 +245,51 @@ function App() {
 
 			<main className="min-h-[calc(100dvh-72px)] flex items-center justify-center px-6 md:px-12">
 				<div className="max-w-2xl text-center">
-					<h1 className="text-4xl md:text-5xl font-medium text-white leading-tight mb-6">
+					<h1 className="text-4xl md:text-5xl font-serif italic text-white leading-tight mb-6">
 						A house for the most ambitious NYC interns this summer.
 					</h1>
 					<p className="text-lg text-muted-foreground leading-relaxed mb-8">
-						Be surrounded by the smartest kids in the country and explore one of the greatest cities ever built. 12 residents. 1 house in Chelsea.
+						Be surrounded by the smartest kids in the country and explore one of
+						the greatest cities ever built. 12 residents. 1 house in Chelsea.
 					</p>
-					<div className="flex items-center justify-center gap-6 mb-12">
+					<div className="flex items-center justify-center gap-4 mb-12">
 						<Button
 							size="lg"
-							className="bg-white text-black hover:bg-white/90"
-							onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLSfNAkbsg63FeITIly22gKZf155IrA9UUbXNNH48dR3hEpdD9A/viewform", "_blank")}
+							className="bg-white text-black hover:bg-white/90 h-12 px-8 text-base"
+							onClick={() =>
+								window.open(
+									"https://docs.google.com/forms/d/e/1FAIpQLSfNAkbsg63FeITIly22gKZf155IrA9UUbXNNH48dR3hEpdD9A/viewform",
+									"_blank",
+								)
+							}
 						>
-							APPLY NOW
+							JOIN US
 						</Button>
-						<p className="text-muted-foreground">4 spots left</p>
+						<Button
+							size="lg"
+							variant="outline"
+							className="h-12 px-8 text-base"
+							asChild
+						>
+							<a href="/about">ABOUT</a>
+						</Button>
 					</div>
 
 					<div className="flex flex-wrap items-center justify-center gap-8 md:gap-10 mt-24">
 						{COMPANIES.map((company) => (
-							<div
+							<a
 								key={company.name}
-								className={company.invert ? "invert" : ""}
+								href={company.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								className={`${company.invert ? "invert" : ""} hover:opacity-70 transition-opacity`}
 							>
 								<img
 									src={company.logo}
 									alt={company.name}
 									className="h-6 md:h-7 w-auto object-contain"
 								/>
-							</div>
+							</a>
 						))}
 					</div>
 				</div>

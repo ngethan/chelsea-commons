@@ -1,6 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Navbar } from "../components/Navbar";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "../components/ui/dialog";
 import { ScrollVelocityRow } from "../components/ui/scroll-based-velocity";
 import { buildSeoTags } from "../site-config";
 
@@ -76,68 +83,223 @@ function FitText({
 	);
 }
 
-const PEOPLE = [
-	{ name: "Chirag Ohri", image: null },
-	{ name: "Daniel Sung", image: null },
-	{ name: "Ethan Ng", image: null },
-	{ name: "Jackson Dietz", image: null },
-	{ name: "Jorik Dammann", image: null },
-	{ name: "Math Heramia", image: null },
-	{ name: "Sachin Sashti", image: null },
-	{ name: "Will Burkhart", image: null },
+type Person = {
+	name: string;
+	company: string;
+	prevCompany?: string;
+	bio: string;
+	linkedin: string;
+	image: string | null;
+};
+
+function PersonCard({ person }: { person: Person }) {
+	const [open, setOpen] = useState(false);
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<button
+				type="button"
+				onClick={() => setOpen(true)}
+				className="text-left group cursor-pointer"
+			>
+				<div className="aspect-square bg-muted mb-4 flex items-center justify-center overflow-hidden">
+					{person.image ? (
+						<img
+							src={person.image}
+							alt={person.name}
+							className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+						/>
+					) : (
+						<span className="text-muted-foreground text-sm">Photo</span>
+					)}
+				</div>
+				<p className="text-foreground font-medium">{person.name}</p>
+				<p className="text-muted-foreground text-sm">{person.company}</p>
+			</button>
+
+			<DialogContent className="sm:max-w-lg">
+				<DialogHeader>
+					<DialogTitle className="text-xl">{person.name}</DialogTitle>
+					<DialogDescription>
+						{person.prevCompany
+							? `${person.company} · Prev ${person.prevCompany}`
+							: person.company}
+					</DialogDescription>
+				</DialogHeader>
+
+				<div className="space-y-4">
+					<div className="aspect-video bg-muted flex items-center justify-center overflow-hidden">
+						{person.image ? (
+							<img
+								src={person.image}
+								alt={person.name}
+								className="w-full h-full object-cover"
+							/>
+						) : (
+							<span className="text-muted-foreground text-sm">Photo</span>
+						)}
+					</div>
+
+					<div className="space-y-3">
+						<p className="text-foreground text-lg leading-relaxed whitespace-pre-line">
+							{person.bio}
+						</p>
+						<a
+							href={person.linkedin}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="inline-block text-sm text-foreground underline hover:text-muted-foreground transition-colors"
+						>
+							LinkedIn →
+						</a>
+					</div>
+				</div>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+const PEOPLE: Person[] = [
+	{
+		name: "Chirag Ohri",
+		company: "JPMorgan Chase",
+		bio: "TBD",
+		linkedin: "https://www.linkedin.com/in/chiragohri07/",
+		image: null,
+	},
+	{
+		name: "Daniel Sung",
+		company: "JPMorgan Chase",
+		bio: "TBD",
+		linkedin: "https://www.linkedin.com/in/danielhsung/",
+		image: null,
+	},
+	{
+		name: "Ethan Ng",
+		company: "Ramp",
+		bio: `Ethan is a junior at Washington University in St. Louis studying Computer Science and Finance. This summer, he'll be a Software Engineering Intern at Ramp and an 8VC fellow.
+
+Previously, he cofounded Connect, an EdTech platform serving 10,000+ students, and was employee #1 at a startup that raised $xM to build a consumer app for relationships.
+
+He's passionate about photography, plays piano, and plays tennis.`,
+		linkedin: "https://www.linkedin.com/in/ethan--ng/",
+		image: null,
+	},
+	{
+		name: "Jackson Dietz",
+		company: "BlackRock",
+		bio: "TBD",
+		linkedin: "https://www.linkedin.com/in/jackson-dietz-/",
+		image: null,
+	},
+	{
+		name: "Jorik Dammann",
+		company: "Radial Equity Partners",
+		bio: "TBD",
+		linkedin: "https://www.linkedin.com/in/jorik-dammann/",
+		image: null,
+	},
+	{
+		name: "Math Heramia",
+		company: "Lead Edge Capital",
+		prevCompany: "BCG",
+		bio: "TBD",
+		linkedin: "https://www.linkedin.com/in/math-heramia/",
+		image: null,
+	},
+	{
+		name: "Sachin Sashti",
+		company: "KPMG",
+		bio: "TBD",
+		linkedin: "https://www.linkedin.com/in/sachinsashti/",
+		image: null,
+	},
+	{
+		name: "Will Burkhart",
+		company: "Teamworthy Ventures",
+		bio: "TBD",
+		linkedin: "https://www.linkedin.com/in/will-burkhart-4b525223a/",
+		image: null,
+	},
 ];
 
 function About() {
+	const [showScrollHint, setShowScrollHint] = useState(true);
+	const peopleRef = useRef<HTMLElement>(null);
+
+	useEffect(() => {
+		const peopleSection = peopleRef.current;
+		if (!peopleSection) return;
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				setShowScrollHint(!entry.isIntersecting);
+			},
+			{ threshold: 0.1 },
+		);
+
+		observer.observe(peopleSection);
+		return () => observer.disconnect();
+	}, []);
+
 	return (
 		<div className="min-h-dvh relative z-10">
 			<Navbar />
-			<main className="px-6 md:px-12 py-12">
+			<main className="px-6 md:px-12">
 				{/* Vision Section */}
-				<section className="max-w-3xl py-24">
-					<p className="text-2xl md:text-3xl text-foreground leading-relaxed mb-8">
-						Chelsea Commons exists to compound the strengths of 12 ambitious
-						interns in New York City into an unforgettable summer.
-					</p>
+				<section className="min-h-[50vh] md:h-[calc(100dvh-110px)] flex flex-col justify-between relative">
+					<div className="max-w-3xl py-12">
+						<p className="text-3xl md:text-5xl text-foreground leading-relaxed mb-8 font-serif">
+							Chelsea Commons exists to <em>compound the strengths</em> of 12
+							ambitious interns in New York City into an unforgettable summer.
+						</p>
 
-					<p className="text-2xl md:text-3xl text-foreground leading-relaxed mb-8">
-						We are curating this group to grow together, build cool stuff, and
-						be the heart of a larger intern ecosystem, creating events and
-						community for all New York interns, while being surrounded by insane
-						talent.
-					</p>
-					<p className="text-2xl md:text-3xl text-foreground leading-relaxed">
-						Reach us at{" "}
-						<a
-							href="mailto:hey@chelseacommons.co"
-							className="underline hover:text-muted-foreground transition-colors"
-						>
-							hey@chelseacommons.co
-						</a>
-						.
-					</p>
+						<p className="text-xl md:text-3xl text-foreground leading-relaxed mb-8">
+							We are curating this group to grow together, build cool stuff, and
+							be the heart of a larger intern ecosystem, creating events and
+							community for all New York interns, while being surrounded by
+							insane talent.
+						</p>
+						<p className="text-xl md:text-3xl text-foreground leading-relaxed">
+							Reach us at{" "}
+							<a
+								href="mailto:hey@chelseacommons.co"
+								className="underline hover:text-muted-foreground transition-colors"
+							>
+								hey@chelseacommons.co
+							</a>
+							.
+						</p>
+					</div>
+					<div className="flex flex-col gap-4">
+						<div className="hidden md:flex items-end justify-end">
+							<button
+								type="button"
+								onClick={() =>
+									peopleRef.current?.scrollIntoView({ behavior: "smooth" })
+								}
+								className={`text-foreground flex items-center gap-2 tracking-widest uppercase transition-all duration-500 cursor-pointer hover:opacity-60 ${
+									showScrollHint
+										? "opacity-100"
+										: "opacity-0 pointer-events-none"
+								}`}
+							>
+								<span className="text-sm font-medium">Meet the team</span>
+								<span className="text-lg">↓</span>
+							</button>
+						</div>
+						<div className="border-t border-border" />
+					</div>
 				</section>
 
 				{/* People Section */}
-				<section className="py-24 border-t border-border">
+				<section ref={peopleRef} className="py-24">
 					<h2 className="text-2xl font-medium text-foreground mb-12">
-						The People
+						The Residents
 					</h2>
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 						{PEOPLE.map((person) => (
-							<div key={person.name} className="group">
-								<div className="aspect-square bg-muted mb-4 flex items-center justify-center">
-									{person.image ? (
-										<img
-											src={person.image}
-											alt={person.name}
-											className="w-full h-full object-cover"
-										/>
-									) : (
-										<span className="text-muted-foreground text-sm">Photo</span>
-									)}
-								</div>
-								<p className="text-foreground font-medium">{person.name}</p>
-							</div>
+							<PersonCard key={person.name} person={person} />
 						))}
 					</div>
 				</section>
