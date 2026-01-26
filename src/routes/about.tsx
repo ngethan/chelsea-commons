@@ -169,7 +169,7 @@ Academically, I'm involved in research and recently published a clean energy pap
 
 Outside of work, I love playing and watching sports - especially soccer (Hala Madrid), basketball, and tennis. I also enjoy playing a few hands of poker every now and then. Okay, I swear it's not gambling. Just probability and game theory.`,
 		linkedin: "https://www.linkedin.com/in/chiragohri07/",
-		image: "/assets/residents/ChiragOhri.png",
+		image: "/assets/residents/ChiragOhri.webp",
 	},
 	{
 		name: "Daniel Sung",
@@ -180,7 +180,7 @@ In the past, I've been the youngest NBA intern in league history, managed Vander
 
 When I'm not working, you'll find me hooping, playing pickleball, or hitting the slopes snowboarding.`,
 		linkedin: "https://www.linkedin.com/in/danielhsung/",
-		image: "/assets/residents/DanielSung.png",
+		image: "/assets/residents/DanielSung.webp",
 	},
 	{
 		name: "Ethan Ng",
@@ -191,7 +191,7 @@ Previously, I cofounded Connect, an EdTech platform serving 10,000+ students, an
 
 I'm passionate about photography, play piano, and play tennis.`,
 		linkedin: "https://www.linkedin.com/in/ethan--ng/",
-		image: "/assets/residents/EthanNg.jpeg",
+		image: "/assets/residents/EthanNg.webp",
 	},
 	{
 		name: "Jackson Dietz",
@@ -202,7 +202,7 @@ Previously, I've worked as a PM at Coke and co-founded a free tutoring service c
 
 I love music, play in a band on campus, and am currently studying abroad in Rome.`,
 		linkedin: "https://www.linkedin.com/in/jackson-dietz-/",
-		image: "/assets/residents/JacksonDietz.jpeg",
+		image: "/assets/residents/JacksonDietz.webp",
 	},
 	{
 		name: "Jorik Dammann",
@@ -213,7 +213,7 @@ Previously, I've interned at Q2 Software and Recursion Works. I'm also the found
 
 I dabble in competitive modular origami, am an avid fan of German rap, and strive to become a 10th-Dan tea master.`,
 		linkedin: "https://www.linkedin.com/in/jorik-dammann/",
-		image: "/assets/residents/JorikDammann.png",
+		image: "/assets/residents/JorikDammann.webp",
 	},
 	{
 		name: "Sachin Sashti",
@@ -224,7 +224,7 @@ In the past, I've presented a policy proposal to EU delegates, was a Collegiate 
 
 I love every type of game and hope to have a weekly resident game night :)`,
 		linkedin: "https://www.linkedin.com/in/sachinsashti/",
-		image: "/assets/residents/SachinSashti.png",
+		image: "/assets/residents/SachinSashti.webp",
 	},
 	{
 		name: "Will Burkhart",
@@ -235,7 +235,7 @@ More generally, national security fires me up. Last summer, I interned at a Stan
 
 A Tale of Two Cities by Dickens is my favorite book. My favorite movie is La La Land. My favorite artist is Olivia Dean. My favorite day is chest day. Fun fact: I lived in Spain for a year in high school and now I speak Spanish.`,
 		linkedin: "https://www.linkedin.com/in/will-burkhart-4b525223a/",
-		image: "/assets/residents/WillBurkhart.png",
+		image: "/assets/residents/WillBurkhart.webp",
 	},
 ];
 
