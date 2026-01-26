@@ -241,16 +241,16 @@ function About() {
 				{/* Vision Section */}
 				<section className="min-h-[50vh] md:h-[calc(100dvh-110px)] flex flex-col justify-between relative">
 					<div className="max-w-3xl py-12">
-						<p className="text-3xl md:text-5xl text-foreground leading-relaxed mb-8 font-serif">
-							Chelsea Commons exists to <em>compound the strengths</em> of 12
-							ambitious interns in New York City into an unforgettable summer.
+						<p className="text-3xl md:text-5xl text-foreground leading-relaxed mb-8 font-serif italic">
+							Chelsea Commons brings together 12 interns in New York City for a
+							shared summer experience.
 						</p>
 
 						<p className="text-xl md:text-3xl text-foreground leading-relaxed mb-8">
 							We are curating this group to grow together, build cool stuff, and
 							be the heart of a larger intern ecosystem, creating events and
-							community for all New York interns, while being surrounded by
-							insane talent.
+							community for all New York interns, while being surrounded by good
+							company.
 						</p>
 						<p className="text-xl md:text-3xl text-foreground leading-relaxed">
 							Reach us at{" "}

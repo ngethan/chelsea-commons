@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Gallery } from "../components/gallery";
@@ -60,21 +60,16 @@ const COMPANIES = [
 		url: "https://www.joinwarp.com",
 	},
 	{
+		name: "KPMG",
+		logo: "/assets/brands/kpmg-logo.png",
+		invert: false,
+		url: "https://kpmg.com",
+	},
+	{
 		name: "Radial Equity Partners",
 		logo: "/assets/brands/radial-logo.png",
+		invert: true,
 		url: "https://www.radialequity.com",
-	},
-	{
-		name: "Red Bull",
-		logo: "/assets/brands/redbull-logo.svg",
-		invert: false,
-		url: "https://redbull.com",
-	},
-	{
-		name: "LA Clippers",
-		logo: "/assets/brands/clippers-logo.svg",
-		invert: false,
-		url: "https://clippers.com",
 	},
 ];
 
@@ -246,11 +241,11 @@ function App() {
 			<main className="min-h-[calc(100dvh-72px)] flex items-center justify-center px-6 md:px-12">
 				<div className="max-w-2xl text-center">
 					<h1 className="text-4xl md:text-5xl font-serif italic text-white leading-tight mb-6">
-						A house for the most ambitious NYC interns this summer.
+						A summer community for 12 interns in NYC.
 					</h1>
 					<p className="text-lg text-muted-foreground leading-relaxed mb-8">
-						Be surrounded by the smartest kids in the country and explore one of
-						the greatest cities ever built. 12 residents. 1 house in Chelsea.
+						Join 12 residents from diverse backgrounds for a summer of living,
+						exploring, and building in New York City.
 					</p>
 					<div className="flex items-center justify-center gap-4 mb-12">
 						<Button
@@ -271,7 +266,9 @@ function App() {
 							className="h-12 px-8 text-base"
 							asChild
 						>
-							<a href="/about">ABOUT</a>
+							<Link to="/about" className="no-underline ">
+								ABOUT
+							</Link>
 						</Button>
 					</div>
 
@@ -282,12 +279,12 @@ function App() {
 								href={company.url}
 								target="_blank"
 								rel="noopener noreferrer"
-								className={`${company.invert ? "invert" : ""} hover:opacity-70 transition-opacity`}
+								className={`${company.invert ? "invert" : ""} group`}
 							>
 								<img
 									src={company.logo}
 									alt={company.name}
-									className="h-6 md:h-7 w-auto object-contain"
+									className="h-6 md:h-7 w-auto object-contain opacity-100 group-hover:opacity-70 transition-opacity duration-150"
 								/>
 							</a>
 						))}
