@@ -10,7 +10,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ReactLenis, useLenis } from "lenis/react";
 import { AnimatePresence } from "motion/react";
 import React, { useEffect } from "react";
 
@@ -99,72 +98,17 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-	const lenis = useLenis(({ scroll }) => {
-		// specific scroll events if needed
-	});
-
 	useEffect(() => {
 		gsap.registerPlugin(ScrollTrigger);
-
-		// Sync Lenis and GSAP
-		const update = (time: number) => {
-			// lenis instance is available via useLenis or we can get it from ref if needed
-			// But wait, useLenis returns the instance but we can't force update it from here easily if we don't have the instance reference in the ticker
-			// Actually ReactLenis usually handles the RAF itself if root is true.
-			// The issue is GSAP ScrollTrigger needs to know about Lenis scroll.
-		};
-		// If ReactLenis handles the raf loop (which it does by default), we just need to tell ScrollTrigger to update when Lenis scrolls?
-		// Or rather, we need to disable GSAP's native smooth scroll if any, and rely on Lenis.
-		// Standard integration:
-		/*
-		lenis.on('scroll', ScrollTrigger.update)
-
-		gsap.ticker.add((time)=>{
-		  lenis.raf(time * 1000)
-		})
-		
-		gsap.ticker.lagSmoothing(0)
-		*/
 	}, []);
 
 	return (
-		<ReactLenis root>
-			<LenisGsapSync />
+		<>
 			<AnimatePresence initial={false}>
 				<Outlet />
 			</AnimatePresence>
-		</ReactLenis>
+		</>
 	);
-}
-
-function LenisGsapSync() {
-	const lenis = useLenis();
-
-	useEffect(() => {
-		if (!lenis) return;
-
-		gsap.registerPlugin(ScrollTrigger);
-
-		// Sync ScrollTrigger with Lenis
-		lenis.on("scroll", ScrollTrigger.update);
-
-		// Add Lenis's requestAnimationFrame to GSAP's ticker
-		const update = (time: number) => {
-			lenis.raf(time * 1000);
-		};
-
-		gsap.ticker.add(update);
-
-		// Disable lag smoothing for smoother scroll
-		gsap.ticker.lagSmoothing(0);
-
-		return () => {
-			lenis.off("scroll", ScrollTrigger.update);
-			gsap.ticker.remove(update);
-		};
-	}, [lenis]);
-
-	return null;
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {

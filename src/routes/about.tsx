@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import {
 	Dialog,
@@ -197,14 +197,6 @@ He's passionate about photography, plays piano, and plays tennis.`,
 		company: "Radial Equity Partners",
 		bio: "TBD",
 		linkedin: "https://www.linkedin.com/in/jorik-dammann/",
-		image: null,
-	},
-	{
-		name: "Math Heramia",
-		company: "Lead Edge Capital",
-		prevCompany: "BCG",
-		bio: "TBD",
-		linkedin: "https://www.linkedin.com/in/math-heramia/",
 		image: null,
 	},
 	{
