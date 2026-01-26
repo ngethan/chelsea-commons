@@ -66,6 +66,12 @@ const COMPANIES = [
 		url: "https://kpmg.com",
 	},
 	{
+		name: "BCG",
+		logo: "/assets/brands/bcg-logo.png",
+		invert: false,
+		url: "https://bcg.com",
+	},
+	{
 		name: "Radial Equity Partners",
 		logo: "/assets/brands/radial-logo.png",
 		invert: true,
@@ -245,7 +251,8 @@ function App() {
 					</h1>
 					<p className="text-lg text-muted-foreground leading-relaxed mb-8">
 						We are bringing together 12 residents for a summer of living,
-						exploring, and building in the heart of New York City.
+						exploring, and building in the heart of New York City. We have 5
+						spots left, apply now!
 					</p>
 					<div className="flex items-center justify-center gap-4 mb-12">
 						<Button

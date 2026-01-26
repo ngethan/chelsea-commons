@@ -277,10 +277,8 @@ function About() {
 						</p>
 
 						<p className="text-xl md:text-3xl text-foreground leading-relaxed mb-8">
-							But this isn’t about stats. It's about growing together and being
-							surrounded by builders in one of the greatest cities ever built.
-							Backed by a unicorn entrepreneur and a Warp executive, we have 4
-							spots left.
+							We're backed by a unicorn founder and a Warp executive. We have 5
+							spots left, apply now!
 						</p>
 
 						<p className="text-xl md:text-3xl text-foreground leading-relaxed">
