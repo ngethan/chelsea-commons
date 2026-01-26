@@ -1,169 +1,131 @@
-import gsap from "gsap";
-import { useLayoutEffect, useRef } from "react";
-import { cn } from "../lib/utils";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 const IMAGES = [
 	{
 		src: "/assets/space/building.jpg",
 		alt: "Building Exterior",
-		title: "The Building",
-		description: "Modern architecture in the heart of Chelsea",
-	},
-	{
-		src: "/assets/space/entrance.jpg",
-		alt: "Entrance",
-		title: "Welcome Home",
-		description: "Secure and inviting entrance",
+		className: "col-span-2 row-span-2 md:col-span-2 md:row-span-2",
 	},
 	{
 		src: "/assets/space/room-1.jpg",
 		alt: "Bedroom 1",
-		title: "Private Spaces",
-		description: "Furnished rooms with natural light",
+		className: "col-span-1 md:col-span-2 md:row-span-1",
 	},
 	{
 		src: "/assets/space/room-kitchen-2.jpg",
 		alt: "Kitchen",
-		title: "Chef's Kitchen",
-		description: "Fully equipped for community meals",
-	},
-	{
-		src: "/assets/space/room-2.jpg",
-		alt: "Bedroom 2",
-		title: "Comfort & Style",
-		description: "Designed for productivity and rest",
+		className: "col-span-1 md:col-span-2 md:row-span-1",
 	},
 	{
 		src: "/assets/space/rooftop.jpg",
 		alt: "Rooftop",
-		title: "Rooftop Views",
-		description: "Stunning views of the NYC skyline",
+		className: "col-span-2 row-span-2 md:col-span-2 md:row-span-2",
+	},
+	{
+		src: "/assets/space/room-2.jpg",
+		alt: "Bedroom 2",
+		className: "col-span-1 md:col-span-1 md:row-span-1",
 	},
 	{
 		src: "/assets/space/gym.jpg",
 		alt: "Gym",
-		title: "Fitness Center",
-		description: "State-of-the-art equipment",
+		className: "col-span-1 md:col-span-1 md:row-span-1",
 	},
 	{
 		src: "/assets/space/room-3.jpg",
 		alt: "Bedroom 3",
-		title: "Your Sanctuary",
-		description: "A quiet place to focus",
-	},
-	{
-		src: "/assets/space/surrounding.jpg",
-		alt: "Neighborhood",
-		title: "Chelsea Life",
-		description: "Surrounded by art, food, and culture",
+		className: "col-span-2 md:col-span-2 md:row-span-1",
 	},
 ];
 
 export function Gallery() {
-	const sectionRef = useRef<HTMLDivElement>(null);
-	const triggerRef = useRef<HTMLDivElement>(null);
-	const progressBarRef = useRef<HTMLDivElement>(null);
+	const [selectedImage, setSelectedImage] = useState<(typeof IMAGES)[0] | null>(
+		null,
+	);
 
-	useLayoutEffect(() => {
-		const ctx = gsap.context(() => {
-			const totalWidth = sectionRef.current?.scrollWidth;
-			const windowWidth = window.innerWidth;
-
-			if (!totalWidth) return;
-
-			const scrollTween = gsap.to(sectionRef.current, {
-				x: () => -(totalWidth - windowWidth),
-				ease: "none",
-				scrollTrigger: {
-					trigger: triggerRef.current,
-					start: "top top",
-					end: () => `+=${totalWidth}`,
-					scrub: 0,
-					pin: true,
-					invalidateOnRefresh: true,
-					anticipatePin: 1,
-				},
-			});
-
-			const slides = gsap.utils.toArray<HTMLElement>(".gallery-slide");
-			const indicators = gsap.utils.toArray<HTMLElement>(".scroll-fill");
-
-			slides.forEach((slide, i) => {
-				const img = slide.querySelector("img");
-				if (!img) return;
-
-				gsap.to(img, {
-					filter: "grayscale(0%)",
-					scale: 1.05,
-					ease: "power2.out",
-					scrollTrigger: {
-						trigger: slide,
-						containerAnimation: scrollTween,
-						start: "center center+=25%",
-						end: "center center-=25%",
-						scrub: true,
-						onEnter: () => {
-							indicators.forEach((ind, idx) => {
-								if (idx <= i) gsap.to(ind, { scaleX: 1, duration: 0.3 });
-							});
-						},
-						onLeave: () => {
-							gsap.to(indicators[i], { scaleX: 1, duration: 0.3 });
-						},
-						onEnterBack: () => {
-							gsap.to(indicators[i], { scaleX: 1, duration: 0.3 });
-							indicators.forEach((ind, idx) => {
-								if (idx > i) gsap.to(ind, { scaleX: 0, duration: 0.3 });
-							});
-						},
-						onLeaveBack: () => {
-							gsap.to(indicators[i], { scaleX: 0, duration: 0.3 });
-						},
-					},
-				});
-			});
-		}, triggerRef);
-
-		return () => ctx.revert();
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === "Escape") setSelectedImage(null);
+		};
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, []);
 
 	return (
-		<section className="overflow-hidden relative" ref={triggerRef}>
-			{/* Custom Scrollbar */}
-			<div
-				ref={progressBarRef}
-				className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[95%] h-0.5 z-20 flex gap-1"
-			>
-				{IMAGES.map((_, index) => (
-					<div
-						key={index}
-						className="scroll-indicator h-full flex-1 bg-white/20 rounded-full overflow-hidden"
-					>
-						<div className="scroll-fill h-full w-full bg-white origin-left scale-x-0" />
-					</div>
-				))}
+		<section className="px-6 md:px-12 py-16" id="gallery">
+			<div className="flex flex-col gap-4 mb-8">
+				<h2 className="text-3xl font-serif italic">The Space</h2>
+				<p className="text-muted-foreground max-w-xl">
+					Explore the common areas, bedrooms, and amenities that make Chelsea
+					Commons a unique place to live.
+				</p>
 			</div>
 
-			<div
-				ref={sectionRef}
-				className="flex h-screen items-center w-fit pl-8 md:pl-24 pr-8 md:pr-24"
-			>
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[160px] md:auto-rows-[240px]">
 				{IMAGES.map((image, index) => (
-					<div
+					<motion.div
 						key={index}
+						onClick={() => setSelectedImage(image)}
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.4, delay: index * 0.05 }}
 						className={cn(
-							"gallery-slide relative h-[60vh] md:h-[70vh] aspect-[16/9] flex-shrink-0 mx-4 md:mx-6 overflow-hidden rounded-sm group",
+							"relative rounded-lg overflow-hidden cursor-pointer group bg-muted",
+							image.className,
 						)}
 					>
 						<img
 							src={image.src}
 							alt={image.alt}
-							className="absolute inset-0 h-full w-full object-cover grayscale"
+							className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
 						/>
-						<div className="absolute inset-0 bg-black/10 transition-colors duration-500" />
-					</div>
+					</motion.div>
 				))}
 			</div>
+
+			<AnimatePresence>
+				{selectedImage && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						onClick={() => setSelectedImage(null)}
+						className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 md:p-12"
+					>
+						<Button
+							variant="ghost"
+							size="icon"
+							className="absolute top-4 right-4 z-50 text-white hover:bg-white/20 rounded-full"
+							onClick={() => setSelectedImage(null)}
+						>
+							<X className="size-6" />
+							<span className="sr-only">Close</span>
+						</Button>
+
+						<motion.div
+							initial={{ opacity: 0, scale: 0.95 }}
+							animate={{ opacity: 1, scale: 1 }}
+							exit={{ opacity: 0, scale: 0.95 }}
+							transition={{ duration: 0.2 }}
+							className="relative w-full h-full flex items-center justify-center p-8 md:p-20"
+							onClick={() => setSelectedImage(null)}
+						>
+							{/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+							<img
+								src={selectedImage.src}
+								alt={selectedImage.alt}
+								className="max-w-full max-h-full object-contain shadow-2xl"
+								onClick={(e) => e.stopPropagation()}
+							/>
+						</motion.div>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</section>
 	);
 }
