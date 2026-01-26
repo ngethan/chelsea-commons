@@ -40,9 +40,6 @@ export function Navbar() {
 						<Button variant="outline" asChild>
 							<Link to="/about">ABOUT</Link>
 						</Button>
-						<Button variant="outline" asChild>
-							<Link to="/events">EVENTS</Link>
-						</Button>
 					</div>
 
 					<button
