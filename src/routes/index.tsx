@@ -241,11 +241,11 @@ function App() {
 			<main className="min-h-[calc(100dvh-72px)] flex items-center justify-center px-6 md:px-12">
 				<div className="max-w-2xl text-center">
 					<h1 className="text-4xl md:text-5xl font-serif italic text-white leading-tight mb-6">
-						A summer community for 12 interns in NYC.
+						A summer home and community for interns in NYC.
 					</h1>
 					<p className="text-lg text-muted-foreground leading-relaxed mb-8">
-						Join 12 residents from diverse backgrounds for a summer of living,
-						exploring, and building in New York City.
+						We are bringing together 12 residents for a summer of living,
+						exploring, and building in the heart of New York City.
 					</p>
 					<div className="flex items-center justify-center gap-4 mb-12">
 						<Button

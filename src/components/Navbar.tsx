@@ -108,13 +108,6 @@ export function Navbar() {
 						>
 							ABOUT
 						</Link>
-						<Link
-							to="/events"
-							onClick={() => setIsOpen(false)}
-							className="text-4xl font-medium text-foreground hover:text-muted-foreground transition-colors"
-						>
-							EVENTS
-						</Link>
 					</div>
 				</div>
 			)}

@@ -117,7 +117,7 @@ function PersonCard({ person }: { person: Person }) {
 				<p className="text-muted-foreground text-sm">{person.company}</p>
 			</button>
 
-			<DialogContent className="sm:max-w-lg">
+			<DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
 				<DialogHeader>
 					<DialogTitle className="text-xl">{person.name}</DialogTitle>
 					<DialogDescription>
@@ -128,7 +128,7 @@ function PersonCard({ person }: { person: Person }) {
 				</DialogHeader>
 
 				<div className="space-y-4">
-					<div className="aspect-video bg-muted flex items-center justify-center overflow-hidden">
+					<div className="aspect-[4/3] bg-muted flex items-center justify-center overflow-hidden">
 						{person.image ? (
 							<img
 								src={person.image}
@@ -163,55 +163,79 @@ const PEOPLE: Person[] = [
 	{
 		name: "Chirag Ohri",
 		company: "JPMorgan Chase",
-		bio: "TBD",
+		bio: `I'm a junior studying Economics at the University of Southern California. This summer, I'll be interning at J.P. Morgan within their Commercial & Investment Banking Division.
+
+Academically, I'm involved in research and recently published a clean energy paper in Energy Economics. I also have experience in policy and advocacy, having served as a Student Assembly Delegate where I represented student concerns at various conferences. I've previously interned with startups, and I'm deeply interested in building a company of my own in the future.
+
+Outside of work, I love playing and watching sports - especially soccer (Hala Madrid), basketball, and tennis. I also enjoy playing a few hands of poker every now and then. Okay, I swear it's not gambling. Just probability and game theory.`,
 		linkedin: "https://www.linkedin.com/in/chiragohri07/",
-		image: null,
+		image: "/assets/residents/ChiragOhri.png",
 	},
 	{
 		name: "Daniel Sung",
 		company: "JPMorgan Chase",
-		bio: "TBD",
+		bio: `I'm a student at Vanderbilt University studying Human and Organizational Development as a Peabody Honors Scholar. This summer, I'll be a Marketing Learning Development Program Analyst at JPMorgan!
+
+In the past, I've been the youngest NBA intern in league history, managed Vanderbilt men's basketball team, and been featured in Fortune magazine twice for my work in sports and entrepreneurship.
+
+When I'm not working, you'll find me hooping, playing pickleball, or hitting the slopes snowboarding.`,
 		linkedin: "https://www.linkedin.com/in/danielhsung/",
-		image: null,
+		image: "/assets/residents/DanielSung.png",
 	},
 	{
 		name: "Ethan Ng",
 		company: "Ramp",
-		bio: `Ethan is a junior at Washington University in St. Louis studying Computer Science and Finance. This summer, he'll be a Software Engineering Intern at Ramp and an 8VC fellow.
+		bio: `I'm a junior at Washington University in St. Louis studying Computer Science and Finance. This summer, I'll be a Software Engineering Intern at Ramp and an 8VC fellow.
 
-Previously, he cofounded Connect, an EdTech platform serving 10,000+ students, and was employee #1 at a startup that raised $xM to build a consumer app for relationships.
+Previously, I cofounded Connect, an EdTech platform serving 10,000+ students, and was employee #1 at a startup that raised $xM to build a consumer app for relationships.
 
-He's passionate about photography, plays piano, and plays tennis.`,
+I'm passionate about photography, play piano, and play tennis.`,
 		linkedin: "https://www.linkedin.com/in/ethan--ng/",
-		image: null,
+		image: "/assets/residents/EthanNg.jpeg",
 	},
 	{
 		name: "Jackson Dietz",
 		company: "BlackRock",
-		bio: "TBD",
+		bio: `I'm a junior at Emory majoring in Computer Science & Business. This summer, I'm going to BlackRock as a Product Manager on their Aladdin Team.
+
+Previously, I've worked as a PM at Coke and co-founded a free tutoring service connecting high schoolers with disadvantaged elementary school students.
+
+I love music, play in a band on campus, and am currently studying abroad in Rome.`,
 		linkedin: "https://www.linkedin.com/in/jackson-dietz-/",
-		image: null,
+		image: "/assets/residents/JacksonDietz.jpeg",
 	},
 	{
 		name: "Jorik Dammann",
 		company: "Radial Equity Partners",
-		bio: "TBD",
+		bio: `I'm a Yale sophomore studying Economics & Mathematics and trying to score goals for the Men's Soccer team. This summer, I'll be a private equity intern at Radial Equity Partners.
+
+Previously, I've interned at Q2 Software and Recursion Works. I'm also the founder and creator of RootOn, a high school sports app.
+
+I dabble in competitive modular origami, am an avid fan of German rap, and strive to become a 10th-Dan tea master.`,
 		linkedin: "https://www.linkedin.com/in/jorik-dammann/",
-		image: null,
+		image: "/assets/residents/JorikDammann.png",
 	},
 	{
 		name: "Sachin Sashti",
 		company: "KPMG",
-		bio: "TBD",
+		bio: `I'm a senior at Penn State studying Finance, Accounting, and Philosophy. This summer, I'll be an M&A Consultant Intern at KPMG and I'm building a SaaS startup with a unicorn entrepreneur.
+
+In the past, I've presented a policy proposal to EU delegates, was a Collegiate Debate National Finalist, and led the implementation of the first EVs into an F500 company's supply chain!
+
+I love every type of game and hope to have a weekly resident game night :)`,
 		linkedin: "https://www.linkedin.com/in/sachinsashti/",
-		image: null,
+		image: "/assets/residents/SachinSashti.png",
 	},
 	{
 		name: "Will Burkhart",
 		company: "Teamworthy Ventures",
-		bio: "TBD",
+		bio: `I'm a sophomore at Vanderbilt majoring in math. When I'm not in class, I build software to make it easier for researchers to get funding from the DoD. Researchers from 10+ universities have used my software.
+
+More generally, national security fires me up. Last summer, I interned at a Stanford national security center, worked with the Army's 75th Ranger Regiment, met four star generals (two of them), and worked on an autonomous weapon system to limit friendly fire. This summer, I'll be working in VC at Teamworthy Ventures.
+
+A Tale of Two Cities by Dickens is my favorite book. My favorite movie is La La Land. My favorite artist is Olivia Dean. My favorite day is chest day. Fun fact: I lived in Spain for a year in high school and now I speak Spanish.`,
 		linkedin: "https://www.linkedin.com/in/will-burkhart-4b525223a/",
-		image: null,
+		image: "/assets/residents/WillBurkhart.png",
 	},
 ];
 
@@ -242,16 +266,23 @@ function About() {
 				<section className="min-h-[50vh] md:h-[calc(100dvh-110px)] flex flex-col justify-between relative">
 					<div className="max-w-3xl py-12">
 						<p className="text-3xl md:text-5xl text-foreground leading-relaxed mb-8 font-serif italic">
-							Chelsea Commons brings together 12 interns in New York City for a
-							shared summer experience.
+							12 Interns. 12 Companies. 1 Summer.
 						</p>
 
 						<p className="text-xl md:text-3xl text-foreground leading-relaxed mb-8">
-							We are curating this group to grow together, build cool stuff, and
-							be the heart of a larger intern ecosystem, creating events and
-							community for all New York interns, while being surrounded by good
-							company.
+							We are bringing this group together to grow, build cool stuff, and
+							be the heart of a larger intern ecosystem. Our residents include
+							Stanford AI researchers, D1 athletes, and the NBA’s youngest ever
+							intern—incoming at companies like Ramp, JPMorgan, and BlackRock.
 						</p>
+
+						<p className="text-xl md:text-3xl text-foreground leading-relaxed mb-8">
+							But this isn’t about stats. It's about growing together and being
+							surrounded by builders in one of the greatest cities ever built.
+							Backed by a unicorn entrepreneur and a Warp executive, we have 4
+							spots left.
+						</p>
+
 						<p className="text-xl md:text-3xl text-foreground leading-relaxed">
 							Reach us at{" "}
 							<a
@@ -359,7 +390,7 @@ function About() {
 						</div>
 					</div>
 
-					<div className="flex flex-col justify-center py-12">
+					<div className="flex flex-col justify-center py-10">
 						<FitText className="font-serif text-8xl tracking-tight text-white opacity-75 leading-none select-none">
 							CHELSEA
 						</FitText>
