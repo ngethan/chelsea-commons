@@ -139,6 +139,32 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					style={{ backgroundColor: "#212121" }}
 				>
 					<MemoizedShadow />
+					<div
+						className="absolute overflow-hidden"
+						style={
+							{
+								top: "-100px",
+								right: "-100px",
+								width: "800px",
+								height: "600px",
+								"--aurora":
+									"repeating-linear-gradient(100deg, #2d1f3d 10%, #4a1942 15%, #c94c4c 20%, #f4a261 25%, #e76f51 30%, #8b5cf6 35%)",
+								maskImage:
+									"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
+								WebkitMaskImage:
+									"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
+							} as React.CSSProperties
+						}
+					>
+						<div
+							className="after:animate-aurora pointer-events-none absolute -inset-[10px] opacity-100 blur-[30px] will-change-transform after:absolute after:inset-0 after:mix-blend-difference after:content-['']"
+							style={{
+								backgroundImage: "var(--aurora)",
+								backgroundSize: "200%, 400%",
+								backgroundPosition: "50% 50%",
+							}}
+						/>
+					</div>
 				</div>
 				<script
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
