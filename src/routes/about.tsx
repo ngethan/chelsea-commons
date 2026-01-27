@@ -185,22 +185,22 @@ When I'm not working, you'll find me hooping, playing pickleball, or hitting the
 	{
 		name: "Ethan Ng",
 		company: "Ramp",
-		bio: `I'm a junior at Washington University in St. Louis studying Computer Science and Finance. This summer, I'll be a Software Engineering Intern at Ramp and an 8VC fellow.
+		bio: `I'm currently a junior at WashU studying CS and Finance. This summer, I'll be a SWE at Ramp and an 8VC fellow.
 
-Previously, I cofounded Connect, an EdTech platform serving 10,000+ students, and was employee #1 at a startup that raised $xM to build a consumer app for relationships.
+I previously cofounded an EdTech now company serving 10,000+ students and was employee #1 at a startup that raised $xM to build a consumer app for relationships.
 
-I'm passionate about photography, play piano, and play tennis.`,
+In my free time, I love to play tennis, play piano, and do photography! Also super interested in cars and have a 2004 350Z.`,
 		linkedin: "https://www.linkedin.com/in/ethan--ng/",
 		image: "/assets/residents/EthanNg.webp",
 	},
 	{
 		name: "Jackson Dietz",
 		company: "BlackRock",
-		bio: `I'm a junior at Emory majoring in Computer Science & Business. This summer, I'm going to BlackRock as a Product Manager on their Aladdin Team.
+		bio: `I'm a junior at Emory double-majoring in Computer Science and Business. This summer, I'll be joining BlackRock Aladdin as a Product Management Intern. Previously, I held a PM internship at Coca-Cola alongside a DS/ML role at a New York–based fintech, PEX.
 
-Previously, I've worked as a PM at Coke and co-founded a free tutoring service connecting high schoolers with disadvantaged elementary school students.
+I'm currently interning abroad in Rome at WorldLift, a global enterprise SEO and content-intelligence platform.
 
-I love music, play in a band on campus, and am currently studying abroad in Rome.`,
+Outside of work, I play bass in the Emory University Symphony Orchestra and in a rock band on campus. My all-time top five artists: Radiohead, Led Zeppelin, King Gizzard & the Lizard Wizard, Dmitri Shostakovich, and Zohar Argov.`,
 		linkedin: "https://www.linkedin.com/in/jackson-dietz-/",
 		image: "/assets/residents/JacksonDietz.webp",
 	},
