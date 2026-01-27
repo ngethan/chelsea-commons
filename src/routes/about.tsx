@@ -188,7 +188,7 @@ When I'm not working, you'll find me hooping, playing pickleball, or hitting the
 		company: "Ramp",
 		bio: `I'm currently a junior at WashU studying CS and Finance. This summer, I'll be a SWE at Ramp and an 8VC fellow.
 
-I previously cofounded an EdTech now company serving 10,000+ students and was employee #1 at a startup that raised $xM to build a consumer app for relationships.
+I previously cofounded an EdTech now company serving 10,000+ students and was employee #1 at a startup that raised $X,000,000 to build a consumer app for relationships.
 
 In my free time, I love to play tennis, play piano, and do photography! Also super interested in cars and have a 2004 350Z.`,
 		linkedin: "https://www.linkedin.com/in/ethan--ng/",
