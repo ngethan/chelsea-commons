@@ -191,7 +191,7 @@ I previously cofounded an EdTech now company serving 10,000+ students and was em
 
 In my free time, I love to play tennis, play piano, and do photography! Also super interested in cars and have a 2004 350Z.`,
 		linkedin: "https://www.linkedin.com/in/ethan--ng/",
-		image: "/assets/residents/EthanNg.webp",
+		image: "/assets/residents/EthanNg-v2.webp",
 	},
 	{
 		name: "Jackson Dietz",
@@ -202,7 +202,7 @@ I'm currently interning abroad in Rome at WorldLift, a global enterprise SEO and
 
 Outside of work, I play bass in the Emory University Symphony Orchestra and in a rock band on campus. My all-time top five artists: Radiohead, Led Zeppelin, King Gizzard & the Lizard Wizard, Dmitri Shostakovich, and Zohar Argov.`,
 		linkedin: "https://www.linkedin.com/in/jackson-dietz-/",
-		image: "/assets/residents/JacksonDietz.webp",
+		image: "/assets/residents/JacksonDietz-v2.webp",
 	},
 	{
 		name: "Jorik Dammann",
