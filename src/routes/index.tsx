@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Gallery } from "../components/gallery";
@@ -205,36 +206,58 @@ function FAQSection() {
 
 	return (
 		<section className="px-6 md:px-12 py-16 border-t border-border min-h-[600px]">
-			<h2 className="text-2xl font-medium text-foreground mb-8">FAQ</h2>
+			<motion.h2
+				initial={{ opacity: 0, y: 15 }}
+				whileInView={{ opacity: 1, y: 0 }}
+				viewport={{ once: true, margin: "-100px" }}
+				transition={{ duration: 0.3 }}
+				className="text-2xl font-medium text-foreground mb-8"
+			>
+				FAQ
+			</motion.h2>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 items-start">
-				<Accordion
-					type="single"
-					collapsible
-					value={openItem}
-					onValueChange={setOpenItem}
-					className="w-full"
+				<motion.div
+					initial={{ opacity: 0, y: 15 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					viewport={{ once: true, margin: "-50px" }}
+					transition={{ duration: 0.3, delay: 0.05 }}
 				>
-					{leftFaqs.map((faq, index) => (
-						<AccordionItem key={index} value={`item-${index}`}>
-							<AccordionTrigger>{faq.question}</AccordionTrigger>
-							<AccordionContent>{faq.answer}</AccordionContent>
-						</AccordionItem>
-					))}
-				</Accordion>
-				<Accordion
-					type="single"
-					collapsible
-					value={openItem}
-					onValueChange={setOpenItem}
-					className="w-full"
+					<Accordion
+						type="single"
+						collapsible
+						value={openItem}
+						onValueChange={setOpenItem}
+						className="w-full"
+					>
+						{leftFaqs.map((faq, index) => (
+							<AccordionItem key={index} value={`item-${index}`}>
+								<AccordionTrigger>{faq.question}</AccordionTrigger>
+								<AccordionContent>{faq.answer}</AccordionContent>
+							</AccordionItem>
+						))}
+					</Accordion>
+				</motion.div>
+				<motion.div
+					initial={{ opacity: 0, y: 15 }}
+					whileInView={{ opacity: 1, y: 0 }}
+					viewport={{ once: true, margin: "-50px" }}
+					transition={{ duration: 0.3, delay: 0.1 }}
 				>
-					{rightFaqs.map((faq, index) => (
-						<AccordionItem key={index + half} value={`item-${index + half}`}>
-							<AccordionTrigger>{faq.question}</AccordionTrigger>
-							<AccordionContent>{faq.answer}</AccordionContent>
-						</AccordionItem>
-					))}
-				</Accordion>
+					<Accordion
+						type="single"
+						collapsible
+						value={openItem}
+						onValueChange={setOpenItem}
+						className="w-full"
+					>
+						{rightFaqs.map((faq, index) => (
+							<AccordionItem key={index + half} value={`item-${index + half}`}>
+								<AccordionTrigger>{faq.question}</AccordionTrigger>
+								<AccordionContent>{faq.answer}</AccordionContent>
+							</AccordionItem>
+						))}
+					</Accordion>
+				</motion.div>
 			</div>
 		</section>
 	);
@@ -247,15 +270,30 @@ function App() {
 
 			<main className="min-h-[calc(100dvh-72px)] flex items-center justify-center px-6 md:px-12">
 				<div className="max-w-2xl text-center">
-					<h1 className="text-4xl md:text-5xl font-serif italic text-white leading-tight mb-6">
+					<motion.h1
+						initial={{ opacity: 0, y: 15 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.4, ease: "easeOut" }}
+						className="text-4xl md:text-5xl font-serif italic text-white leading-tight mb-6"
+					>
 						A summer home for ambitious interns in NYC.
-					</h1>
-					<p className="text-lg text-muted-foreground leading-relaxed mb-8">
+					</motion.h1>
+					<motion.p
+						initial={{ opacity: 0, y: 15 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+						className="text-lg text-muted-foreground leading-relaxed mb-8"
+					>
 						We are bringing together 12 residents for a summer of living,
 						exploring, and building in the heart of New York City. We have 5
 						spots left, apply now!
-					</p>
-					<div className="flex items-center justify-center gap-4 mb-12">
+					</motion.p>
+					<motion.div
+						initial={{ opacity: 0, y: 15 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
+						className="flex items-center justify-center gap-4 mb-12"
+					>
 						<Button
 							size="lg"
 							className="bg-white text-black hover:bg-white/90 h-12 px-8 text-base"
@@ -278,15 +316,23 @@ function App() {
 								ABOUT
 							</Link>
 						</Button>
-					</div>
+					</motion.div>
 
-					<div className="flex flex-wrap items-center justify-center gap-8 md:gap-10 mt-24">
-						{COMPANIES.map((company) => (
-							<a
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 0.3, delay: 0.2 }}
+						className="flex flex-wrap items-center justify-center gap-8 md:gap-10 mt-24"
+					>
+						{COMPANIES.map((company, index) => (
+							<motion.a
 								key={company.name}
 								href={company.url}
 								target="_blank"
 								rel="noopener noreferrer"
+								initial={{ opacity: 0, y: 8 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.3, delay: 0.25 + index * 0.03 }}
 								className={`${company.invert ? "invert" : ""} ${"white" in company && company.white ? "brightness-0 invert" : ""} group`}
 							>
 								<img
@@ -294,9 +340,9 @@ function App() {
 									alt={company.name}
 									className="h-6 md:h-7 w-auto object-contain opacity-100 group-hover:opacity-70 transition-opacity duration-150"
 								/>
-							</a>
+							</motion.a>
 						))}
-					</div>
+					</motion.div>
 				</div>
 			</main>
 

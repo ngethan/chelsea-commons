@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import {
@@ -202,7 +203,7 @@ I'm currently interning abroad in Rome at WorldLift, a global enterprise SEO and
 
 Outside of work, I play bass in the Emory University Symphony Orchestra and in a rock band on campus. My all-time top five artists: Radiohead, Led Zeppelin, King Gizzard & the Lizard Wizard, Dmitri Shostakovich, and Zohar Argov.`,
 		linkedin: "https://www.linkedin.com/in/jackson-dietz-/",
-		image: "/assets/residents/JacksonDietz-v2.webp",
+		image: "/assets/residents/JacksonDietz.webp",
 	},
 	{
 		name: "Jorik Dammann",
@@ -265,23 +266,43 @@ function About() {
 				{/* Vision Section */}
 				<section className="min-h-[50vh] md:h-[calc(100dvh-110px)] flex flex-col justify-between relative">
 					<div className="max-w-3xl py-12">
-						<p className="text-3xl md:text-5xl text-foreground leading-relaxed mb-8 font-serif italic">
+						<motion.p
+							initial={{ opacity: 0, y: 15 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.4, ease: "easeOut" }}
+							className="text-3xl md:text-5xl text-foreground leading-relaxed mb-8 font-serif italic"
+						>
 							12 Interns. 12 Companies. 1 Summer.
-						</p>
+						</motion.p>
 
-						<p className="text-xl md:text-3xl text-foreground leading-relaxed mb-8">
+						<motion.p
+							initial={{ opacity: 0, y: 15 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+							className="text-xl md:text-3xl text-foreground leading-relaxed mb-8"
+						>
 							We are bringing this group together to grow, build cool stuff, and
 							be the heart of a larger intern ecosystem. Our residents include
-							Stanford AI researchers, D1 athletes, and the NBA’s youngest ever
+							Stanford AI researchers, D1 athletes, and the NBA's youngest ever
 							intern—incoming at companies like Ramp, JPMorgan, and BlackRock.
-						</p>
+						</motion.p>
 
-						<p className="text-xl md:text-3xl text-foreground leading-relaxed mb-8">
+						<motion.p
+							initial={{ opacity: 0, y: 15 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
+							className="text-xl md:text-3xl text-foreground leading-relaxed mb-8"
+						>
 							We're backed by a unicorn founder and a Warp executive. We have 5
 							spots left, apply now!
-						</p>
+						</motion.p>
 
-						<p className="text-xl md:text-3xl text-foreground leading-relaxed">
+						<motion.p
+							initial={{ opacity: 0, y: 15 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
+							className="text-xl md:text-3xl text-foreground leading-relaxed"
+						>
 							Reach us at{" "}
 							<a
 								href="mailto:hey@chelseacommons.co"
@@ -290,7 +311,7 @@ function About() {
 								hey@chelseacommons.co
 							</a>
 							.
-						</p>
+						</motion.p>
 					</div>
 					<div className="flex flex-col gap-4">
 						<div className="hidden md:flex items-end justify-end">
@@ -315,12 +336,26 @@ function About() {
 
 				{/* People Section */}
 				<section ref={peopleRef} className="py-24">
-					<h2 className="text-2xl font-medium text-foreground mb-12">
+					<motion.h2
+						initial={{ opacity: 0, y: 15 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true, margin: "-100px" }}
+						transition={{ duration: 0.3 }}
+						className="text-2xl font-medium text-foreground mb-12"
+					>
 						The Residents
-					</h2>
+					</motion.h2>
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-						{PEOPLE.map((person) => (
-							<PersonCard key={person.name} person={person} />
+						{PEOPLE.map((person, index) => (
+							<motion.div
+								key={person.name}
+								initial={{ opacity: 0, y: 20 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								viewport={{ once: true, margin: "-50px" }}
+								transition={{ duration: 0.3, delay: index * 0.05 }}
+							>
+								<PersonCard person={person} />
+							</motion.div>
 						))}
 					</div>
 				</section>

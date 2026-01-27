@@ -104,7 +104,7 @@ function RootComponent() {
 
 	return (
 		<>
-			<AnimatePresence initial={false}>
+			<AnimatePresence>
 				<Outlet />
 			</AnimatePresence>
 		</>
