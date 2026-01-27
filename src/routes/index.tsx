@@ -74,7 +74,8 @@ const COMPANIES = [
 	{
 		name: "Radial Equity Partners",
 		logo: "/assets/brands/radial-logo.png",
-		invert: true,
+		invert: false,
+		white: true,
 		url: "https://www.radialequity.com",
 	},
 ];
@@ -286,7 +287,7 @@ function App() {
 								href={company.url}
 								target="_blank"
 								rel="noopener noreferrer"
-								className={`${company.invert ? "invert" : ""} group`}
+								className={`${company.invert ? "invert" : ""} ${"white" in company && company.white ? "brightness-0 invert" : ""} group`}
 							>
 								<img
 									src={company.logo}
