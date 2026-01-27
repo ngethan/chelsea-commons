@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WritingRouteImport } from './routes/writing'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,6 +26,11 @@ const WritingRoute = WritingRouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/apply': typeof ApplyRoute
   '/events': typeof EventsRoute
   '/writing': typeof WritingRouteWithChildren
   '/writing/$slug': typeof WritingSlugRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/apply': typeof ApplyRoute
   '/events': typeof EventsRoute
   '/writing/$slug': typeof WritingSlugRoute
   '/writing': typeof WritingIndexRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/apply': typeof ApplyRoute
   '/events': typeof EventsRoute
   '/writing': typeof WritingRouteWithChildren
   '/writing/$slug': typeof WritingSlugRoute
@@ -86,17 +95,26 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/about'
+    | '/apply'
     | '/events'
     | '/writing'
     | '/writing/$slug'
     | '/writing/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$' | '/about' | '/events' | '/writing/$slug' | '/writing'
+  to:
+    | '/'
+    | '/$'
+    | '/about'
+    | '/apply'
+    | '/events'
+    | '/writing/$slug'
+    | '/writing'
   id:
     | '__root__'
     | '/'
     | '/$'
     | '/about'
+    | '/apply'
     | '/events'
     | '/writing'
     | '/writing/$slug'
@@ -107,6 +125,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
+  ApplyRoute: typeof ApplyRoute
   EventsRoute: typeof EventsRoute
   WritingRoute: typeof WritingRouteWithChildren
 }
@@ -125,6 +144,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -182,6 +208,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
+  ApplyRoute: ApplyRoute,
   EventsRoute: EventsRoute,
   WritingRoute: WritingRouteWithChildren,
 }
