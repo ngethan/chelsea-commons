@@ -66,6 +66,9 @@ export function Navbar() {
 						<Button variant="outline" asChild>
 							<Link to="/about">ABOUT</Link>
 						</Button>
+						<Button variant="outline" asChild>
+							<Link to="/events">EVENTS</Link>
+						</Button>
 					</div>
 
 					<button
@@ -133,6 +136,13 @@ export function Navbar() {
 							className="text-4xl font-medium text-foreground hover:text-muted-foreground transition-colors"
 						>
 							ABOUT
+						</Link>
+						<Link
+							to="/events"
+							onClick={() => setIsOpen(false)}
+							className="text-4xl font-medium text-foreground hover:text-muted-foreground transition-colors"
+						>
+							EVENTS
 						</Link>
 					</div>
 				</div>

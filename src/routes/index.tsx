@@ -79,6 +79,12 @@ const COMPANIES = [
 		white: true,
 		url: "https://www.radialequity.com",
 	},
+	{
+		name: "Teamworthy Ventures",
+		logo: "/assets/brands/teamworthy-logo.png",
+		invert: true,
+		url: "https://www.teamworthy.com",
+	},
 ];
 
 const FAQS = [
