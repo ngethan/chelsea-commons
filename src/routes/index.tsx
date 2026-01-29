@@ -274,7 +274,7 @@ function App() {
 		<div className="relative z-10">
 			<Navbar />
 
-			<main className="min-h-[calc(100dvh-72px)] flex items-center justify-center px-6 md:px-12">
+			<main className="min-h-[calc(100dvh-112px)] flex items-center justify-center px-6 md:px-12 mb-10">
 				<div className="max-w-2xl text-center">
 					<motion.h1
 						initial={{ opacity: 0, y: 15 }}
