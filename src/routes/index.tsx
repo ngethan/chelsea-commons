@@ -344,6 +344,7 @@ function App() {
 								<img
 									src={company.logo}
 									alt={company.name}
+									loading="eager"
 									className="h-6 md:h-7 w-auto object-contain opacity-100 group-hover:opacity-70 transition-opacity duration-150"
 								/>
 							</motion.a>

@@ -1,10 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Shadow } from "./shadow";
 import { Button } from "./ui/button";
 
 export function Navbar() {
 	const [isOpen, setIsOpen] = useState(false);
+	const [isMobile, setIsMobile] = useState(
+		typeof window !== "undefined" ? window.innerWidth < 768 : false,
+	);
+
+	useEffect(() => {
+		setIsMobile(window.innerWidth < 768);
+	}, []);
 
 	return (
 		<div className="sticky top-0 z-50 w-full">
@@ -15,36 +22,38 @@ export function Navbar() {
 				>
 					<Shadow
 						color="rgba(128, 128, 128, 0.3)"
-						animation={{ scale: 50, speed: 80 }}
+						animation={isMobile ? undefined : { scale: 50, speed: 80 }}
 						noise={{ opacity: 1, scale: 1.5 }}
 						sizing="fill"
 					/>
-					<div
-						className="absolute overflow-hidden"
-						style={
-							{
-								top: "-100px",
-								right: "-100px",
-								width: "800px",
-								height: "600px",
-								"--aurora":
-									"repeating-linear-gradient(100deg, #2d1f3d 10%, #4a1942 15%, #c94c4c 20%, #f4a261 25%, #e76f51 30%, #8b5cf6 35%)",
-								maskImage:
-									"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
-								WebkitMaskImage:
-									"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
-							} as React.CSSProperties
-						}
-					>
+					{!isOpen && (
 						<div
-							className="after:animate-aurora pointer-events-none absolute -inset-[10px] opacity-100 blur-[30px] will-change-transform after:absolute after:inset-0 after:mix-blend-difference after:content-['']"
-							style={{
-								backgroundImage: "var(--aurora)",
-								backgroundSize: "200%, 400%",
-								backgroundPosition: "50% 50%",
-							}}
-						/>
-					</div>
+							className="absolute overflow-hidden"
+							style={
+								{
+									top: "-100px",
+									right: "-100px",
+									width: "800px",
+									height: "600px",
+									"--aurora":
+										"repeating-linear-gradient(100deg, #2d1f3d 10%, #4a1942 15%, #c94c4c 20%, #f4a261 25%, #e76f51 30%, #8b5cf6 35%)",
+									maskImage:
+										"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
+									WebkitMaskImage:
+										"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
+								} as React.CSSProperties
+							}
+						>
+							<div
+								className="pointer-events-none absolute -inset-[10px] opacity-100 blur-[8px] md:blur-[30px] after:absolute after:inset-0 after:mix-blend-difference after:content-[''] md:after:animate-aurora md:will-change-transform"
+								style={{
+									backgroundImage: "var(--aurora)",
+									backgroundSize: "200%, 400%",
+									backgroundPosition: "50% 50%",
+								}}
+							/>
+						</div>
+					)}
 				</div>
 				<div className="relative px-6 md:px-12 py-6 flex items-center justify-between">
 					<Link to="/" className="text-foreground font-bold text-xl font-serif">
@@ -104,37 +113,10 @@ export function Navbar() {
 					>
 						<Shadow
 							color="rgba(128, 128, 128, 0.3)"
-							animation={{ scale: 50, speed: 80 }}
+							animation={undefined}
 							noise={{ opacity: 1, scale: 1.5 }}
 							sizing="fill"
 						/>
-						{/* Aurora accent - top right corner */}
-						<div
-							className="absolute overflow-hidden"
-							style={
-								{
-									top: "-100px",
-									right: "-100px",
-									width: "800px",
-									height: "600px",
-									"--aurora":
-										"repeating-linear-gradient(100deg, #2d1f3d 10%, #4a1942 15%, #c94c4c 20%, #f4a261 25%, #e76f51 30%, #8b5cf6 35%)",
-									maskImage:
-										"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
-									WebkitMaskImage:
-										"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
-								} as React.CSSProperties
-							}
-						>
-							<div
-								className="after:animate-aurora pointer-events-none absolute -inset-[10px] opacity-100 blur-[30px] will-change-transform after:absolute after:inset-0 after:mix-blend-difference after:content-['']"
-								style={{
-									backgroundImage: "var(--aurora)",
-									backgroundSize: "200%, 400%",
-									backgroundPosition: "50% 50%",
-								}}
-							/>
-						</div>
 					</div>
 					<div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-8">
 						<Link

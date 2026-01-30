@@ -13,19 +13,28 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence } from "motion/react";
 import React, { useEffect } from "react";
 
-import "lenis/dist/lenis.css";
 import { Shadow } from "../components/shadow";
 import { buildSeoTags, siteConfig } from "../site-config";
 import appCss from "../styles.css?url";
 
-const MemoizedShadow = React.memo(() => (
-	<Shadow
-		color="rgba(128, 128, 128, 0.3)"
-		animation={{ scale: 50, speed: 80 }}
-		noise={{ opacity: 1, scale: 1.5 }}
-		sizing="fill"
-	/>
-));
+const MemoizedShadow = React.memo(() => {
+	const [isMobile, setIsMobile] = React.useState(
+		typeof window !== "undefined" ? window.innerWidth < 768 : false,
+	);
+
+	React.useEffect(() => {
+		setIsMobile(window.innerWidth < 768);
+	}, []);
+
+	return (
+		<Shadow
+			color="rgba(128, 128, 128, 0.3)"
+			animation={isMobile ? undefined : { scale: 50, speed: 80 }}
+			noise={{ opacity: 1, scale: 1.5 }}
+			sizing="fill"
+		/>
+	);
+});
 
 export const Route = createRootRoute({
 	head: () => {
@@ -157,7 +166,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						}
 					>
 						<div
-							className="after:animate-aurora pointer-events-none absolute -inset-[10px] opacity-100 blur-[30px] will-change-transform after:absolute after:inset-0 after:mix-blend-difference after:content-['']"
+							className="pointer-events-none absolute -inset-[10px] opacity-100 blur-[8px] md:blur-[30px] after:absolute after:inset-0 after:mix-blend-difference after:content-[''] md:after:animate-aurora md:will-change-transform"
 							style={{
 								backgroundImage: "var(--aurora)",
 								backgroundSize: "200%, 400%",

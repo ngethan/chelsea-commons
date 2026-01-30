@@ -108,6 +108,7 @@ function PersonCard({ person }: { person: Person }) {
 						<img
 							src={person.image}
 							alt={person.name}
+							loading="lazy"
 							className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
 						/>
 					) : (
@@ -134,6 +135,7 @@ function PersonCard({ person }: { person: Person }) {
 							<img
 								src={person.image}
 								alt={person.name}
+								loading="lazy"
 								className="w-full h-full object-cover"
 							/>
 						) : (
