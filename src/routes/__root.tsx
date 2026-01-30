@@ -10,7 +10,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { AnimatePresence } from "motion/react";
 import React, { useEffect } from "react";
 
 import { Shadow } from "../components/shadow";
@@ -111,13 +110,7 @@ function RootComponent() {
 		gsap.registerPlugin(ScrollTrigger);
 	}, []);
 
-	return (
-		<>
-			<AnimatePresence>
-				<Outlet />
-			</AnimatePresence>
-		</>
-	);
+	return <Outlet />;
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
