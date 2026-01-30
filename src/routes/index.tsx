@@ -280,7 +280,7 @@ function App() {
 						initial={{ opacity: 0, y: 15 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.4, ease: "easeOut" }}
-						className="text-4xl md:text-5xl font-serif italic text-white leading-tight mb-6"
+						className="text-3xl md:text-5xl font-serif italic text-white leading-tight mb-5"
 					>
 						A summer home for ambitious interns in NYC.
 					</motion.h1>
@@ -288,7 +288,7 @@ function App() {
 						initial={{ opacity: 0, y: 15 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-						className="text-lg text-muted-foreground leading-relaxed mb-8"
+						className="text-base md:text-lg text-muted-foreground leading-relaxed mb-6"
 					>
 						We are bringing together 12 residents for a summer of living,
 						exploring, and building in the heart of New York City. We have 5
@@ -298,11 +298,11 @@ function App() {
 						initial={{ opacity: 0, y: 15 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
-						className="flex items-center justify-center gap-4 mb-12"
+						className="flex items-center justify-center gap-3 mb-10"
 					>
 						<Button
 							size="lg"
-							className="bg-white text-black hover:bg-white/90 h-12 px-8 text-base"
+							className="bg-white text-black hover:bg-white/90 h-10 md:h-12 px-6 md:px-8 text-sm md:text-base"
 							onClick={() =>
 								window.open(
 									"https://docs.google.com/forms/d/e/1FAIpQLSfNAkbsg63FeITIly22gKZf155IrA9UUbXNNH48dR3hEpdD9A/viewform",
@@ -315,7 +315,7 @@ function App() {
 						<Button
 							size="lg"
 							variant="outline"
-							className="h-12 px-8 text-base"
+							className="h-10 md:h-12 px-6 md:px-8 text-sm md:text-base"
 							asChild
 						>
 							<Link to="/about" className="no-underline ">
@@ -328,7 +328,7 @@ function App() {
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ duration: 0.3, delay: 0.2 }}
-						className="flex flex-wrap items-center justify-center gap-8 md:gap-10 mt-24"
+						className="flex flex-wrap items-center justify-center gap-6 md:gap-10 mt-16 md:mt-24"
 					>
 						{COMPANIES.map((company, index) => (
 							<motion.a
@@ -345,7 +345,7 @@ function App() {
 									src={company.logo}
 									alt={company.name}
 									loading="eager"
-									className="h-6 md:h-7 w-auto object-contain opacity-100 group-hover:opacity-70 transition-opacity duration-150"
+									className="h-5 md:h-7 w-auto object-contain opacity-100 group-hover:opacity-70 transition-opacity duration-150"
 								/>
 							</motion.a>
 						))}
