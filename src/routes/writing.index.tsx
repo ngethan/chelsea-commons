@@ -16,7 +16,7 @@ interface BlogFrontmatter {
 export const Route = createFileRoute("/writing/")({
 	head: () =>
 		buildSeoTags({
-			title: "Writing | Chelsea Commons",
+			title: "Writing | THE CHELSEA COMMONS",
 			description: DESCRIPTION,
 			path: "/writing",
 		}),

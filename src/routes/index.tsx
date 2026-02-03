@@ -16,8 +16,9 @@ import { buildSeoTags } from "../site-config";
 export const Route = createFileRoute("/")({
 	head: () =>
 		buildSeoTags({
-			title: "Chelsea Commons",
-			description: "A summer house for 12 interns in Chelsea, Manhattan.",
+			title: "THE CHELSEA COMMONS",
+			description:
+				"A community of 12 ambitious interns living, exploring, and building together in Chelsea, Manhattan",
 			path: "/",
 		}),
 	component: App,

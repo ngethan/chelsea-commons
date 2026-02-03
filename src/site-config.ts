@@ -26,8 +26,8 @@ const resolveRuntimeOrigin = () => {
 const getBaseUrl = () => rawSiteUrl ?? resolveRuntimeOrigin() ?? "";
 
 export const siteConfig = {
-	name: "Chelsea Commons",
-	shortName: "Chelsea Commons",
+	name: "THE CHELSEA COMMONS",
+	shortName: "THE CHELSEA COMMONS",
 	description: "A summer house for 12 interns in Chelsea, Manhattan.",
 	url: getBaseUrl(),
 	twitterHandle: "",
@@ -88,10 +88,8 @@ export const buildSeoTags = ({
 	const image = toAbsoluteUrl(imagePath ?? siteConfig.defaultOgImagePath);
 
 	return {
+		title,
 		meta: [
-			{
-				title,
-			},
 			{
 				name: "description",
 				content: description,
@@ -99,6 +97,10 @@ export const buildSeoTags = ({
 			{
 				name: "robots",
 				content: robots,
+			},
+			{
+				name: "keywords",
+				content: "THE CHELSEA COMMONS, Chelsea Commons, NYC intern housing, Manhattan summer housing, intern community, Chelsea Manhattan, summer internship housing, NYC summer housing, intern network, young professionals NYC",
 			},
 			{
 				property: "og:title",

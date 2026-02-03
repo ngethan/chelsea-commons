@@ -50,7 +50,7 @@ export const Route = createFileRoute("/writing/$slug")({
 	},
 	head: ({ loaderData }) => {
 		return buildSeoTags({
-			title: `${loaderData?.post?.title || "Post"} | Chelsea Commons`,
+			title: `${loaderData?.post?.title || "Post"} | THE CHELSEA COMMONS`,
 			description: loaderData?.post?.excerpt || "Blog post",
 			path: `/writing/${loaderData?.post?.slug || ""}`,
 			imagePath: loaderData?.post?.ogImage,

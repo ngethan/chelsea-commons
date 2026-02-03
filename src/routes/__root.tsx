@@ -119,12 +119,46 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+	const structuredData = {
+		"@context": "https://schema.org",
+		"@type": "Organization",
+		name: "THE CHELSEA COMMONS",
+		url: "https://chelseacommons.co",
+		logo: "https://chelseacommons.co/og.png",
+		description:
+			"A summer housing community for 12 ambitious interns in Chelsea, Manhattan.",
+		address: {
+			"@type": "PostalAddress",
+			streetAddress: "300 W 20th Street",
+			addressLocality: "New York",
+			addressRegion: "NY",
+			postalCode: "10011",
+			addressCountry: "US",
+		},
+		contactPoint: {
+			"@type": "ContactPoint",
+			email: "hey@chelseacommons.co",
+			contactType: "General Inquiries",
+		},
+		sameAs: [
+			"https://www.linkedin.com/company/the-chelsea-commons/",
+			"https://twitter.com",
+		],
+	};
+
 	return (
 		<html lang="en" className="dark" style={{ backgroundColor: "#1a1a1a" }}>
 			<head>
 				<HeadContent />
 				<SpeedInsights />
 				<Analytics />
+				<script
+					type="application/ld+json"
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: Structured data for SEO
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(structuredData),
+					}}
+				/>
 				<link
 					rel="preload"
 					as="image"

@@ -6,8 +6,9 @@ import { buildSeoTags } from "../site-config";
 export const Route = createFileRoute("/events")({
 	head: () =>
 		buildSeoTags({
-			title: "Events - Chelsea Commons",
-			description: "Mixers and events throughout the summer in NYC.",
+			title: "Events - THE CHELSEA COMMONS",
+			description:
+				"Join exclusive dinners, networking events, and intern mixers throughout Summer 2026 in NYC",
 			path: "/events",
 		}),
 	component: Events,
