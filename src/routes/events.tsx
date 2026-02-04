@@ -1,6 +1,8 @@
+import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { Navbar } from "../components/Navbar";
+import { AuroraButton } from "../components/ui/aurora-button";
 import { buildSeoTags } from "../site-config";
 
 export const Route = createFileRoute("/events")({
@@ -38,6 +40,20 @@ function Events() {
 						We're planning a series of exclusive events, dinners, and intern
 						mixers throughout the summer. Stay tuned for announcements.
 					</motion.p>
+
+					<motion.div
+						initial={{ opacity: 0, y: 15 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
+					>
+						<a
+							href="https://chelsea-commons.notion.site/2fd5b71c112f8015bfeadf423ee983c2?pvs=105"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<Button size="xl">Register for Events</Button>
+						</a>
+					</motion.div>
 				</div>
 			</main>
 		</div>
