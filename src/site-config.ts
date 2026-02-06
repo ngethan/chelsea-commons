@@ -28,7 +28,7 @@ const getBaseUrl = () => rawSiteUrl ?? resolveRuntimeOrigin() ?? "";
 export const siteConfig = {
 	name: "THE CHELSEA COMMONS",
 	shortName: "THE CHELSEA COMMONS",
-	description: "A summer house for 12 interns in Chelsea, Manhattan.",
+	description: "A community of 12 ambitious interns living, exploring, and building together in Chelsea, Manhattan.",
 	url: getBaseUrl(),
 	twitterHandle: "",
 	defaultOgImagePath: "/og.png",

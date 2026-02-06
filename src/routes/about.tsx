@@ -15,9 +15,9 @@ import { buildSeoTags } from "../site-config";
 export const Route = createFileRoute("/about")({
 	head: () =>
 		buildSeoTags({
-			title: "About The Chelsea Commons",
+			title: "About - THE CHELSEA COMMONS",
 			description:
-				"Learn more about why we're building The Chelsea Commons and who our residents are",
+				"Learn more about why we're building THE CHELSEA COMMONS and who our residents are. 12 ambitious interns from companies like Ramp, JPMorgan, and BlackRock.",
 			path: "/about",
 		}),
 	component: About,

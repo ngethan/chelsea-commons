@@ -45,6 +45,7 @@ export const Route = createRootRoute({
 		});
 
 		return {
+			title: baseSeo.title,
 			meta: [
 				{
 					charSet: "utf-8",
