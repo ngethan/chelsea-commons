@@ -2,17 +2,22 @@ import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { Navbar } from "../components/Navbar";
-import { AuroraButton } from "../components/ui/aurora-button";
 import { buildSeoTags } from "../site-config";
 
 export const Route = createFileRoute("/events")({
-	head: () =>
-		buildSeoTags({
+	head: () => {
+		const seo = buildSeoTags({
 			title: "Events - THE CHELSEA COMMONS",
 			description:
 				"Join exclusive dinners, networking events, and intern mixers throughout Summer 2026 in NYC",
 			path: "/events",
-		}),
+		});
+		return {
+			title: seo.title,
+			meta: seo.meta,
+			links: seo.links,
+		};
+	},
 	component: Events,
 });
 

@@ -150,6 +150,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en" className="dark" style={{ backgroundColor: "#1a1a1a" }}>
 			<head>
+				<title>{siteConfig.name}</title>
 				<HeadContent />
 				<SpeedInsights />
 				<Analytics />

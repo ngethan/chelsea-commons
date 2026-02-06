@@ -14,13 +14,19 @@ import { ScrollVelocityRow } from "../components/ui/scroll-based-velocity";
 import { buildSeoTags } from "../site-config";
 
 export const Route = createFileRoute("/")({
-	head: () =>
-		buildSeoTags({
+	head: () => {
+		const seo = buildSeoTags({
 			title: "THE CHELSEA COMMONS",
 			description:
 				"A community of 12 ambitious interns living, exploring, and building together in Chelsea, Manhattan",
 			path: "/",
-		}),
+		});
+		return {
+			title: seo.title,
+			meta: seo.meta,
+			links: seo.links,
+		};
+	},
 	component: App,
 });
 
