@@ -74,10 +74,16 @@ const COMPANIES = [
 		url: "https://kpmg.com",
 	},
 	{
-		name: "BCG",
-		logo: "/assets/brands/bcg-logo.png",
+		name: "Figma",
+		logo: "/assets/brands/figma-logo.png",
 		invert: false,
-		url: "https://bcg.com",
+		url: "https://figma.com",
+	},
+	{
+		name: "Nvidia",
+		logo: "/assets/brands/nvidia-logo.png",
+		invert: false,
+		url: "https://nvidia.com",
 	},
 	{
 		name: "Radial Equity Partners",
