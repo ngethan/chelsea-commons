@@ -248,6 +248,17 @@ I love every type of game and hope to have a weekly resident game night :)`,
 		image: "/assets/residents/SachinSashti.webp",
 	},
 	{
+		name: "Tres Frisard",
+		company: "Verition Fund Management",
+		bio: `I'm a Harvard junior studying Computer Science and I am a part of Harvard Poker Club and Harvard First-Year Outdoor Program. This summer, I'll be a software engineer intern at Verition Fund Management.
+
+Previously, I've interned at Scale AI and Felicis. I'm also the founder and creator of Gnome, a semantic search app for all files.
+
+I dabble in poker, One Piece, and catan.`,
+		linkedin: "https://www.linkedin.com/in/tres-frisard-219214216/",
+		image: "/assets/residents/TresFrisard.webp",
+	},
+	{
 		name: "Will Burkhart",
 		company: "Teamworthy Ventures",
 		bio: `I'm a sophomore at Vanderbilt majoring in math. When I'm not in class, I build software to make it easier for researchers to get funding from the DoD. Researchers from 10+ universities have used my software.
