@@ -226,6 +226,17 @@ I dabble in competitive modular origami, am an avid fan of German rap, and striv
 		image: "/assets/residents/JorikDammann.webp",
 	},
 	{
+		name: "Robert Tezock",
+		company: "Figma",
+		bio: `I'm a Junior at The University of Texas at Austin studying Computer Science. I'll be joining Figma & Nvidia this coming Summer and Fall, both as a Software Engineering Intern.
+
+Professionally, I'm largely interested in distributed systems & making applications scale. I've previously worked at small companies, large companies, and startups, and each experience has shaped my perspective on how to build applications that impact users globally.
+
+Outside of work, you can either catch me playing basketball, watching anime (huge fan of Attack on Titan & One Piece), or dabbling around in something new- I always enjoy a new adventure :)`,
+		linkedin: "https://www.linkedin.com/in/tezock/",
+		image: "/assets/residents/RobertTezock.webp",
+	},
+	{
 		name: "Sachin Sashti",
 		company: "KPMG",
 		bio: `I'm a senior at Penn State studying Finance, Accounting, and Philosophy. This summer, I'll be an M&A Consultant Intern at KPMG and I'm building a SaaS startup with a unicorn entrepreneur.
