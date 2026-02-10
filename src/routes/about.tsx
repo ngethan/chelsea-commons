@@ -193,6 +193,17 @@ When I'm not working, you'll find me hooping, playing pickleball, or hitting the
 		image: "/assets/residents/DanielSung.webp",
 	},
 	{
+		name: "Erfan Ballew",
+		company: "PwC",
+		bio: `I'm a sophomore at Berkeley M.E.T. studying EECS and Business. This summer, I'll be a consultant at PwC.
+
+I'm a big startup guy — I previously co-founded a company valued at $X,000,000 and am currently building again. I'm also looking to break into venture, aiming to launch a $X,000,000 fund by the end of the summer focused on backing BIPOC and women founders.
+
+When I'm not building, you'll probably find me surfing, wakeboarding, snowboarding, or lifting.`,
+		linkedin: "https://www.linkedin.com/in/erfan-ballew/",
+		image: "/assets/residents/ErfanBallew.webp",
+	},
+	{
 		name: "Ethan Ng",
 		company: "Ramp",
 		bio: `I'm currently a junior at WashU studying CS and Finance. This summer, I'll be a SWE at Ramp and an 8VC fellow.
