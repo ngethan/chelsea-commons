@@ -237,6 +237,17 @@ I dabble in competitive modular origami, am an avid fan of German rap, and striv
 		image: "/assets/residents/JorikDammann.webp",
 	},
 	{
+		name: "Nikhil Reddy",
+		company: "Robinhood",
+		bio: `I'm a Stanford sophomore studying Computer Science with interests in finance, product, and tech. This summer, I'll be working at Robinhood on the event contracts team.
+
+Previously, I dug into growth-stage investing at FTV Capital on the enterprise software desk. I'm also completing a co-op this quarter at GDA Luma, a distressed and special situations fund.
+
+Copying Will's formatting thunder - my favorite movie is Interstellar. My favorite artist is Drake. My favorite day is push day. Fun fact: I've lived in three Texas cities (Fort Worth, Keller, McAllen) & the word is that the Cowboys will win Super Bowl 61.`,
+		linkedin: "https://www.linkedin.com/in/nk-reddy/",
+		image: "/assets/residents/NikhilReddy.webp",
+	},
+	{
 		name: "Robert Tezock",
 		company: "Figma",
 		bio: `I'm a Junior at The University of Texas at Austin studying Computer Science. I'll be joining Figma & Nvidia this coming Summer and Fall, both as a Software Engineering Intern.
