@@ -65,12 +65,12 @@ export function Navbar() {
 							className="bg-white text-black hover:bg-white/90"
 							onClick={() =>
 								window.open(
-									"https://docs.google.com/forms/d/e/1FAIpQLSfNAkbsg63FeITIly22gKZf155IrA9UUbXNNH48dR3hEpdD9A/viewform",
+									"https://www.linkedin.com/company/the-chelsea-commons/",
 									"_blank",
 								)
 							}
 						>
-							JOIN US
+							FOLLOW US
 						</Button>
 						<Button variant="outline" asChild>
 							<Link to="/about">ABOUT</Link>
@@ -130,14 +130,14 @@ export function Navbar() {
 							type="button"
 							onClick={() => {
 								window.open(
-									"https://docs.google.com/forms/d/e/1FAIpQLSfNAkbsg63FeITIly22gKZf155IrA9UUbXNNH48dR3hEpdD9A/viewform",
+									"https://www.linkedin.com/company/the-chelsea-commons/",
 									"_blank",
 								);
 								setIsOpen(false);
 							}}
 							className="text-4xl font-medium text-foreground hover:text-muted-foreground transition-colors"
 						>
-							JOIN US
+							FOLLOW US
 						</button>
 						<Link
 							to="/about"

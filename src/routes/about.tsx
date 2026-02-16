@@ -108,7 +108,7 @@ function PersonCard({ person }: { person: Person }) {
 			<button
 				type="button"
 				onClick={() => setOpen(true)}
-				className="text-left group cursor-pointer"
+				className="text-left group cursor-pointer w-full"
 			>
 				<div className="aspect-square bg-muted mb-4 flex items-center justify-center overflow-hidden">
 					{person.image ? (
@@ -119,7 +119,7 @@ function PersonCard({ person }: { person: Person }) {
 							className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
 						/>
 					) : (
-						<span className="text-muted-foreground text-sm">Photo</span>
+						<span />
 					)}
 				</div>
 				<p className="text-foreground font-medium">{person.name}</p>
@@ -146,7 +146,7 @@ function PersonCard({ person }: { person: Person }) {
 								className="w-full h-full object-cover"
 							/>
 						) : (
-							<span className="text-muted-foreground text-sm">Photo</span>
+							<span />
 						)}
 					</div>
 
@@ -270,6 +270,17 @@ I love every type of game and hope to have a weekly resident game night :)`,
 		image: "/assets/residents/SachinSashti.webp",
 	},
 	{
+		name: "Summit Kawakami",
+		company: "Ramp",
+		bio: `I'm a sophomore at Stanford studying EECS and Stats, and I'll be at Ramp this upcoming summer.
+
+I've bounced between biomedical research, debate, and building embedded services for a satellite. Lately I've been getting more interested in startups, finance, and low-level systems.
+
+As a Canadian I grew up skiing and playing hockey. Living in the Bay Area, it's more basketball and poker now. I try not to take anything too seriously, enjoy good conversations, and try to stay curious about everything in front of me.`,
+		linkedin: "https://www.linkedin.com/in/sumkawa",
+		image: "/assets/residents/SummitKawakami.webp",
+	},
+	{
 		name: "Tres Frisard",
 		company: "Verition Fund Management",
 		bio: `I'm a Harvard junior studying Computer Science and I am a part of Harvard Poker Club and Harvard First-Year Outdoor Program. This summer, I'll be a software engineer intern at Verition Fund Management.
@@ -325,7 +336,7 @@ function About() {
 							transition={{ duration: 0.4, ease: "easeOut" }}
 							className="text-3xl md:text-5xl text-foreground leading-relaxed mb-8 font-serif italic"
 						>
-							12 Interns. 12 Companies. 1 Summer.
+							12 Interns. 10 Companies. 1 Summer.
 						</motion.p>
 
 						<motion.p
@@ -346,8 +357,8 @@ function About() {
 							transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
 							className="text-xl md:text-3xl text-foreground leading-relaxed mb-8"
 						>
-							We're backed by a unicorn founder and a Warp executive. We have 5
-							spots left, apply now!
+							We're backed by a unicorn founder and a Warp executive. Sign up
+							for our summer events and mixers.
 						</motion.p>
 
 						<motion.p

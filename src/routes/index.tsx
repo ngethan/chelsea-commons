@@ -122,9 +122,9 @@ const FAQS = [
 			"Furnished rooms, gym, study spaces, rooftop access. Wifi and utilities included.",
 	},
 	{
-		question: "Who are we looking for?",
+		question: "Who are the residents?",
 		answer:
-			"Interns interested in entrepreneurship, exploration, and growth. We want a diverse mix of backgrounds and interests - stories are more important than credentials.",
+			"Interns interested in entrepreneurship, exploration, and growth. We brought together a diverse mix of backgrounds and interests - from Stanford AI researchers to D1 athletes to the NBA's youngest ever intern.",
 	},
 	{
 		question: "Is this a hacker house?",
@@ -132,9 +132,9 @@ const FAQS = [
 			"Not in the intense, mandatory-events way. There is no mandatory building or networking. That said, the goal is to connect with each resident, hanging out on weekends while leveraging strengths to build something special.",
 	},
 	{
-		question: "How do you choose people?",
+		question: "How were residents chosen?",
 		answer:
-			"We're looking for people who are scrappy, take initiative, and would genuinely add to the house dynamic. People who think creatively and reach out to make things happen.",
+			"We looked for people who are scrappy, take initiative, and genuinely add to the house dynamic. People who think creatively and reach out to make things happen.",
 	},
 	{
 		question: "What do people do during the day?",
@@ -149,7 +149,7 @@ const FAQS = [
 	{
 		question: "Will there be events outside the house?",
 		answer:
-			"Yes. We're planning to throw intern mixers and events throughout the summer. More details once we have everyone selected.",
+			"Yes. We're throwing intern mixers and events throughout the summer. Check our events page to sign up.",
 	},
 ];
 
@@ -295,7 +295,7 @@ function App() {
 						transition={{ duration: 0.4, ease: "easeOut" }}
 						className="text-3xl md:text-5xl font-serif italic text-white leading-tight mb-5"
 					>
-						A summer home for ambitious interns in NYC.
+						A summer community for ambitious interns in NYC.
 					</motion.h1>
 					<motion.p
 						initial={{ opacity: 0, y: 15 }}
@@ -303,9 +303,9 @@ function App() {
 						transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
 						className="text-base md:text-lg text-muted-foreground leading-relaxed mb-6"
 					>
-						We are bringing together 12 residents for a summer of living,
-						exploring, and building in the heart of New York City. We have 5
-						spots left, apply now!
+						Built by 12 interns living together in Manhattan. If you're a
+						founder, builder, or someone driven to grow alongside amazing
+						people—you belong here.
 					</motion.p>
 					<motion.div
 						initial={{ opacity: 0, y: 15 }}
@@ -316,14 +316,11 @@ function App() {
 						<Button
 							size="lg"
 							className="bg-white text-black hover:bg-white/90 h-10 md:h-12 px-6 md:px-8 text-sm md:text-base"
-							onClick={() =>
-								window.open(
-									"https://docs.google.com/forms/d/e/1FAIpQLSfNAkbsg63FeITIly22gKZf155IrA9UUbXNNH48dR3hEpdD9A/viewform",
-									"_blank",
-								)
-							}
+							asChild
 						>
-							JOIN US
+							<Link to="/events" className="no-underline">
+								SIGN UP FOR EVENTS
+							</Link>
 						</Button>
 						<Button
 							size="lg"
