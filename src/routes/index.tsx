@@ -92,13 +92,6 @@ const COMPANIES = [
 		url: "https://nvidia.com",
 	},
 	{
-		name: "Radial Equity Partners",
-		logo: "/assets/brands/radial-logo.png",
-		invert: false,
-		white: true,
-		url: "https://www.radialequity.com",
-	},
-	{
 		name: "Teamworthy Ventures",
 		logo: "/assets/brands/teamworthy-logo.png",
 		invert: true,
