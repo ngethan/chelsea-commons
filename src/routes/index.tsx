@@ -68,10 +68,16 @@ const COMPANIES = [
 		url: "https://www.joinwarp.com",
 	},
 	{
-		name: "KPMG",
-		logo: "/assets/brands/kpmg-logo.png",
+		name: "Scale AI",
+		logo: "/assets/brands/scale-logo.webp",
 		invert: false,
-		url: "https://kpmg.com",
+		url: "https://scale.com",
+	},
+	{
+		name: "Robinhood",
+		logo: "/assets/brands/robinhood-logo.svg",
+		invert: true,
+		url: "https://robinhood.com",
 	},
 	{
 		name: "Figma",

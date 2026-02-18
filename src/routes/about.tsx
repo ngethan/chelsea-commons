@@ -201,7 +201,7 @@ I'm a big startup guy — I previously co-founded a company valued at $X,000,000
 
 When I'm not building, you'll probably find me surfing, wakeboarding, snowboarding, or lifting.`,
 		linkedin: "https://www.linkedin.com/in/erfan-ballew/",
-		image: "/assets/residents/ErfanBallew.webp",
+		image: "/assets/residents/ErfanBallew-2.webp",
 	},
 	{
 		name: "Ethan Ng",
@@ -256,7 +256,7 @@ Professionally, I'm largely interested in distributed systems & making applicati
 
 Outside of work, you can either catch me playing basketball, watching anime (huge fan of Attack on Titan & One Piece), or dabbling around in something new- I always enjoy a new adventure :)`,
 		linkedin: "https://www.linkedin.com/in/tezock/",
-		image: "/assets/residents/RobertTezock.webp",
+		image: "/assets/residents/RobertTezock-2.webp",
 	},
 	{
 		name: "Sachin Sashti",
