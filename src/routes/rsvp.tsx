@@ -3,7 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/rsvp")({
 	beforeLoad: () => {
 		throw redirect({
-			href: "https://chelsea-commons.notion.site/2fd5b71c112f8015bfeadf423ee983c2?pvs=105",
+			href: "https://docs.google.com/forms/u/0/d/17pYCdAHFwEmf9offsVGZztE-l0zdUfaGVYgJpXw__o8/viewform?edit_requested=true",
 		});
 	},
 });

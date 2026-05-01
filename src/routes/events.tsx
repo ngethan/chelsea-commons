@@ -52,7 +52,7 @@ function Events() {
 						transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
 					>
 						<a
-							href="https://docs.google.com/forms/u/0/d/17pYCdAHFwEmf9offsVGZztE-l0zdUfaGVYgJpXw__o8/viewform?edit_requested=true"
+							href="/rsvp"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
