@@ -52,7 +52,7 @@ function Events() {
 						transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
 					>
 						<a
-							href="https://chelsea-commons.notion.site/2fd5b71c112f8015bfeadf423ee983c2?pvs=105"
+							href="https://docs.google.com/forms/u/0/d/17pYCdAHFwEmf9offsVGZztE-l0zdUfaGVYgJpXw__o8/viewform?edit_requested=true"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
