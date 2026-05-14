@@ -463,7 +463,7 @@ function EventDrawer({
 										<p className="text-muted-foreground text-[11px] uppercase tracking-widest mb-3">
 											About
 										</p>
-										<p className="text-foreground/75 text-base leading-relaxed">
+											<p className="text-foreground/75 text-base leading-relaxed whitespace-pre-line">
 											{event.description}
 										</p>
 									</div>
@@ -485,7 +485,7 @@ function EventDrawer({
 											disabled
 											className="w-full flex items-center justify-center bg-white/5 text-muted-foreground rounded-lg py-4 text-base cursor-not-allowed"
 										>
-											RSVP coming soon
+											By Invitation Only
 										</button>
 									)}
 								</div>
