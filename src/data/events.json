@@ -1,125 +1,115 @@
 {
-	"_comment": "HOW TO ADD AN EVENT: Add a new object to the 'events' array below. Required fields: id (unique slug, e.g. 'rooftop-mixer-may-29'), title, date (YYYY-MM-DD), time (e.g. '7:00 PM'), location, status ('upcoming' or 'past'). Optional: endTime, address, description, hosts (array of { name, avatar }), image (path under /assets/), rsvpUrl. Host avatars use resident photos — format is '/assets/residents/FirstLast.webp'. See existing entries for examples.",
+	"_comment": "HOW TO ADD AN EVENT: Add a new object to the 'events' array below. Required fields: id (unique slug, e.g. 'menlo-dinner-june-2'), title, date (YYYY-MM-DD — use '2099-01-01' if date is TBD), time (e.g. '7:00 PM' — use 'Ask Sachin' if TBD), location, status ('upcoming' or 'past'). Optional: endTime, address, description, rsvpUrl. The host is always Chelsea Commons — no need to change the hosts field.",
 	"events": [
 		{
-			"id": "rooftop-kickoff-mixer",
-			"title": "Rooftop Kickoff Mixer",
-			"date": "2026-05-29",
+			"id": "menlo-ventures-dinner",
+			"title": "Menlo Ventures Dinner",
+			"date": "2026-06-02",
 			"time": "7:00 PM",
-			"endTime": "10:00 PM",
-			"location": "Chelsea Commons Rooftop",
-			"address": "300 W 20th Street, New York, NY 10011",
-			"description": "Kick off the summer with fellow interns and guests at the Chelsea Commons rooftop. Meet your neighbors, share what you're working on, and enjoy the Manhattan skyline. Drinks and light bites provided.",
-			"hosts": [
-				{
-					"name": "Nikhil Reddy",
-					"avatar": "/assets/residents/NikhilReddy.webp"
-				},
-				{
-					"name": "Jackson Dietz",
-					"avatar": "/assets/residents/JacksonDietz-v3.webp"
-				}
-			],
-			"image": "/assets/space/rooftop.jpg",
+			"location": "Private Residence",
+			"description": "The kickoff to our weekly dinner series featuring 8–12 exceptional young people and Menlo Ventures! For people thinking of founding or at seed stage.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
 		},
 		{
-			"id": "intern-dinner-june",
-			"title": "Intern Dinner",
-			"date": "2026-06-13",
-			"time": "7:30 PM",
-			"endTime": "9:30 PM",
-			"location": "Chelsea Commons",
-			"address": "300 W 20th Street, New York, NY 10011",
-			"description": "A communal dinner for Chelsea Commons residents and invited guests. We'll be cooking together and sharing food from our respective backgrounds. Come hungry.",
-			"hosts": [
-				{
-					"name": "Will Burkhart",
-					"avatar": "/assets/residents/WillBurkhart.webp"
-				},
-				{
-					"name": "Tres Frisard",
-					"avatar": "/assets/residents/TresFrisard.webp"
-				},
-				{ "name": "Ethan Ng", "avatar": "/assets/residents/EthanNg-v2.webp" }
-			],
-			"image": "/assets/space/room-kitchen-2.jpg",
+			"id": "box-group-game-night",
+			"title": "Box Group Game Night",
+			"date": "2026-06-10",
+			"time": "7:00 PM",
+			"location": "Box Group Office",
+			"description": "Game night with Box Group for young people curious about founding or working at early stage startups.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
 		},
 		{
-			"id": "startup-demo-night",
-			"title": "Startup Demo Night",
-			"date": "2026-06-27",
+			"id": "cory-levy-dinner",
+			"title": "Cory Levy Dinner",
+			"date": "2026-06-11",
+			"time": "Ask Sachin",
+			"location": "Private Residence",
+			"description": "Dinner with the founder of Z-Fellows for exceptional young engineers.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
+			"rsvpUrl": "",
+			"status": "upcoming"
+		},
+		{
+			"id": "poker-pizza-night",
+			"title": "Poker + Pizza Night",
+			"date": "2026-06-17",
+			"time": "6:30 PM",
+			"location": "Pareto Office",
+			"description": "Poker + Pizza night hosted by Pareto VC for young builders & engineers.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
+			"rsvpUrl": "",
+			"status": "upcoming"
+		},
+		{
+			"id": "m13-dinner",
+			"title": "M13 Dinner",
+			"date": "2026-06-24",
+			"time": "6:30 PM",
+			"location": "abc kitchen",
+			"description": "Come eat and have fun with the team at M13.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
+			"rsvpUrl": "https://luma.com/p1tqv9u2",
+			"status": "upcoming"
+		},
+		{
+			"id": "roboflow-factory-tour",
+			"title": "Roboflow Factory Tour / Rooftop Mixer",
+			"date": "2026-06-30",
+			"time": "TBD",
+			"location": "Roboflow Factory",
+			"description": "An exclusive tour of Roboflow's mini computer vision factory followed by a rooftop hang for young engineers. Date TBD — ask Sachin for details.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
+			"rsvpUrl": "",
+			"status": "upcoming"
+		},
+		{
+			"id": "lerer-hippeau-dinner",
+			"title": "Lerer Hippeau Dinner",
+			"date": "2026-07-01",
+			"time": "Ask Sachin",
+			"location": "Private Residence",
+			"description": "Dinner with Lerer Hippeau for young people curious about founding or working at early stage startups.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
+			"rsvpUrl": "",
+			"status": "upcoming"
+		},
+		{
+			"id": "first-round-dinner",
+			"title": "First Round Dinner",
+			"date": "2026-07-08",
+			"time": "Ask Sachin",
+			"location": "Private Restaurant",
+			"description": "Dinner with First Round Capital for young people curious about founding or startups.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
+			"rsvpUrl": "",
+			"status": "upcoming"
+		},
+		{
+			"id": "lvlup-dinner",
+			"title": "LvlUp Dinner",
+			"date": "2026-07-29",
 			"time": "6:00 PM",
-			"endTime": "9:00 PM",
-			"location": "Chelsea Commons",
-			"address": "300 W 20th Street, New York, NY 10011",
-			"description": "Residents and guests present what they've been building this summer. Short demos, big ideas. Open to the wider NYC intern community — bring your friends.",
-			"hosts": [
-				{
-					"name": "Chirag Ohri",
-					"avatar": "/assets/residents/ChiragOhri.webp"
-				},
-				{
-					"name": "Daniel Sung",
-					"avatar": "/assets/residents/DanielSung.webp"
-				},
-				{
-					"name": "Sachin Sashti",
-					"avatar": "/assets/residents/SachinSashti.webp"
-				}
-			],
-			"image": "/assets/space/room-1.jpg",
+			"location": "Ask Sachin",
+			"description": "Dinner for young people curious about founding or working at early stage startups.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
 		},
 		{
-			"id": "chelsea-gallery-walk",
-			"title": "Chelsea Gallery Walk",
-			"date": "2026-04-18",
-			"time": "2:00 PM",
-			"endTime": "5:00 PM",
-			"location": "Chelsea Art District",
-			"address": "W 26th St, New York, NY 10001",
-			"description": "Explore Chelsea's world-famous gallery district together. We toured 5 galleries and grabbed coffee after. No art background needed — just curiosity.",
-			"hosts": [
-				{
-					"name": "Jorik Dammann",
-					"avatar": "/assets/residents/JorikDammann.webp"
-				},
-				{
-					"name": "Summit Kawakami",
-					"avatar": "/assets/residents/SummitKawakami.webp"
-				}
-			],
-			"image": "/assets/space/building.jpg",
+			"id": "felicis-dinner",
+			"title": "Felicis Dinner",
+			"date": "2099-01-01",
+			"time": "6:00 PM",
+			"location": "Private Restaurant",
+			"description": "Dinner with Felicis Ventures for young people curious about founding or working at early stage startups. Date TBD.",
+			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
-			"status": "past"
-		},
-		{
-			"id": "hacker-house-kickoff",
-			"title": "Hacker House Kickoff",
-			"date": "2026-05-01",
-			"time": "7:00 PM",
-			"endTime": "10:00 PM",
-			"location": "Chelsea Commons",
-			"address": "300 W 20th Street, New York, NY 10011",
-			"description": "The official kickoff for the Chelsea Commons summer. All 12 residents gathered for the first time — introductions, a shared dinner, and the beginning of something special.",
-			"hosts": [
-				{
-					"name": "Robert Tezock",
-					"avatar": "/assets/residents/RobertTezock-2.webp"
-				},
-				{
-					"name": "Erfan Ballew",
-					"avatar": "/assets/residents/ErfanBallew-2.webp"
-				}
-			],
-			"image": "/assets/space/room-2.jpg",
-			"rsvpUrl": "",
-			"status": "past"
+			"status": "upcoming"
 		}
 	]
 }
