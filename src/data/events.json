@@ -7,7 +7,7 @@
 			"date": "2026-06-02",
 			"time": "7:00 PM",
 			"location": "Private Residence",
-			"description": "The kickoff to our weekly dinner series featuring 8–12 exceptional young people and Menlo Ventures!\n\nFor people thinking of founding or at seed stage.",
+			"description": "The kickoff to our weekly dinner series featuring 8–12 exceptional young people and Menlo Ventures!\n\nFor people thinking of founding or at seed stage. By nomination only",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
@@ -18,7 +18,7 @@
 			"date": "2026-06-10",
 			"time": "7:00 PM",
 			"location": "Box Group Office",
-			"description": "Game night with Box Group for young people curious about founding or working at early stage startups.",
+			"description": "Private Dinner + game night with Box Group\n\n for young people curious about founding / working at early stage startups or exceptional engineers. By nomination only",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
@@ -27,9 +27,9 @@
 			"id": "cory-levy-dinner",
 			"title": "Cory Levy Dinner",
 			"date": "2026-06-03",
-			"time": "Ask Sachin",
+			"time": "7:00",
 			"location": "Private Residence",
-			"description": "Dinner with the founder of Z-Fellows for exceptional young engineers.",
+			"description": "Dinner with the founder of Z-Fellows\n\n For exceptional young people.",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
@@ -40,7 +40,7 @@
 			"date": "2026-06-17",
 			"time": "6:30 PM",
 			"location": "Pareto Office",
-			"description": "Poker + Pizza night hosted by Pareto VC for young builders & engineers.",
+			"description": "Poker + Pizza night hosted by Pareto VC for young builders & engineers. By invite only",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
@@ -51,29 +51,19 @@
 			"date": "2026-06-24",
 			"time": "6:30 PM",
 			"location": "abc kitchen",
-			"description": "Come eat and have fun with the team at M13.",
+			"description": "Come eat and have fun with us. By nomination only",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "https://luma.com/p1tqv9u2",
 			"status": "upcoming"
 		},
-		{
-			"id": "roboflow-factory-tour",
-			"title": "Roboflow Factory Tour / Rooftop Mixer",
-			"date": "2026-06-30",
-			"time": "TBD",
-			"location": "Roboflow Factory",
-			"description": "An exclusive tour of Roboflow's mini computer vision factory followed by a rooftop hang for young engineers. Date TBD — ask Sachin for details.",
-			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
-			"rsvpUrl": "",
-			"status": "upcoming"
-		},
+		
 		{
 			"id": "lerer-hippeau-dinner",
 			"title": "Lerer Hippeau Dinner",
 			"date": "2026-07-01",
-			"time": "Ask Sachin",
+			"time": "6:30 PM",
 			"location": "Private Residence",
-			"description": "Dinner with Lerer Hippeau for young people curious about founding or working at early stage startups.",
+			"description": "Come eat with us\n\n For exceptional young engineers + people curious about founding or working at early stage startups. By invitation only",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
@@ -82,31 +72,21 @@
 			"id": "first-round-dinner",
 			"title": "First Round Dinner",
 			"date": "2026-07-08",
-			"time": "Ask Sachin",
+			"time": "6:30 PM",
 			"location": "Private Restaurant",
-			"description": "Dinner with First Round Capital for young people curious about founding or startups.",
+			"description": "Come eat with us\n\nfor young people curious about founding or startups. By invite only",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
 		},
-		{
-			"id": "lvlup-dinner",
-			"title": "LvlUp Dinner",
-			"date": "2026-07-29",
-			"time": "6:00 PM",
-			"location": "Ask Sachin",
-			"description": "Dinner for young people curious about founding or working at early stage startups.",
-			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
-			"rsvpUrl": "",
-			"status": "upcoming"
-		},
+
 		{
 			"id": "felicis-dinner",
 			"title": "Felicis Dinner",
-			"date": "2099-01-01",
+			"date": "2026-07-13",
 			"time": "6:00 PM",
 			"location": "Private Restaurant",
-			"description": "Dinner with Felicis Ventures for young people curious about founding or working at early stage startups. Date TBD.",
+			"description": "Come eat with us\n\n For exceptional young engineers + people curious about founding or working at early stage startups. By invitation only",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
 			"rsvpUrl": "",
 			"status": "upcoming"
