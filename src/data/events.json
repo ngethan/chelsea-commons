@@ -7,9 +7,10 @@
 			"date": "2026-06-02",
 			"time": "7:00 PM",
 			"location": "Private Residence",
+			"image": "/events/menlo-rho.avif",
 			"description": "The kickoff to our weekly dinner series featuring 8–12 exceptional young people and Menlo Ventures!\n\nFor people thinking of founding or at seed stage. By nomination only",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
-			"rsvpUrl": "",
+			"rsvpUrl": "https://luma.com/dsysfoju",
 			"status": "upcoming"
 		},
 		{
@@ -18,9 +19,10 @@
 			"date": "2026-06-10",
 			"time": "7:00 PM",
 			"location": "Box Group Office",
+			"image": "/events/box-group.avif",
 			"description": "Private Dinner + game night with Box Group\n\n for young people curious about founding / working at early stage startups or exceptional engineers. By nomination only",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
-			"rsvpUrl": "",
+			"rsvpUrl": "https://luma.com/xokyiili",
 			"status": "upcoming"
 		},
 		{
@@ -29,9 +31,10 @@
 			"date": "2026-06-03",
 			"time": "7:00 PM",
 			"location": "Private Residence",
+			"image": "/events/cory-levy.avif",
 			"description": "Dinner with the founder of Z-Fellows\n\n For exceptional young people.",
 			"hosts": [{ "name": "Chelsea Commons", "avatar": "/android-chrome-192x192.png" }],
-			"rsvpUrl": "",
+			"rsvpUrl": "https://luma.com/8i0goieb",
 			"status": "upcoming"
 		},
 		{

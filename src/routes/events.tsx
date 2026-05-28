@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
+import { Button } from "../components/ui/button";
 import eventsJson from "../data/events.json";
 import { buildSeoTags } from "../site-config";
 
@@ -78,7 +79,7 @@ function EventTile({
 			transition={{ duration: 0.4, delay: index * 0.05 }}
 			className="text-left group cursor-pointer w-full"
 		>
-			<div className="aspect-[4/3] bg-muted mb-4 overflow-hidden relative">
+			<div className="aspect-square bg-muted mb-4 overflow-hidden relative">
 				{event.image ? (
 					<img
 						src={event.image}
@@ -261,14 +262,19 @@ function EventDrawer({
 
 								<div className="pt-2">
 									{event.rsvpUrl ? (
-										<a
-											href={event.rsvpUrl}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="w-full flex items-center justify-center gap-2 bg-foreground text-background rounded-lg py-4 text-base font-medium hover:opacity-90 transition-opacity"
+										<Button
+											size="xl"
+											className="w-full bg-white text-black hover:bg-white/90 text-sm md:text-base tracking-wider uppercase"
+											asChild
 										>
-											RSVP <ExternalLink className="w-4 h-4" />
-										</a>
+											<a
+												href={event.rsvpUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												RSVP <ExternalLink className="w-4 h-4" />
+											</a>
+										</Button>
 									) : (
 										<p className="text-muted-foreground text-sm italic text-center">
 											By invitation only
