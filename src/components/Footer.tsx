@@ -1,73 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { FitText } from "./FitText";
 import { ScrollVelocityRow } from "./ui/scroll-based-velocity";
-
-function FitText({
-	children,
-	className,
-	style,
-}: {
-	children: React.ReactNode;
-	className?: string;
-	style?: React.CSSProperties;
-}) {
-	const containerRef = useRef<HTMLDivElement>(null);
-	const measureRef = useRef<HTMLSpanElement>(null);
-	const [fontSize, setFontSize] = useState(10);
-
-	useEffect(() => {
-		const container = containerRef.current;
-		const measure = measureRef.current;
-		if (!container || !measure) return;
-
-		const updateSize = () => {
-			const containerWidth = container.offsetWidth;
-			const measureWidth = measure.offsetWidth;
-			if (measureWidth > 0) {
-				setFontSize((containerWidth / measureWidth) * 10);
-			}
-		};
-
-		document.fonts.ready.then(updateSize);
-		const observer = new ResizeObserver(updateSize);
-		observer.observe(container);
-		return () => observer.disconnect();
-	}, []);
-
-	return (
-		<div ref={containerRef} className="w-full">
-			<span
-				ref={measureRef}
-				aria-hidden
-				style={{
-					position: "absolute",
-					visibility: "hidden",
-					fontSize: "10px",
-					whiteSpace: "nowrap",
-				}}
-			>
-				{children}
-			</span>
-			<span
-				className={className}
-				style={{
-					display: "block",
-					fontSize: `${fontSize}px`,
-					whiteSpace: "nowrap",
-					lineHeight: 0.85,
-					...style,
-				}}
-			>
-				{children}
-			</span>
-		</div>
-	);
-}
 
 export function Footer() {
 	return (
 		<footer className="relative flex flex-col overflow-hidden border-t border-border">
 			<div
-				className="absolute inset-0 overflow-hidden"
+				className="absolute inset-0 overflow-hidden pointer-events-none"
 				style={
 					{
 						"--aurora":
@@ -80,7 +18,7 @@ export function Footer() {
 				}
 			>
 				<div
-					className="after:animate-aurora pointer-events-none absolute -inset-[10px] opacity-70 blur-[20px] will-change-transform after:absolute after:inset-0 after:mix-blend-difference after:content-['']"
+					className="pointer-events-none absolute -inset-[10px] opacity-95 blur-[20px]"
 					style={{
 						backgroundImage: "var(--aurora)",
 						backgroundSize: "200%, 400%",
@@ -109,14 +47,6 @@ export function Footer() {
 					</div>
 					<div className="flex items-center gap-6 text-sm text-muted-foreground">
 						<a
-							href="https://twitter.com"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="hover:text-foreground transition-colors"
-						>
-							Twitter
-						</a>
-						<a
 							href="https://www.linkedin.com/company/the-chelsea-commons/"
 							target="_blank"
 							rel="noopener noreferrer"
@@ -127,33 +57,29 @@ export function Footer() {
 					</div>
 				</div>
 
-				<div className="flex flex-col justify-center py-12">
-					<FitText className="font-serif text-8xl tracking-tight text-white opacity-75 leading-none select-none">
+				<div className="flex flex-col justify-center py-12 select-none">
+					<FitText className="font-serif text-8xl tracking-tight text-foreground opacity-90 leading-none">
 						CHELSEA
 					</FitText>
-					<FitText className="font-serif text-8xl tracking-tight text-white opacity-75 leading-none select-none">
+					<FitText className="font-serif text-8xl tracking-tight text-foreground opacity-90 leading-none">
 						COMMONS
 					</FitText>
 				</div>
 
-				<div className="border-t border-border py-4">
+				<div className="border-t border-foreground/15 py-4">
 					<ScrollVelocityRow baseVelocity={3}>
-						<span className="text-sm text-muted-foreground mx-8">
-							NEW YORK CITY
-						</span>
-						<span className="text-sm text-muted-foreground mx-8">✦</span>
-						<span className="text-sm text-muted-foreground mx-8">
-							SUMMER 2026
-						</span>
-						<span className="text-sm text-muted-foreground mx-8">✦</span>
-						<span className="text-sm text-muted-foreground mx-8">
-							12 RESIDENTS
-						</span>
-						<span className="text-sm text-muted-foreground mx-8">✦</span>
-						<span className="text-sm text-muted-foreground mx-8">
-							MANHATTAN
-						</span>
-						<span className="text-sm text-muted-foreground mx-8">✦</span>
+						<span className="text-sm text-white mx-8">NEW YORK CITY</span>
+						<span className="text-sm text-white mx-8">✦</span>
+						<span className="text-sm text-white mx-8">BUILDERS</span>
+						<span className="text-sm text-white mx-8">✦</span>
+						<span className="text-sm text-white mx-8">OPERATORS</span>
+						<span className="text-sm text-white mx-8">✦</span>
+						<span className="text-sm text-white mx-8">FOUNDERS</span>
+						<span className="text-sm text-white mx-8">✦</span>
+						<span className="text-sm text-white mx-8">EST. 2026</span>
+						<span className="text-sm text-white mx-8">✦</span>
+						<span className="text-sm text-white mx-8">MANHATTAN</span>
+						<span className="text-sm text-white mx-8">✦</span>
 					</ScrollVelocityRow>
 				</div>
 			</div>

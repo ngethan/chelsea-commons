@@ -1,76 +1,40 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Shadow } from "./shadow";
 import { Button } from "./ui/button";
 
 export function Navbar() {
 	const [isOpen, setIsOpen] = useState(false);
-	const [isMobile, setIsMobile] = useState(
-		typeof window !== "undefined" ? window.innerWidth < 768 : false,
-	);
 
 	useEffect(() => {
-		setIsMobile(window.innerWidth < 768);
-	}, []);
+		if (!isOpen) return;
+		document.body.style.overflow = "hidden";
+		const onKeyDown = (e: KeyboardEvent) => {
+			if (e.key === "Escape") setIsOpen(false);
+		};
+		window.addEventListener("keydown", onKeyDown);
+		return () => {
+			document.body.style.overflow = "";
+			window.removeEventListener("keydown", onKeyDown);
+		};
+	}, [isOpen]);
 
 	return (
-		<div className="sticky top-0 z-50 w-full">
-			<nav className="w-full relative z-50" style={{ clipPath: "inset(0)" }}>
-				<div
-					className="absolute inset-0 pointer-events-none"
-					style={{ position: "fixed", inset: 0, backgroundColor: "#212121" }}
-				>
-					<Shadow
-						color="rgba(128, 128, 128, 0.3)"
-						animation={isMobile ? undefined : { scale: 50, speed: 80 }}
-						noise={{ opacity: 1, scale: 1.5 }}
-						sizing="fill"
-					/>
-					{!isOpen && (
-						<div
-							className="absolute overflow-hidden"
-							style={
-								{
-									top: "-100px",
-									right: "-100px",
-									width: "800px",
-									height: "600px",
-									"--aurora":
-										"repeating-linear-gradient(100deg, #2d1f3d 10%, #4a1942 15%, #c94c4c 20%, #f4a261 25%, #e76f51 30%, #8b5cf6 35%)",
-									maskImage:
-										"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
-									WebkitMaskImage:
-										"radial-gradient(ellipse at top right, black 0%, transparent 70%)",
-								} as React.CSSProperties
-							}
-						>
-							<div
-								className="pointer-events-none absolute -inset-[10px] opacity-100 blur-[8px] md:blur-[30px] after:absolute after:inset-0 after:mix-blend-difference after:content-[''] md:after:animate-aurora md:will-change-transform"
-								style={{
-									backgroundImage: "var(--aurora)",
-									backgroundSize: "200%, 400%",
-									backgroundPosition: "50% 50%",
-								}}
-							/>
-						</div>
-					)}
-				</div>
-				<div className="relative px-6 md:px-12 py-6 flex items-center justify-between">
-					<Link to="/" className="text-foreground font-bold text-xl font-serif">
-						XII
+		<div className="sticky top-0 z-(--z-nav) w-full">
+			<nav className="w-full relative z-(--z-nav) bg-background">
+				<div className="px-6 md:px-12 py-6 flex items-center justify-between">
+					<Link to="/" className="text-foreground font-medium text-xl font-serif">
+						<span className="md:hidden">XII</span>
+						<span className="hidden italic md:inline">CHELSEA COMMONS</span>
 					</Link>
 
 					<div className="hidden md:flex items-center gap-3">
 						<Button
-							className="bg-white text-black hover:bg-white/90"
-							onClick={() =>
-								window.open(
-									"https://www.linkedin.com/company/the-chelsea-commons/",
-									"_blank",
-								)
-							}
+							className="bg-foreground text-background hover:bg-foreground/90"
+							asChild
 						>
-							FOLLOW US
+							<Link to="/rsvp" target="_blank" rel="noopener noreferrer">
+								RSVP
+							</Link>
 						</Button>
 						<Button variant="outline" asChild>
 							<Link to="/about">ABOUT</Link>
@@ -82,9 +46,11 @@ export function Navbar() {
 
 					<button
 						type="button"
-						className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5 z-50 relative"
+						className="md:hidden flex flex-col justify-center items-center w-11 h-11 -mr-1.5 gap-1.5 z-(--z-nav) relative"
 						onClick={() => setIsOpen(!isOpen)}
 						aria-label="Toggle menu"
+						aria-expanded={isOpen}
+						aria-controls="mobile-menu"
 					>
 						<span
 							className={`block w-6 h-0.5 bg-foreground transition-all duration-300 ${
@@ -106,18 +72,11 @@ export function Navbar() {
 			</nav>
 
 			{isOpen && (
-				<div className="fixed inset-0 z-40 flex flex-col pt-20 md:hidden">
-					<div
-						className="absolute inset-0"
-						style={{ backgroundColor: "#212121" }}
-					>
-						<Shadow
-							color="rgba(128, 128, 128, 0.3)"
-							animation={undefined}
-							noise={{ opacity: 1, scale: 1.5 }}
-							sizing="fill"
-						/>
-					</div>
+				<div
+					id="mobile-menu"
+					className="fixed inset-0 z-(--z-nav-overlay) flex flex-col pt-20 md:hidden"
+				>
+					<div className="absolute inset-0 bg-background" />
 					<div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-8">
 						<Link
 							to="/"
@@ -126,19 +85,15 @@ export function Navbar() {
 						>
 							HOME
 						</Link>
-						<button
-							type="button"
-							onClick={() => {
-								window.open(
-									"https://www.linkedin.com/company/the-chelsea-commons/",
-									"_blank",
-								);
-								setIsOpen(false);
-							}}
+						<Link
+							to="/rsvp"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={() => setIsOpen(false)}
 							className="text-4xl font-medium text-foreground hover:text-muted-foreground transition-colors"
 						>
-							FOLLOW US
-						</button>
+							RSVP
+						</Link>
 						<Link
 							to="/about"
 							onClick={() => setIsOpen(false)}

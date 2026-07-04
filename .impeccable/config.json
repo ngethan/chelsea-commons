@@ -1,0 +1,44 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "#2d1f3d",
+        "reason": "User confirmed footer aurora gradient is intentional (The Ember Rule, footer-only exception)",
+        "createdAt": "2026-07-02T21:19:33.548Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#4a1942",
+        "reason": "User confirmed footer aurora gradient is intentional (The Ember Rule, footer-only exception)",
+        "createdAt": "2026-07-02T21:19:33.601Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#c94c4c",
+        "reason": "User confirmed footer aurora gradient is intentional (The Ember Rule, footer-only exception)",
+        "createdAt": "2026-07-02T21:19:33.652Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#f4a261",
+        "reason": "User confirmed footer aurora gradient is intentional (The Ember Rule, footer-only exception)",
+        "createdAt": "2026-07-02T21:19:33.702Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#e76f51",
+        "reason": "User confirmed footer aurora gradient is intentional (The Ember Rule, footer-only exception)",
+        "createdAt": "2026-07-02T21:19:33.758Z"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#8b5cf6",
+        "reason": "User confirmed footer aurora gradient is intentional (The Ember Rule, footer-only exception)",
+        "createdAt": "2026-07-02T21:19:33.804Z"
+      }
+    ]
+  }
+}

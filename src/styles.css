@@ -25,7 +25,7 @@ code {
 }
 
 main a:not(.no-underline) {
-	@apply text-foreground transition-colors duration-300 hover:text-foreground hover:underline;
+	@apply text-foreground transition-colors duration-300 hover:text-muted-foreground hover:underline;
 }
 
 main a.no-underline {
@@ -34,40 +34,28 @@ main a.no-underline {
 }
 
 :root {
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0 0);
-	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.145 0 0);
-	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
-	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.97 0 0);
-	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.97 0 0);
-	--muted-foreground: oklch(0.556 0 0);
-	--semi-foreground: oklch(0.85 0.008 286);
-	--accent: oklch(0.97 0 0);
-	--accent-foreground: oklch(0.205 0 0);
+	--background: #f2f1e8;
+	--foreground: #2b2b2b;
+	--card: #f7f6ee;
+	--card-foreground: #2b2b2b;
+	--popover: #f7f6ee;
+	--popover-foreground: #2b2b2b;
+	--primary: #2b2b2b;
+	--primary-foreground: #f2f1e8;
+	--secondary: #e8e6da;
+	--secondary-foreground: #2b2b2b;
+	--muted: #e8e6da;
+	--muted-foreground: #6b6a62;
+	--semi-foreground: oklch(0.45 0.008 286);
+	--accent: #e8e6da;
+	--accent-foreground: #2b2b2b;
 	--destructive: oklch(0.577 0.245 27.325);
 	--destructive-foreground: oklch(1.0 0 0);
-	--border: oklch(0.922 0 0);
-	--input: oklch(0.922 0 0);
-	--ring: oklch(0.708 0 0);
-	--chart-1: oklch(0.646 0.222 41.116);
-	--chart-2: oklch(0.6 0.118 184.704);
-	--chart-3: oklch(0.398 0.07 227.392);
-	--chart-4: oklch(0.828 0.189 84.429);
-	--chart-5: oklch(0.769 0.188 70.08);
-	--sidebar: oklch(0.985 0 0);
-	--sidebar-foreground: oklch(0.145 0 0);
-	--sidebar-primary: oklch(0.205 0 0);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.97 0 0);
-	--sidebar-accent-foreground: oklch(0.205 0 0);
-	--sidebar-border: oklch(0.922 0 0);
-	--sidebar-ring: oklch(0.708 0 0);
-	--font-sans: Geist;
+	--border: #dcd9c9;
+	--input: #dcd9c9;
+	--ring: #a3a091;
+	--font-sans: "Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI",
+		sans-serif;
 	--font-serif: "Playfair Display Variable", serif;
 	--font-mono: Geist Mono;
 	--radius: 0.625rem;
@@ -84,6 +72,16 @@ main a.no-underline {
 	--shadow-xl: 0px 4px 12px -2px hsl(0 0% 0% / 0.2), 0px 8px 10px -3px
 		hsl(0 0% 0% / 0.2);
 	--shadow-2xl: 0px 4px 12px -2px hsl(0 0% 0% / 0.5);
+
+	/* Semantic z-scale: nav overlay sits under nav chrome; modals over both;
+	   the pre-hydration splash outranks everything; grain rides above it all
+	   (non-interactive texture, so it can't block anything). */
+	--z-nav-overlay: 40;
+	--z-nav: 50;
+	--z-modal-backdrop: 60;
+	--z-modal: 70;
+	--z-splash: 80;
+	--z-grain: 90;
 }
 
 @theme inline {
@@ -106,19 +104,6 @@ main a.no-underline {
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
-	--color-chart-1: var(--chart-1);
-	--color-chart-2: var(--chart-2);
-	--color-chart-3: var(--chart-3);
-	--color-chart-4: var(--chart-4);
-	--color-chart-5: var(--chart-5);
-	--color-sidebar: var(--sidebar);
-	--color-sidebar-foreground: var(--sidebar-foreground);
-	--color-sidebar-primary: var(--sidebar-primary);
-	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-	--color-sidebar-accent: var(--sidebar-accent);
-	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-	--color-sidebar-border: var(--sidebar-border);
-	--color-sidebar-ring: var(--sidebar-ring);
 
 	--font-sans: var(--font-sans);
 	--font-mono: var(--font-mono);
@@ -188,25 +173,37 @@ main a.no-underline {
 		letter-spacing: var(--tracking-normal);
 		@apply bg-background text-foreground;
 		position: relative;
+		/* The wall behind the page: texture.png is a grunge-wall mottle
+		   (transparenttextures.com) pre-baked over the cream --background at
+		   1.5x strength, so it needs no opacity/blend tricks and is guaranteed
+		   to sit under all content. Rebake via the compositing script if
+		   --background ever changes. */
+		background-size: 500px 375px;
+		background-repeat: repeat;
+	}
+	body::after {
+		content: "";
+		position: fixed;
+		inset: 0;
+		background-image: url(/grain.avif);
+		background-size: 200px;
+		opacity: 0.07;
+		pointer-events: none;
+		z-index: var(--z-grain);
 	}
 	::selection {
-		background-color: white;
-		color: black;
+		background-color: var(--foreground);
+		color: var(--background);
 	}
 
-	/* Hide scrollbar */
-	::-webkit-scrollbar {
-		display: none;
-	}
-
-	/* Firefox scrollbar */
-	* {
+	/* Hide scrollbars only on opted-in internal scrollers (galleries, tickers).
+	   The document scrollbar stays visible: it's the page's position indicator. */
+	.scrollbar-none {
 		scrollbar-width: none;
-	}
-
-	/* IE and Edge */
-	* {
 		-ms-overflow-style: none;
+	}
+	.scrollbar-none::-webkit-scrollbar {
+		display: none;
 	}
 
 	/* Fade mask for scrollable content with offset */
@@ -269,38 +266,4 @@ main a.no-underline {
 		filter: none;
 		opacity: 1;
 	}
-}
-
-.dark {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.205 0 0);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.205 0 0);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.922 0 0);
-	--primary-foreground: oklch(0.205 0 0);
-	--secondary: oklch(0.269 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.269 0 0);
-	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.269 0 0);
-	--accent-foreground: oklch(0.985 0 0);
-	--destructive: oklch(0.704 0.191 22.216);
-	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.556 0 0);
-	--chart-1: oklch(0.488 0.243 264.376);
-	--chart-2: oklch(0.696 0.17 162.48);
-	--chart-3: oklch(0.769 0.188 70.08);
-	--chart-4: oklch(0.627 0.265 303.9);
-	--chart-5: oklch(0.645 0.246 16.439);
-	--sidebar: oklch(0.205 0 0);
-	--sidebar-foreground: oklch(0.985 0 0);
-	--sidebar-primary: oklch(0.488 0.243 264.376);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.269 0 0);
-	--sidebar-accent-foreground: oklch(0.985 0 0);
-	--sidebar-border: oklch(1 0 0 / 10%);
-	--sidebar-ring: oklch(0.556 0 0);
 }

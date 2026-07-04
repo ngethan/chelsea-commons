@@ -26,9 +26,13 @@ const resolveRuntimeOrigin = () => {
 const getBaseUrl = () => rawSiteUrl ?? resolveRuntimeOrigin() ?? "";
 
 export const siteConfig = {
-	name: "THE CHELSEA COMMONS",
-	shortName: "THE CHELSEA COMMONS",
-	description: "A community of 12 ambitious interns living, exploring, and building together in Chelsea, Manhattan.",
+	name: "Chelsea Commons",
+	shortName: "Chelsea Commons",
+	/** Cream (--background); duplicated here for pre-hydration paint (html/body
+	 * inline styles, theme-color, load splash) where CSS tokens can't be read. */
+	themeColor: "#f2f1e8",
+	description:
+		"A community of young, ambitious builders, operators, and founders in New York.",
 	url: getBaseUrl(),
 	twitterHandle: "",
 	defaultOgImagePath: "/og.png",
@@ -100,7 +104,8 @@ export const buildSeoTags = ({
 			},
 			{
 				name: "keywords",
-				content: "THE CHELSEA COMMONS, Chelsea Commons, NYC intern housing, Manhattan summer housing, intern community, Chelsea Manhattan, summer internship housing, NYC summer housing, intern network, young professionals NYC",
+				content:
+					"Chelsea Commons, NYC founders community, NYC builders, startup community New York, young professionals NYC, Chelsea Manhattan, founder events NYC, NYC tech community, summer cohort NYC",
 			},
 			{
 				property: "og:title",

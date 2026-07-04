@@ -16,7 +16,7 @@ interface BlogFrontmatter {
 export const Route = createFileRoute("/writing/")({
 	head: () =>
 		buildSeoTags({
-			title: "Writing | THE CHELSEA COMMONS",
+			title: "Writing | Chelsea Commons",
 			description: DESCRIPTION,
 			path: "/writing",
 		}),
@@ -155,7 +155,7 @@ function BlogIndex() {
 												{post.tags.map((tag: string) => (
 													<span
 														key={tag}
-														className="px-2 py-0.5 rounded bg-white/5 text-muted-foreground"
+														className="px-2 py-0.5 rounded bg-foreground/5 text-muted-foreground"
 													>
 														{tag}
 													</span>

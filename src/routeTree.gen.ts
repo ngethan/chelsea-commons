@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WritingRouteImport } from './routes/writing'
+import { Route as V2RouteImport } from './routes/v2'
 import { Route as RsvpRouteImport } from './routes/rsvp'
+import { Route as MicrographicsRouteImport } from './routes/micrographics'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as SplatRouteImport } from './routes/$'
@@ -23,9 +25,19 @@ const WritingRoute = WritingRouteImport.update({
   path: '/writing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const V2Route = V2RouteImport.update({
+  id: '/v2',
+  path: '/v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RsvpRoute = RsvpRouteImport.update({
   id: '/rsvp',
   path: '/rsvp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MicrographicsRoute = MicrographicsRouteImport.update({
+  id: '/micrographics',
+  path: '/micrographics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -64,7 +76,9 @@ export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/events': typeof EventsRoute
+  '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
+  '/v2': typeof V2Route
   '/writing': typeof WritingRouteWithChildren
   '/writing/$slug': typeof WritingSlugRoute
   '/writing/': typeof WritingIndexRoute
@@ -74,7 +88,9 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/events': typeof EventsRoute
+  '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
+  '/v2': typeof V2Route
   '/writing/$slug': typeof WritingSlugRoute
   '/writing': typeof WritingIndexRoute
 }
@@ -84,7 +100,9 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/events': typeof EventsRoute
+  '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
+  '/v2': typeof V2Route
   '/writing': typeof WritingRouteWithChildren
   '/writing/$slug': typeof WritingSlugRoute
   '/writing/': typeof WritingIndexRoute
@@ -96,7 +114,9 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/events'
+    | '/micrographics'
     | '/rsvp'
+    | '/v2'
     | '/writing'
     | '/writing/$slug'
     | '/writing/'
@@ -106,7 +126,9 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/events'
+    | '/micrographics'
     | '/rsvp'
+    | '/v2'
     | '/writing/$slug'
     | '/writing'
   id:
@@ -115,7 +137,9 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/events'
+    | '/micrographics'
     | '/rsvp'
+    | '/v2'
     | '/writing'
     | '/writing/$slug'
     | '/writing/'
@@ -126,7 +150,9 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
   EventsRoute: typeof EventsRoute
+  MicrographicsRoute: typeof MicrographicsRoute
   RsvpRoute: typeof RsvpRoute
+  V2Route: typeof V2Route
   WritingRoute: typeof WritingRouteWithChildren
 }
 
@@ -139,11 +165,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WritingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/v2': {
+      id: '/v2'
+      path: '/v2'
+      fullPath: '/v2'
+      preLoaderRoute: typeof V2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rsvp': {
       id: '/rsvp'
       path: '/rsvp'
       fullPath: '/rsvp'
       preLoaderRoute: typeof RsvpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/micrographics': {
+      id: '/micrographics'
+      path: '/micrographics'
+      fullPath: '/micrographics'
+      preLoaderRoute: typeof MicrographicsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -209,7 +249,9 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
   EventsRoute: EventsRoute,
+  MicrographicsRoute: MicrographicsRoute,
   RsvpRoute: RsvpRoute,
+  V2Route: V2Route,
   WritingRoute: WritingRouteWithChildren,
 }
 export const routeTree = rootRouteImport
