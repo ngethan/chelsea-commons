@@ -149,16 +149,10 @@ function App() {
 						transition={{ duration: 0.4, ease: "easeOut" }}
 						className="w-full min-w-0 lg:col-span-8 font-serif text-foreground text-[clamp(2.75rem,6.5vw,5.25rem)] leading-[1.05]"
 					>
-						A space for
+						Ambition
 						<br />
-						the{" "}
-						<span aria-hidden="true" className="text-[0.72em]">
-							✦
-						</span>{" "}
-						builders,
-						<br />
-						dreamers &amp; doers{" "}
-						<span aria-hidden="true" className="text-[0.72em]">
+						loves company
+						<span aria-hidden="true" className="text-[0.6em] align-super">
 							✳
 						</span>
 					</motion.h1>
