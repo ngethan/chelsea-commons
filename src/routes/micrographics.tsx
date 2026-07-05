@@ -195,7 +195,7 @@ function ScanSequenceForms() {
 					<HalftoneGlobe seed={7} mode="dots" size={64} />
 				</div>
 				<div className="font-mono text-[11px] text-center leading-relaxed">
-					FORMS 001—004 ✳ GEOMETRY DEPT.
+					FORMS 001—004 ✳︎ GEOMETRY DEPT.
 					<br />
 					ALL SHAPES SCANNED AT 1-BIT
 				</div>
@@ -369,7 +369,7 @@ function GlyphIndex() {
 				))}
 			</div>
 			<div className="mt-2 border-t border-border pt-2 tracking-[0.15em] opacity-50">
-				USE FREELY. USE PRECISELY. ✳ † ‡ § RESERVED FOR EMERGENCIES.
+				USE FREELY. USE PRECISELY. ✳︎ † ‡ § RESERVED FOR EMERGENCIES.
 			</div>
 		</div>
 	);

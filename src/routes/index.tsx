@@ -153,7 +153,7 @@ function App() {
 						<br />
 						loves company
 						<span aria-hidden="true" className="text-[0.6em] align-super">
-							✳
+							{"✳︎"}
 						</span>
 					</motion.h1>
 					<div className="lg:col-span-4 lg:justify-self-end lg:max-w-md flex flex-col gap-5">
