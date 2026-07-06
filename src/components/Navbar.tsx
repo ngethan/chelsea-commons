@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
@@ -77,38 +78,83 @@ export function Navbar() {
 					className="fixed inset-0 z-(--z-nav-overlay) flex flex-col pt-20 md:hidden"
 				>
 					<div className="absolute inset-0 bg-background" />
-					<div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-8">
-						<Link
-							to="/"
-							onClick={() => setIsOpen(false)}
-							className="text-4xl font-medium text-foreground hover:text-muted-foreground transition-colors"
+					<div className="relative z-10 flex-1 flex flex-col items-start justify-start gap-4 px-6 pt-8">
+						{(
+							[
+								{ to: "/", label: "HOME" },
+								{ to: "/about", label: "ABOUT" },
+								{ to: "/events", label: "EVENTS" },
+							] as const
+						).map((item, i) => (
+							<motion.div
+								key={item.to}
+								initial={{ opacity: 0, x: -30 }}
+								animate={{ opacity: 1, x: 0 }}
+								transition={{
+									duration: 0.25,
+									ease: "easeOut",
+									delay: i * 0.05,
+								}}
+							>
+								<Link
+									to={item.to}
+									onClick={() => setIsOpen(false)}
+									className="text-[2.5rem] font-medium text-foreground hover:text-muted-foreground transition-colors"
+								>
+									{item.label}
+								</Link>
+							</motion.div>
+						))}
+						<motion.div
+							initial={{ opacity: 0, x: -30 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{
+								duration: 0.25,
+								ease: "easeOut",
+								delay: 3 * 0.05,
+							}}
 						>
-							HOME
-						</Link>
-						<Link
-							to="/rsvp"
+							<Button
+								size="lg"
+								className="bg-foreground text-background hover:bg-foreground/90 text-xl px-8 py-6"
+								asChild
+							>
+								<Link
+									to="/rsvp"
+									target="_blank"
+									rel="noopener noreferrer"
+									onClick={() => setIsOpen(false)}
+								>
+									RSVP
+								</Link>
+							</Button>
+						</motion.div>
+					</div>
+					<motion.div
+						initial={{ opacity: 0, x: -30 }}
+						animate={{ opacity: 1, x: 0 }}
+						transition={{
+							duration: 0.25,
+							ease: "easeOut",
+							delay: 4 * 0.05,
+						}}
+						className="relative z-10 flex items-center gap-6 px-6 pb-10"
+					>
+						<a
+							href="https://www.linkedin.com/company/the-chelsea-commons/"
 							target="_blank"
 							rel="noopener noreferrer"
-							onClick={() => setIsOpen(false)}
-							className="text-4xl font-medium text-foreground hover:text-muted-foreground transition-colors"
+							className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 						>
-							RSVP
-						</Link>
-						<Link
-							to="/about"
-							onClick={() => setIsOpen(false)}
-							className="text-4xl font-medium text-foreground hover:text-muted-foreground transition-colors"
+							LinkedIn
+						</a>
+						<a
+							href="mailto:hey@chelseacommons.co"
+							className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 						>
-							ABOUT
-						</Link>
-						<Link
-							to="/events"
-							onClick={() => setIsOpen(false)}
-							className="text-4xl font-medium text-foreground hover:text-muted-foreground transition-colors"
-						>
-							EVENTS
-						</Link>
-					</div>
+							Email
+						</a>
+					</motion.div>
 				</div>
 			)}
 		</div>
