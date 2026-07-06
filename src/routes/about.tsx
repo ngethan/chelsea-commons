@@ -131,15 +131,15 @@ When I'm not working, you'll find me hooping, playing pickleball, or hitting the
 		image: "/assets/residents/DanielSung.webp",
 	},
 	{
-		name: "Erfan Ballew",
-		company: "PwC",
-		bio: `I'm a sophomore at Berkeley M.E.T. studying EECS and Business. This summer, I'll be a consultant at PwC.
+		name: "Devin Fitzpatrick",
+		company: "CLEAR",
+		bio: `I'm a sophomore at UC Berkeley studying Computer Science & Business Administration. This summer I'm working at CLEAR as a Software Engineering Intern.
 
-I'm a big startup guy. I previously co-founded a company valued at $X,000,000 and am currently building again. I'm also looking to break into venture, aiming to launch a $X,000,000 fund by the end of the summer focused on backing BIPOC and women founders.
+I'm broadly interested in engineering and startups, with a more recent interest in ML research. I'm specifically drawn to applied machine learning and agentic systems. Last summer, I worked at a defense-tech startup that raised over $50 million, building ML tools for non-technical users.
 
-When I'm not building, you'll probably find me surfing, wakeboarding, snowboarding, or lifting.`,
-		linkedin: "https://www.linkedin.com/in/erfan-ballew/",
-		image: "/assets/residents/ErfanBallew-2.webp",
+In my free time, you'll find me running, lifting, snowboarding, playing spikeball and playing basketball with my friends.`,
+		linkedin: "",
+		image: "/assets/residents/DevinFitzpatrick.webp",
 	},
 	{
 		name: "Ethan Ng",
@@ -232,11 +232,15 @@ I dabble in poker, One Piece, and catan.`,
 	{
 		name: "Will Burkhart",
 		company: "Teamworthy Ventures",
-		bio: `I'm a sophomore at Vanderbilt majoring in math. When I'm not in class, I build software to make it easier for researchers to get funding from the DoD. Researchers from 10+ universities have used my software.
+		bio: `Hi! I'm Will. I'm an incoming transfer student at Stanford University.
 
-More generally, national security fires me up. Last summer, I interned at a Stanford national security center, worked with the Army's 75th Ranger Regiment, met four star generals (two of them), and worked on an autonomous weapon system to limit friendly fire. This summer, I'll be working in VC at Teamworthy Ventures.
+This summer, I am working at Teamworthy Ventures in New York City and building a community for interns called Chelsea Commons.
 
-A Tale of Two Cities by Dickens is my favorite book. My favorite movie is La La Land. My favorite artist is Olivia Dean. My favorite day is chest day. Fun fact: I lived in Spain for a year in high school and now I speak Spanish.`,
+I spent the past two years studying Math at Vanderbilt University and developing software to make it easier for researchers to get funding with Stanford's Technology Transfer for Defense office.
+
+A Tale of Two Cities by Dickens is my favorite book. My favorite movie is La La Land. My favorite artist is Olivia Dean. My favorite day is chest day.
+
+If you're in Palo Alto or NYC, let me know!`,
 		linkedin: "https://www.linkedin.com/in/will-burkhart-4b525223a/",
 		image: "/assets/residents/WillBurkhart.webp",
 	},

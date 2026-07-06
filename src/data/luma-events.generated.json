@@ -1,0 +1,214 @@
+{
+	"generatedAt": "2026-07-06T21:27:01.832Z",
+	"calendarApiId": "cal-Ab7IiaASyPX2MKb",
+	"events": [
+		{
+			"id": "tdxwxj1w",
+			"title": "Lerer Hippeau Dinner",
+			"date": "2026-07-01",
+			"time": "6:15 PM",
+			"endTime": "8:15 PM",
+			"location": "6 Bond St",
+			"address": "6 Bond St, New York, NY 10012, USA",
+			"image": "https://images.lumacdn.com/uploads/y9/d0bc24b6-275c-442f-be51-d1f200f9775c.png",
+			"rsvpUrl": "https://luma.com/tdxwxj1w",
+			"status": "past",
+			"lumaEventApiId": "evt-CMIXnepsUdBsPmg",
+			"lumaCalendarEventApiId": "calev-2ZMl3xAb5vb20Tv",
+			"hosts": [
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				},
+				{
+					"name": "Will McKelvey",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_11.png",
+					"username": null
+				},
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				}
+			]
+		},
+		{
+			"id": "p1tqv9u2",
+			"title": "M13 X Chelsea Commons: Young Builders Dinner",
+			"date": "2026-06-23",
+			"time": "6:45 PM",
+			"endTime": "9:45 PM",
+			"location": "abc kitchen",
+			"address": "abc kitchen, 35 E 18th St, New York, NY 10003, USA",
+			"image": "https://images.lumacdn.com/uploads/s6/16a73773-033d-4c42-945f-9a33ed672811.png",
+			"rsvpUrl": "https://luma.com/p1tqv9u2",
+			"status": "past",
+			"lumaEventApiId": "evt-IjCPMKqAHfVFWQe",
+			"lumaCalendarEventApiId": "calev-DKq7zO8ELlGyPR1",
+			"hosts": [
+				{
+					"name": "M13 Events",
+					"avatar": "https://images.lumacdn.com/avatars/lf/3846b6ee-6807-4528-83f7-7efb8cd7e138",
+					"username": null
+				},
+				{
+					"name": "Morgan Blumberg",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_13.png",
+					"username": null
+				},
+				{
+					"name": "amedeo lorenzotti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_4.png",
+					"username": null
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				},
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				}
+			],
+			"description": "M13 x Chelsea Commons Dinner\n📍 ABC Kitchen\n🗓 June 23\n🕡 6:45 PM\n\nAn intimate dinner bringing together young builders, operators, and thinkers across NYC.\n\nHosted by M13 and Chelsea Commons, this evening is designed to gather a highly curated group for meaningful conversation, new connections, and shared perspective across industries and stages.\n\nExpect a thoughtful room, great food, and even better company.\n\nBy invitation only."
+		},
+		{
+			"id": "31s59mlz",
+			"title": "Pizza + Poker & Board Games with Pareto",
+			"date": "2026-06-16",
+			"time": "6:30 PM",
+			"endTime": "9:00 PM",
+			"location": "SoHo",
+			"image": "https://images.lumacdn.com/uploads/2y/31be70fa-56d5-4179-adec-14b331fb0046.png",
+			"rsvpUrl": "https://luma.com/31s59mlz",
+			"status": "past",
+			"lumaEventApiId": "evt-XfpiS0p4fs6gqa5",
+			"lumaCalendarEventApiId": "calev-Pz0PeLVOGQwCFiU",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				},
+				{
+					"name": "Carson Kraycik",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_26.png",
+					"username": null
+				},
+				{
+					"name": "Tres Frisard",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_27.png",
+					"username": null
+				}
+			],
+			"description": "Pizza + Games night hosted by Pareto VC for young builders & engineers. By invite only"
+		},
+		{
+			"id": "xokyiili",
+			"title": "Chelsea Commons x BoxGroup Dinner + Game Night",
+			"date": "2026-06-10",
+			"time": "6:30 PM",
+			"endTime": "9:30 PM",
+			"location": "Meatpacking District",
+			"image": "https://images.lumacdn.com/uploads/vy/91039a05-0b74-4d66-976d-ea2bbc5870ff.png",
+			"rsvpUrl": "https://luma.com/xokyiili",
+			"status": "past",
+			"lumaEventApiId": "evt-RA0AIzpeuBBsBMI",
+			"lumaCalendarEventApiId": "calev-SCvhOiJmAhdyoWm",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Ava",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_22.png",
+					"username": null
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				}
+			],
+			"description": "Dinner + games for exceptional young engineers. By invitation only."
+		},
+		{
+			"id": "8i0goieb",
+			"title": "Chelsea Commons x Cory Levy Private Dinner",
+			"date": "2026-06-03",
+			"time": "6:30 PM",
+			"endTime": "8:30 PM",
+			"location": "SAINT RESTAURANT BAR & SPEAKEASY",
+			"address": "SAINT RESTAURANT BAR & SPEAKEASY, 136 2nd Ave, New York, NY 10003, USA",
+			"image": "https://images.lumacdn.com/uploads/a6/a1b452c5-1495-4804-a051-af48962e2571.png",
+			"rsvpUrl": "https://luma.com/8i0goieb",
+			"status": "past",
+			"lumaEventApiId": "evt-6pRAiTP7McCvaHq",
+			"lumaCalendarEventApiId": "calev-E7XLXuxwv1GJjqn",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				}
+			],
+			"description": "private dinner with cory levy, founder of z-fellows. by invitation only."
+		},
+		{
+			"id": "dsysfoju",
+			"title": "Chelsea Commons Dinner [Hosted by Chelsea Commons x Menlo Ventures x Rho]",
+			"date": "2026-06-02",
+			"time": "6:30 PM",
+			"endTime": "8:30 PM",
+			"location": "Gramercy Park",
+			"image": "https://images.lumacdn.com/uploads/8b/ceba6830-a5f2-465e-a163-8f1b706787b1.png",
+			"rsvpUrl": "https://luma.com/dsysfoju",
+			"status": "past",
+			"lumaEventApiId": "evt-7ZojBlmi917ho1c",
+			"lumaCalendarEventApiId": "calev-cFrGFqUqbA6rpdW",
+			"hosts": [
+				{
+					"name": "Remi Chester",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_7.png",
+					"username": null
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				},
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "C.C. Gong",
+					"avatar": "https://images.lumacdn.com/avatars/l1/26dddf85-ab40-4d1a-82ff-37c2e66cb056",
+					"username": "ccgongMenlo"
+				},
+				{
+					"name": "Drew Parten",
+					"avatar": "https://images.lumacdn.com/avatars/kp/3de14f53-89d0-41a7-ad1b-38d724af659c.png",
+					"username": "rhodrew"
+				}
+			],
+			"description": "Join us for a private dinner in Follia’s wine cellar for exceptional young builders. By invitation only.\n\n#nyc\n\nMeet the hosts:\n\nChelsea Commons is a summer community for ambitious interns in NYC. Built by 12 interns living together in Manhattan.\n\nMenlo Ventures is an early-stage venture capital firm that invests across AI, consumer, enterprise, and healthcare technologies.\n\nRho is the all-in-one banking platform for startups and the accountants supporting them. With banking setup in minutes, cashback cards, and powerful tools for managing spend, paying bills, and closing the books, Rho helps high-growth startups move fast and stay focused, backed by support that goes to the end of the earth to help you win.\n\nRho is a fintech company, not a bank. Checking and card services are provided by Webster Bank, N.A., member FDIC; savings account services are provided by American Deposit Management Co. and its partner banks."
+		}
+	]
+}

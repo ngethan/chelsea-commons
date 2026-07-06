@@ -6,22 +6,8 @@ import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
 import { PartnersStrip } from "../components/PartnersStrip";
 import { Button } from "../components/ui/button";
-import eventsJson from "../data/events.json";
+import { type CCEvent, getDisplayEvents } from "../lib/lumaEvents";
 import { buildSeoTags } from "../site-config";
-
-interface CCEvent {
-	id: string;
-	title: string;
-	date: string;
-	time: string;
-	endTime?: string;
-	location: string;
-	address?: string;
-	description?: string;
-	image?: string;
-	rsvpUrl?: string;
-	status: string;
-}
 
 export const Route = createFileRoute("/events")({
 	head: () => {
@@ -86,7 +72,7 @@ function EventTile({
 						src={event.image}
 						alt={event.title}
 						loading="lazy"
-						className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+						className="absolute inset-0 w-full h-full object-cover"
 					/>
 				) : (
 					<div className="absolute inset-0 flex items-center justify-center px-6 text-center">
@@ -96,7 +82,7 @@ function EventTile({
 					</div>
 				)}
 			</div>
-			<p className="text-foreground text-sm font-medium uppercase tracking-wider">
+			<p className="text-foreground text-sm font-medium uppercase tracking-wider truncate">
 				{event.title}
 			</p>
 			<p className="text-muted-foreground text-sm italic mt-1">
@@ -208,19 +194,24 @@ function EventDrawer({
 
 						<div className="flex-1 overflow-y-auto">
 							{event.image && (
-								<div className="w-full h-56 shrink-0 overflow-hidden">
-									<img
-										src={event.image}
-										alt={event.title}
-										className="w-full h-full object-cover"
-									/>
-								</div>
+								<img
+									src={event.image}
+									alt={event.title}
+									className="w-full h-auto"
+								/>
 							)}
 
 							<div className="p-6 flex flex-col gap-6">
-								<h2 className="text-foreground text-3xl font-serif italic leading-tight">
-									{event.title}
-								</h2>
+								<div>
+									<h2 className="text-foreground text-3xl font-serif italic leading-tight">
+										{event.title}
+									</h2>
+									{event.hosts && event.hosts.length > 0 && (
+										<p className="text-muted-foreground text-sm italic mt-2">
+											Hosted by {event.hosts.map((h) => h.name).join(", ")}
+										</p>
+									)}
+								</div>
 
 								<div className="flex flex-col gap-4">
 									<div className="flex items-start gap-3">
@@ -261,27 +252,29 @@ function EventDrawer({
 									</div>
 								)}
 
-								<div className="pt-2">
-									{event.rsvpUrl ? (
-										<Button
-											size="xl"
-											className="w-full bg-foreground text-background hover:bg-foreground/90 text-sm md:text-base tracking-wider uppercase"
-											asChild
-										>
-											<a
-												href={event.rsvpUrl}
-												target="_blank"
-												rel="noopener noreferrer"
+								{event.date >= localDateStr() && (
+									<div className="pt-2">
+										{event.rsvpUrl ? (
+											<Button
+												size="xl"
+												className="w-full bg-foreground text-background hover:bg-foreground/90 text-sm md:text-base tracking-wider uppercase"
+												asChild
 											>
-												RSVP <ExternalLink className="w-4 h-4" />
-											</a>
-										</Button>
-									) : (
-										<p className="text-muted-foreground text-sm italic text-center">
-											By invitation only
-										</p>
-									)}
-								</div>
+												<a
+													href={event.rsvpUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													RSVP <ExternalLink className="w-4 h-4" />
+												</a>
+											</Button>
+										) : (
+											<p className="text-muted-foreground text-sm italic text-center">
+												By invitation only
+											</p>
+										)}
+									</div>
+								)}
 							</div>
 						</div>
 					</motion.div>
@@ -293,7 +286,7 @@ function EventDrawer({
 
 function Events() {
 	const [selectedEvent, setSelectedEvent] = useState<CCEvent | null>(null);
-	const allEvents = eventsJson.events as CCEvent[];
+	const allEvents = getDisplayEvents();
 	const today = localDateStr();
 
 	const upcoming = allEvents
