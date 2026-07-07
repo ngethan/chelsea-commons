@@ -2,6 +2,16 @@ import { ScrollVelocityRow } from "./ui/scroll-based-velocity";
 
 const PARTNERS = [
 	{
+		name: "a16z",
+		logo: "/assets/partners/a16z-logo.webp",
+		url: "https://a16z.com",
+	},
+	{
+		name: "Amazon",
+		logo: "/assets/partners/amazon-logo.png",
+		url: "https://amazon.com",
+	},
+	{
 		name: "BoxGroup",
 		logo: "/assets/partners/boxgroup-logo.png",
 		url: "https://boxgroup.com",
@@ -15,6 +25,11 @@ const PARTNERS = [
 		name: "Felicis",
 		logo: "/assets/partners/felicis-logo.png",
 		url: "https://felicis.com",
+	},
+	{
+		name: "Harvey AI",
+		logo: "/assets/partners/harvey-logo.png",
+		url: "https://harvey.ai",
 	},
 	{
 		name: "First Round Capital",
@@ -42,6 +57,11 @@ const PARTNERS = [
 		url: "https://menlovc.com",
 	},
 	{
+		name: "Mercury",
+		logo: "/assets/partners/mercury-logo.webp",
+		url: "https://mercury.com",
+	},
+	{
 		name: "OpenAI",
 		logo: "/assets/partners/openai-logo.webp",
 		url: "https://openai.com",
@@ -55,6 +75,16 @@ const PARTNERS = [
 		name: "Ramp",
 		logo: "/assets/partners/ramp-logo.png",
 		url: "https://ramp.com",
+	},
+	{
+		name: "Rho",
+		logo: "/assets/partners/rho-logo.webp",
+		url: "https://rho.co",
+	},
+	{
+		name: "TQ Ventures",
+		logo: "/assets/partners/tqventures-logo.png",
+		url: "https://tqventures.com",
 	},
 	{
 		name: "Z Fellows",
