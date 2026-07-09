@@ -4,30 +4,17 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
+import { PartnersStrip } from "../components/PartnersStrip";
 import { Button } from "../components/ui/button";
-import eventsJson from "../data/events.json";
+import { type CCEvent, getDisplayEvents } from "../lib/lumaEvents";
 import { buildSeoTags } from "../site-config";
-
-interface CCEvent {
-	id: string;
-	title: string;
-	date: string;
-	time: string;
-	endTime?: string;
-	location: string;
-	address?: string;
-	description?: string;
-	image?: string;
-	rsvpUrl?: string;
-	status: string;
-}
 
 export const Route = createFileRoute("/events")({
 	head: () => {
 		const seo = buildSeoTags({
-			title: "Events - THE CHELSEA COMMONS",
+			title: "Events - Chelsea Commons",
 			description:
-				"Exclusive events, dinners, and intern mixers throughout Summer 2026 in NYC",
+				"Events, dinners, and gatherings throughout Summer 2026 in NYC",
 			path: "/events",
 		});
 		return {
@@ -85,7 +72,7 @@ function EventTile({
 						src={event.image}
 						alt={event.title}
 						loading="lazy"
-						className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+						className="absolute inset-0 w-full h-full object-cover"
 					/>
 				) : (
 					<div className="absolute inset-0 flex items-center justify-center px-6 text-center">
@@ -95,7 +82,7 @@ function EventTile({
 					</div>
 				)}
 			</div>
-			<p className="text-foreground text-sm font-medium uppercase tracking-wider">
+			<p className="text-foreground text-sm font-medium uppercase tracking-wider truncate">
 				{event.title}
 			</p>
 			<p className="text-muted-foreground text-sm italic mt-1">
@@ -181,7 +168,7 @@ function EventDrawer({
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.2 }}
-						className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
+						className="fixed inset-0 bg-foreground/50 backdrop-blur-sm z-(--z-modal-backdrop)"
 						onClick={onClose}
 					/>
 					<motion.div
@@ -190,7 +177,7 @@ function EventDrawer({
 						animate={{ x: 0 }}
 						exit={{ x: "100%" }}
 						transition={{ type: "spring", damping: 28, stiffness: 280 }}
-						className="fixed right-0 top-0 h-full w-full sm:w-[500px] z-[70] flex flex-col overflow-hidden border-l border-border bg-popover"
+						className="fixed right-0 top-0 h-full w-full sm:w-[500px] z-(--z-modal) flex flex-col overflow-hidden border-l border-border bg-popover"
 					>
 						<div className="shrink-0 flex items-center justify-between px-6 py-5 border-b border-border">
 							<span className="text-muted-foreground text-sm tracking-widest uppercase">
@@ -199,27 +186,48 @@ function EventDrawer({
 							<button
 								type="button"
 								onClick={onClose}
-								className="p-2 rounded-lg hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
+								className="p-2 rounded-lg hover:bg-foreground/10 transition-colors text-muted-foreground hover:text-foreground"
 							>
 								<X className="w-5 h-5" />
 							</button>
 						</div>
 
 						<div className="flex-1 overflow-y-auto">
-							{event.image && (
-								<div className="w-full h-56 shrink-0 overflow-hidden">
+							{event.gallery && event.gallery.length > 0 ? (
+								<div className="grid grid-cols-2 gap-1">
+									{event.gallery.map((src, i) => (
+										<img
+											key={src}
+											src={src}
+											alt={`${event.title} (${i + 1})`}
+											loading={i === 0 ? undefined : "lazy"}
+											className={`w-full h-full object-cover aspect-square ${
+												i === 0 ? "col-span-2 aspect-video" : ""
+											}`}
+										/>
+									))}
+								</div>
+							) : (
+								event.image && (
 									<img
 										src={event.image}
 										alt={event.title}
-										className="w-full h-full object-cover"
+										className="w-full h-auto"
 									/>
-								</div>
+								)
 							)}
 
 							<div className="p-6 flex flex-col gap-6">
-								<h2 className="text-foreground text-3xl font-serif italic leading-tight">
-									{event.title}
-								</h2>
+								<div>
+									<h2 className="text-foreground text-3xl font-serif italic leading-tight">
+										{event.title}
+									</h2>
+									{event.hosts && event.hosts.length > 0 && (
+										<p className="text-muted-foreground text-sm italic mt-2">
+											Hosted by {event.hosts.map((h) => h.name).join(", ")}
+										</p>
+									)}
+								</div>
 
 								<div className="flex flex-col gap-4">
 									<div className="flex items-start gap-3">
@@ -260,27 +268,29 @@ function EventDrawer({
 									</div>
 								)}
 
-								<div className="pt-2">
-									{event.rsvpUrl ? (
-										<Button
-											size="xl"
-											className="w-full bg-white text-black hover:bg-white/90 text-sm md:text-base tracking-wider uppercase"
-											asChild
-										>
-											<a
-												href={event.rsvpUrl}
-												target="_blank"
-												rel="noopener noreferrer"
+								{event.date >= localDateStr() && (
+									<div className="pt-2">
+										{event.rsvpUrl ? (
+											<Button
+												size="xl"
+												className="w-full bg-foreground text-background hover:bg-foreground/90 text-sm md:text-base tracking-wider uppercase"
+												asChild
 											>
-												RSVP <ExternalLink className="w-4 h-4" />
-											</a>
-										</Button>
-									) : (
-										<p className="text-muted-foreground text-sm italic text-center">
-											By invitation only
-										</p>
-									)}
-								</div>
+												<a
+													href={event.rsvpUrl}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													RSVP <ExternalLink className="w-4 h-4" />
+												</a>
+											</Button>
+										) : (
+											<p className="text-muted-foreground text-sm italic text-center">
+												By invitation only
+											</p>
+										)}
+									</div>
+								)}
 							</div>
 						</div>
 					</motion.div>
@@ -292,7 +302,7 @@ function EventDrawer({
 
 function Events() {
 	const [selectedEvent, setSelectedEvent] = useState<CCEvent | null>(null);
-	const allEvents = eventsJson.events as CCEvent[];
+	const allEvents = getDisplayEvents();
 	const today = localDateStr();
 
 	const upcoming = allEvents
@@ -306,15 +316,16 @@ function Events() {
 		<div className="min-h-dvh relative z-10">
 			<Navbar />
 			<main className="px-6 md:px-12 pt-12 md:pt-16 pb-24">
-				<div className="max-w-3xl mb-10 md:mb-14">
-					<h1 className="text-foreground text-4xl md:text-6xl font-serif italic mb-5 leading-tight">
-						Events & Mixers
-					</h1>
-					<p className="text-muted-foreground text-base md:text-lg leading-relaxed">
-						Chelsea Commons is hosting curated dinners, mixers, and
-						gatherings all summer in NYC for founders, builders, interns, and
-						operators.
-					</p>
+				<div className="flex items-end justify-between gap-6 mb-10 md:mb-14">
+					<div className="max-w-3xl">
+						<h1 className="text-foreground text-4xl md:text-6xl font-serif italic mb-5 leading-tight">
+							Events & Mixers
+						</h1>
+						<p className="text-muted-foreground text-base md:text-lg leading-relaxed">
+							Chelsea Commons is hosting curated dinners, mixers, and gatherings
+							all summer in NYC for builders, operators, and founders.
+						</p>
+					</div>
 				</div>
 
 				<div className="border-t border-border mb-10 md:mb-14" />
@@ -335,6 +346,8 @@ function Events() {
 					onSelect={setSelectedEvent}
 				/>
 			</main>
+
+			<PartnersStrip />
 
 			<Footer />
 

@@ -16,6 +16,8 @@ interface ScrollVelocityRowProps extends React.HTMLAttributes<HTMLDivElement> {
 	children: React.ReactNode;
 	baseVelocity?: number;
 	direction?: 1 | -1;
+	/** Keep scrolling in `direction` regardless of page scroll direction */
+	lockDirection?: boolean;
 }
 
 export const wrap = (min: number, max: number, v: number) => {
@@ -71,6 +73,7 @@ function ScrollVelocityRowImpl({
 	children,
 	baseVelocity = 5,
 	direction = 1,
+	lockDirection = false,
 	className,
 	velocityFactor,
 	...props
@@ -142,13 +145,15 @@ function ScrollVelocityRowImpl({
 	});
 
 	useAnimationFrame((_, delta) => {
+		// Reduced motion: the row renders static, no drift at all
+		if (prefersReducedMotionRef.current) return;
 		if (!isInViewRef.current || !isPageVisibleRef.current) return;
 		const dt = delta / 1000;
 		const vf = velocityFactor.get();
 		const absVf = Math.min(5, Math.abs(vf));
-		const speedMultiplier = prefersReducedMotionRef.current ? 1 : 1 + absVf;
+		const speedMultiplier = 1 + absVf;
 
-		if (absVf > 0.1) {
+		if (!lockDirection && absVf > 0.1) {
 			const scrollDirection = vf >= 0 ? 1 : -1;
 			currentDirectionRef.current = baseDirectionRef.current * scrollDirection;
 		}

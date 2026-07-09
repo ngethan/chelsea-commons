@@ -50,7 +50,7 @@ export const Route = createFileRoute("/writing/$slug")({
 	},
 	head: ({ loaderData }) => {
 		return buildSeoTags({
-			title: `${loaderData?.post?.title || "Post"} | THE CHELSEA COMMONS`,
+			title: `${loaderData?.post?.title || "Post"} | Chelsea Commons`,
 			description: loaderData?.post?.excerpt || "Blog post",
 			path: `/writing/${loaderData?.post?.slug || ""}`,
 			imagePath: loaderData?.post?.ogImage,
@@ -154,7 +154,7 @@ function BlogPost() {
 						</div>
 					</header>
 
-					<div className="prose prose-invert prose-neutral max-w-none prose-headings:text-foreground prose-strong:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-li:text-muted-foreground">
+					<div className="prose prose-neutral max-w-none prose-headings:text-foreground prose-strong:text-foreground prose-p:text-muted-foreground prose-p:leading-relaxed prose-li:text-muted-foreground">
 						<Streamdown
 							components={{
 								img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (

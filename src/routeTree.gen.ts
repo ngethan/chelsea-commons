@@ -10,22 +10,35 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WritingRouteImport } from './routes/writing'
+import { Route as V2RouteImport } from './routes/v2'
 import { Route as RsvpRouteImport } from './routes/rsvp'
+import { Route as MicrographicsRouteImport } from './routes/micrographics'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WritingIndexRouteImport } from './routes/writing.index'
 import { Route as WritingSlugRouteImport } from './routes/writing.$slug'
+import { Route as ApiCronSyncEventsRouteImport } from './routes/api.cron.sync-events'
 
 const WritingRoute = WritingRouteImport.update({
   id: '/writing',
   path: '/writing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const V2Route = V2RouteImport.update({
+  id: '/v2',
+  path: '/v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RsvpRoute = RsvpRouteImport.update({
   id: '/rsvp',
   path: '/rsvp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MicrographicsRoute = MicrographicsRouteImport.update({
+  id: '/micrographics',
+  path: '/micrographics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -58,25 +71,36 @@ const WritingSlugRoute = WritingSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => WritingRoute,
 } as any)
+const ApiCronSyncEventsRoute = ApiCronSyncEventsRouteImport.update({
+  id: '/api/cron/sync-events',
+  path: '/api/cron/sync-events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/events': typeof EventsRoute
+  '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
+  '/v2': typeof V2Route
   '/writing': typeof WritingRouteWithChildren
   '/writing/$slug': typeof WritingSlugRoute
   '/writing/': typeof WritingIndexRoute
+  '/api/cron/sync-events': typeof ApiCronSyncEventsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/events': typeof EventsRoute
+  '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
+  '/v2': typeof V2Route
   '/writing/$slug': typeof WritingSlugRoute
   '/writing': typeof WritingIndexRoute
+  '/api/cron/sync-events': typeof ApiCronSyncEventsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -84,10 +108,13 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/events': typeof EventsRoute
+  '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
+  '/v2': typeof V2Route
   '/writing': typeof WritingRouteWithChildren
   '/writing/$slug': typeof WritingSlugRoute
   '/writing/': typeof WritingIndexRoute
+  '/api/cron/sync-events': typeof ApiCronSyncEventsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,29 +123,38 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/events'
+    | '/micrographics'
     | '/rsvp'
+    | '/v2'
     | '/writing'
     | '/writing/$slug'
     | '/writing/'
+    | '/api/cron/sync-events'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$'
     | '/about'
     | '/events'
+    | '/micrographics'
     | '/rsvp'
+    | '/v2'
     | '/writing/$slug'
     | '/writing'
+    | '/api/cron/sync-events'
   id:
     | '__root__'
     | '/'
     | '/$'
     | '/about'
     | '/events'
+    | '/micrographics'
     | '/rsvp'
+    | '/v2'
     | '/writing'
     | '/writing/$slug'
     | '/writing/'
+    | '/api/cron/sync-events'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -126,8 +162,11 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
   EventsRoute: typeof EventsRoute
+  MicrographicsRoute: typeof MicrographicsRoute
   RsvpRoute: typeof RsvpRoute
+  V2Route: typeof V2Route
   WritingRoute: typeof WritingRouteWithChildren
+  ApiCronSyncEventsRoute: typeof ApiCronSyncEventsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -139,11 +178,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WritingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/v2': {
+      id: '/v2'
+      path: '/v2'
+      fullPath: '/v2'
+      preLoaderRoute: typeof V2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rsvp': {
       id: '/rsvp'
       path: '/rsvp'
       fullPath: '/rsvp'
       preLoaderRoute: typeof RsvpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/micrographics': {
+      id: '/micrographics'
+      path: '/micrographics'
+      fullPath: '/micrographics'
+      preLoaderRoute: typeof MicrographicsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -188,6 +241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WritingSlugRouteImport
       parentRoute: typeof WritingRoute
     }
+    '/api/cron/sync-events': {
+      id: '/api/cron/sync-events'
+      path: '/api/cron/sync-events'
+      fullPath: '/api/cron/sync-events'
+      preLoaderRoute: typeof ApiCronSyncEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -209,8 +269,11 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
   EventsRoute: EventsRoute,
+  MicrographicsRoute: MicrographicsRoute,
   RsvpRoute: RsvpRoute,
+  V2Route: V2Route,
   WritingRoute: WritingRouteWithChildren,
+  ApiCronSyncEventsRoute: ApiCronSyncEventsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

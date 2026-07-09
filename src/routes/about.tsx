@@ -15,9 +15,9 @@ import { buildSeoTags } from "../site-config";
 export const Route = createFileRoute("/about")({
 	head: () => {
 		const seo = buildSeoTags({
-			title: "About - THE CHELSEA COMMONS",
+			title: "About - Chelsea Commons",
 			description:
-				"Learn more about why we're building THE CHELSEA COMMONS and who our residents are. 12 ambitious interns from companies like Ramp, JPMorgan, and BlackRock.",
+				"Learn more about why we're building Chelsea Commons and meet our first summer cohort: ambitious builders, operators, and founders at companies like Ramp, JPMorgan, and BlackRock.",
 			path: "/about",
 		});
 		return {
@@ -131,15 +131,15 @@ When I'm not working, you'll find me hooping, playing pickleball, or hitting the
 		image: "/assets/residents/DanielSung.webp",
 	},
 	{
-		name: "Erfan Ballew",
-		company: "PwC",
-		bio: `I'm a sophomore at Berkeley M.E.T. studying EECS and Business. This summer, I'll be a consultant at PwC.
+		name: "Devin Fitzpatrick",
+		company: "CLEAR",
+		bio: `I'm a sophomore at UC Berkeley studying Computer Science & Business Administration. This summer I'm working at CLEAR as a Software Engineering Intern.
 
-I'm a big startup guy — I previously co-founded a company valued at $X,000,000 and am currently building again. I'm also looking to break into venture, aiming to launch a $X,000,000 fund by the end of the summer focused on backing BIPOC and women founders.
+I'm broadly interested in engineering and startups, with a more recent interest in ML research. I'm specifically drawn to applied machine learning and agentic systems. Last summer, I worked at a defense-tech startup that raised over $50 million, building ML tools for non-technical users.
 
-When I'm not building, you'll probably find me surfing, wakeboarding, snowboarding, or lifting.`,
-		linkedin: "https://www.linkedin.com/in/erfan-ballew/",
-		image: "/assets/residents/ErfanBallew-2.webp",
+In my free time, you'll find me running, lifting, snowboarding, playing spikeball and playing basketball with my friends.`,
+		linkedin: "",
+		image: "/assets/residents/DevinFitzpatrick.webp",
 	},
 	{
 		name: "Ethan Ng",
@@ -150,7 +150,7 @@ I previously cofounded an EdTech now company serving 10,000+ students and was em
 
 In my free time, I love to play tennis, play piano, and do photography! Also super interested in cars and have a 2004 350Z.`,
 		linkedin: "https://www.linkedin.com/in/ethan--ng/",
-		image: "/assets/residents/EthanNg-v2.webp",
+		image: "/assets/residents/EthanNg.webp",
 	},
 	{
 		name: "Jackson Dietz",
@@ -220,8 +220,8 @@ As a Canadian I grew up skiing and playing hockey. Living in the Bay Area, it's 
 	},
 	{
 		name: "Tres Frisard",
-		company: "Verition Fund Management",
-		bio: `I'm a Harvard junior studying Computer Science and I am a part of Harvard Poker Club and Harvard First-Year Outdoor Program. This summer, I'll be a software engineer intern at Verition Fund Management.
+		company: "Vatic Labs",
+		bio: `I'm a Harvard junior studying Computer Science and I am a part of Harvard Poker Club and Harvard First-Year Outdoor Program. This summer, I'll be a software engineer intern at Vatic Labs.
 
 Previously, I've interned at Scale AI and Felicis. I'm also the founder and creator of Gnome, a semantic search app for all files.
 
@@ -232,11 +232,15 @@ I dabble in poker, One Piece, and catan.`,
 	{
 		name: "Will Burkhart",
 		company: "Teamworthy Ventures",
-		bio: `I'm a sophomore at Vanderbilt majoring in math. When I'm not in class, I build software to make it easier for researchers to get funding from the DoD. Researchers from 10+ universities have used my software.
+		bio: `Hi! I'm Will. I'm an incoming transfer student at Stanford University.
 
-More generally, national security fires me up. Last summer, I interned at a Stanford national security center, worked with the Army's 75th Ranger Regiment, met four star generals (two of them), and worked on an autonomous weapon system to limit friendly fire. This summer, I'll be working in VC at Teamworthy Ventures.
+This summer, I am working at Teamworthy Ventures in New York City and building a community for interns called Chelsea Commons.
 
-A Tale of Two Cities by Dickens is my favorite book. My favorite movie is La La Land. My favorite artist is Olivia Dean. My favorite day is chest day. Fun fact: I lived in Spain for a year in high school and now I speak Spanish.`,
+I spent the past two years studying Math at Vanderbilt University and developing software to make it easier for researchers to get funding with Stanford's Technology Transfer for Defense office.
+
+A Tale of Two Cities by Dickens is my favorite book. My favorite movie is La La Land. My favorite artist is Olivia Dean. My favorite day is chest day.
+
+If you're in Palo Alto or NYC, let me know!`,
 		linkedin: "https://www.linkedin.com/in/will-burkhart-4b525223a/",
 		image: "/assets/residents/WillBurkhart.webp",
 	},
@@ -274,7 +278,7 @@ function About() {
 							transition={{ duration: 0.4, ease: "easeOut" }}
 							className="text-3xl md:text-5xl text-foreground leading-relaxed mb-8 font-serif italic"
 						>
-							12 Interns. 10 Companies. 1 Summer.
+							One house. A new cohort every season.
 						</motion.p>
 
 						<motion.p
@@ -283,10 +287,12 @@ function About() {
 							transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
 							className="text-xl md:text-3xl text-foreground leading-relaxed mb-8"
 						>
-							We are bringing this group together to grow, build cool stuff, and
-							be the heart of a larger intern ecosystem. Our residents include
-							Stanford AI researchers, D1 athletes, and the NBA's youngest ever
-							intern—incoming at companies like Ramp, JPMorgan, and BlackRock.
+							Each season, Chelsea Commons brings a new batch of ambitious
+							builders, operators, and founders to live together in Chelsea and
+							anchor a growing community across New York. Our first summer cohort
+							includes Stanford AI researchers, D1 athletes, and the NBA's
+							youngest ever intern, at companies like Ramp, JPMorgan, and
+							BlackRock.
 						</motion.p>
 
 						<motion.p
@@ -296,7 +302,7 @@ function About() {
 							className="text-xl md:text-3xl text-foreground leading-relaxed mb-8"
 						>
 							We're backed by a unicorn founder and a Warp executive. Sign up
-							for our summer events and mixers.
+							for our seasonal events and mixers.
 						</motion.p>
 
 						<motion.p
@@ -338,15 +344,17 @@ function About() {
 
 				{/* People Section */}
 				<section ref={peopleRef} className="py-24">
-					<motion.h2
+					<motion.div
 						initial={{ opacity: 0, y: 15 }}
 						whileInView={{ opacity: 1, y: 0 }}
 						viewport={{ once: true, margin: "-100px" }}
 						transition={{ duration: 0.3 }}
-						className="text-2xl font-medium text-foreground mb-12"
+						className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 mb-12"
 					>
-						The Residents
-					</motion.h2>
+						<h2 className="text-2xl font-medium text-foreground">
+							The Residents
+						</h2>
+					</motion.div>
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 						{PEOPLE.map((person, index) => (
 							<motion.div

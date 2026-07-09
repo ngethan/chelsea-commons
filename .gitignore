@@ -11,3 +11,12 @@ count.txt
 .vinxi
 todos.json
 .vercel
+
+# agent tooling (installed locally, not source)
+.claude/skills/
+.cursor/skills/
+.claude/settings.local.json
+
+# impeccable transient outputs
+.impeccable/critique/
+.impeccable/live/

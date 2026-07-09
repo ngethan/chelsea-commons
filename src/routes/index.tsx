@@ -1,24 +1,25 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { useState } from "react";
+import { EventPhotos } from "../components/EventPhotos";
 import { Footer } from "../components/Footer";
+import { LogoStrip } from "../components/LogoStrip";
 import { Navbar } from "../components/Navbar";
-import { Gallery } from "../components/gallery";
+import { HalftoneHeroImage } from "../components/halftone-hero-image";
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
 } from "../components/ui/accordion";
-import { Button } from "../components/ui/button";
 import { buildSeoTags } from "../site-config";
 
 export const Route = createFileRoute("/")({
 	head: () => {
 		const seo = buildSeoTags({
-			title: "THE CHELSEA COMMONS",
+			title: "Chelsea Commons",
 			description:
-				"A community of 12 ambitious interns living, exploring, and building together in Chelsea, Manhattan",
+				"A community of young, ambitious builders, operators, and founders in New York.",
 			path: "/",
 		});
 		return {
@@ -30,125 +31,56 @@ export const Route = createFileRoute("/")({
 	component: App,
 });
 
-const COMPANIES = [
-	{
-		name: "Y Combinator",
-		logo: "/assets/brands/yc-logo.svg",
-		invert: false,
-		url: "https://ycombinator.com",
-	},
-	{
-		name: "8VC",
-		logo: "/assets/brands/8vc-logo.png",
-		invert: true,
-		url: "https://8vc.com",
-	},
-	{
-		name: "BlackRock",
-		logo: "/assets/brands/blackrock-logo.png",
-		invert: true,
-		url: "https://blackrock.com",
-	},
-	{
-		name: "JPMorgan Chase",
-		logo: "/assets/brands/jpmc-logo.png",
-		invert: true,
-		url: "https://jpmorgan.com",
-	},
-	{
-		name: "Ramp",
-		logo: "/assets/brands/ramp-logo.png",
-		invert: true,
-		url: "https://ramp.com",
-	},
-	{
-		name: "Warp",
-		logo: "/assets/brands/warp-logo.png",
-		invert: true,
-		url: "https://www.joinwarp.com",
-	},
-	{
-		name: "Scale AI",
-		logo: "/assets/brands/scale-logo.webp",
-		invert: false,
-		url: "https://scale.com",
-	},
-	{
-		name: "Robinhood",
-		logo: "/assets/brands/robinhood-logo.svg",
-		invert: true,
-		url: "https://robinhood.com",
-	},
-	{
-		name: "Figma",
-		logo: "/assets/brands/figma-logo.png",
-		invert: false,
-		url: "https://figma.com",
-	},
-	{
-		name: "Nvidia",
-		logo: "/assets/brands/nvidia-logo.png",
-		invert: false,
-		url: "https://nvidia.com",
-	},
-	{
-		name: "Teamworthy Ventures",
-		logo: "/assets/brands/teamworthy-logo.png",
-		invert: true,
-		url: "https://www.teamworthy.com",
-	},
-];
-
 const FAQS = [
 	{
-		question: "What's the cost?",
+		question: "What is Chelsea Commons?",
 		answer:
-			"Rent is $2,200 per person per month. We are actively working with partners and sponsors to subsidize rent for residents, and expect final pricing to be significantly lower.",
+			"A community of young, ambitious builders, operators, and founders in New York. It started as twelve people living together in Chelsea, and it's growing into a network that hosts dinners, mixers, and events across the city.",
 	},
 	{
-		question: "How long is the program?",
+		question: "Who is it for?",
 		answer:
-			"Summer 2026 - roughly June through August. Exact dates are flexible depending on your schedule.",
+			"People early in their careers who are building something: founders, engineers, operators, investors, and the generally ambitious. If you want to be around people who make things happen, you'll fit in.",
 	},
 	{
-		question: "Where is the house?",
+		question: "How do I get involved?",
 		answer:
-			"Chelsea, Manhattan. The Found Study building at 300 W 20th Street. Great location with easy access to the rest of the city.",
+			"Come to an event. We host mixers, dinners, and gatherings throughout the summer. Sign up on our events page.",
 	},
 	{
-		question: "What's included?",
+		question: "How does the house work?",
 		answer:
-			"Furnished rooms, gym, study spaces, rooftop access. Wifi and utilities included.",
+			"Each summer we bring together a new cohort of residents to live in the house in Chelsea. Batches change year to year, and the community keeps growing as they cycle through.",
 	},
 	{
-		question: "Who are the residents?",
+		question: "Can I join a future cohort?",
 		answer:
-			"Interns interested in entrepreneurship, exploration, and growth. We brought together a diverse mix of backgrounds and interests - from Stanford AI researchers to D1 athletes to the NBA's youngest ever intern.",
+			"Yes. We select a new batch of residents ahead of each summer. Reach out at hey@chelseacommons.co or follow us to hear when applications open.",
 	},
 	{
 		question: "Is this a hacker house?",
 		answer:
-			"Not in the intense, mandatory-events way. There is no mandatory building or networking. That said, the goal is to connect with each resident, hanging out on weekends while leveraging strengths to build something special.",
+			"Not in the intense, mandatory-events way. There's no forced building or networking, just ambitious people who genuinely want to spend time together and leverage each other's strengths to build something special.",
 	},
 	{
-		question: "How were residents chosen?",
+		question: "Where are you based?",
 		answer:
-			"We looked for people who are scrappy, take initiative, and genuinely add to the house dynamic. People who think creatively and reach out to make things happen.",
-	},
-	{
-		question: "What do people do during the day?",
-		answer:
-			"Most residents are at their internships during the day. Evenings and weekends are for exploring the city together.",
+			"Chelsea, Manhattan. The community grew out of a house at 300 W 20th Street, and most of our events happen nearby.",
 	},
 	{
 		question: "Are there organized events?",
 		answer:
-			"We want input from all residents, but we're thinking a mandatory Sunday dinner to learn something new or host interesting guests. Details TBD with the group.",
+			"Yes: mixers, speaker dinners, and smaller gatherings throughout the summer. Check the events page for what's coming up.",
 	},
 	{
-		question: "Will there be events outside the house?",
+		question: "What does it cost?",
 		answer:
-			"Yes. We're throwing intern mixers and events throughout the summer. Check our events page to sign up.",
+			"Events are mostly free, just sign up. Residents in each summer cohort pay rent for their room in the house, and we work with partners and sponsors to bring that cost down.",
+	},
+	{
+		question: "What do members do during the day?",
+		answer:
+			"Most are at their jobs, internships, or startups during the day. Evenings and weekends are for the community: exploring the city, hosting events, and building together.",
 	},
 ];
 
@@ -160,23 +92,12 @@ function FAQSection() {
 	const rightFaqs = FAQS.slice(half);
 
 	return (
-		<section className="px-6 md:px-12 py-16 border-t border-border min-h-[600px]">
-			<motion.h2
-				initial={{ opacity: 0, y: 15 }}
-				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true, margin: "-100px" }}
-				transition={{ duration: 0.3 }}
-				className="text-2xl font-medium text-foreground mb-8"
-			>
-				FAQ
-			</motion.h2>
+		<section className="relative px-6 md:px-12 py-16 border-t border-border">
+			<h2 className="font-serif italic text-3xl md:text-4xl text-foreground mb-10">
+				Common questions
+			</h2>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 items-start">
-				<motion.div
-					initial={{ opacity: 0, y: 15 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					viewport={{ once: true, margin: "-50px" }}
-					transition={{ duration: 0.3, delay: 0.05 }}
-				>
+				<div>
 					<Accordion
 						type="single"
 						collapsible
@@ -185,19 +106,14 @@ function FAQSection() {
 						className="w-full"
 					>
 						{leftFaqs.map((faq, index) => (
-							<AccordionItem key={index} value={`item-${index}`}>
+							<AccordionItem key={faq.question} value={`item-${index}`}>
 								<AccordionTrigger>{faq.question}</AccordionTrigger>
 								<AccordionContent>{faq.answer}</AccordionContent>
 							</AccordionItem>
 						))}
 					</Accordion>
-				</motion.div>
-				<motion.div
-					initial={{ opacity: 0, y: 15 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					viewport={{ once: true, margin: "-50px" }}
-					transition={{ duration: 0.3, delay: 0.1 }}
-				>
+				</div>
+				<div>
 					<Accordion
 						type="single"
 						collapsible
@@ -206,13 +122,13 @@ function FAQSection() {
 						className="w-full"
 					>
 						{rightFaqs.map((faq, index) => (
-							<AccordionItem key={index + half} value={`item-${index + half}`}>
+							<AccordionItem key={faq.question} value={`item-${index + half}`}>
 								<AccordionTrigger>{faq.question}</AccordionTrigger>
 								<AccordionContent>{faq.answer}</AccordionContent>
 							</AccordionItem>
 						))}
 					</Accordion>
-				</motion.div>
+				</div>
 			</div>
 		</section>
 	);
@@ -223,85 +139,72 @@ function App() {
 		<div className="relative z-10">
 			<Navbar />
 
-			<main className="min-h-[calc(100dvh-112px)] flex items-center justify-center px-6 md:px-12 mb-10">
-				<div className="max-w-2xl text-center">
+			<main className="px-6 md:px-12 pt-10 md:pt-16 pb-16">
+				<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end mb-8 md:mb-12">
+					{/* Statement headline — brand name lives in the navbar; the hero
+					    gets to say something. One consistent display size across lines. */}
 					<motion.h1
 						initial={{ opacity: 0, y: 15 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.4, ease: "easeOut" }}
-						className="text-3xl md:text-5xl font-serif italic text-white leading-tight mb-5"
+						className="w-full min-w-0 lg:col-span-8 font-serif text-foreground text-[clamp(2.75rem,6.5vw,5.25rem)] leading-[1.05]"
 					>
-						A summer community for ambitious interns in NYC.
+						Ambition
+						<br />
+						loves company
+						<span aria-hidden="true" className="text-[0.6em] align-super">
+							{"✳︎"}
+						</span>
 					</motion.h1>
-					<motion.p
-						initial={{ opacity: 0, y: 15 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-						className="text-base md:text-lg text-muted-foreground leading-relaxed mb-6"
-					>
-						Built by 12 interns living together in Manhattan. If you're a
-						founder, builder, or someone driven to grow alongside amazing
-						people—you belong here.
-					</motion.p>
-					<motion.div
-						initial={{ opacity: 0, y: 15 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
-						className="flex items-center justify-center gap-3 mb-10"
-					>
-						<Button
-							size="lg"
-							className="bg-white text-black hover:bg-white/90 h-10 md:h-12 px-6 md:px-8 text-sm md:text-base"
-							asChild
+					<div className="lg:col-span-4 lg:justify-self-end lg:max-w-md flex flex-col gap-5">
+						<motion.p
+							initial={{ opacity: 0, y: 15 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+							className="text-base md:text-lg text-muted-foreground leading-relaxed"
 						>
-							<Link to="/events" className="no-underline">
-								SIGN UP FOR EVENTS
-							</Link>
-						</Button>
-						<Button
-							size="lg"
-							variant="outline"
-							className="h-10 md:h-12 px-6 md:px-8 text-sm md:text-base"
-							asChild
+							A community of young, ambitious builders, operators, and founders
+							in New York, born out of a house in Chelsea. We host dinners,
+							mixers, and events across the city.
+						</motion.p>
+						<motion.p
+							initial={{ opacity: 0, y: 15 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
+							className="text-base md:text-lg text-muted-foreground leading-relaxed"
 						>
-							<Link to="/about" className="no-underline ">
-								ABOUT
-							</Link>
-						</Button>
-					</motion.div>
-
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ duration: 0.3, delay: 0.2 }}
-						className="flex flex-wrap items-center justify-center gap-6 md:gap-10 mt-16 md:mt-24"
-					>
-						{COMPANIES.map((company, index) => (
-							<motion.a
-								key={company.name}
-								href={company.url}
+							Want to come to an event? Fill out our{" "}
+							<Link
+								to="/rsvp"
 								target="_blank"
 								rel="noopener noreferrer"
-								initial={{ opacity: 0, y: 8 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.3, delay: 0.25 + index * 0.03 }}
-								className={`${company.invert ? "invert" : ""} ${"white" in company && company.white ? "brightness-0 invert" : ""} group`}
+								className="text-foreground underline underline-offset-4 decoration-1 hover:text-muted-foreground transition-colors"
 							>
-								<img
-									src={company.logo}
-									alt={company.name}
-									loading="eager"
-									className="h-5 md:h-7 w-auto object-contain opacity-100 group-hover:opacity-70 transition-opacity duration-150"
-								/>
-							</motion.a>
-						))}
-					</motion.div>
+								interest form
+							</Link>
+							!
+						</motion.p>
+					</div>
 				</div>
+
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
+					className="relative"
+				>
+					<HalftoneHeroImage
+						image="/assets/creation-of-adam.jpg"
+						alt="The hands of Adam and God reaching toward each other, after Michelangelo — rendered in halftone"
+					/>
+				</motion.div>
 			</main>
 
-			<FAQSection />
+			<EventPhotos />
 
-			<Gallery />
+			<LogoStrip />
+
+			<FAQSection />
 
 			<Footer />
 		</div>

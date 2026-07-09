@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-02T21:00:00Z",
+  "title": "Design System: Chelsea Commons",
+  "extensions": {
+    "colorMeta": {
+      "cream": {
+        "role": "neutral",
+        "displayName": "Cream",
+        "canonical": "#f2f1e8",
+        "tonalRamp": ["oklch(15% 0.012 105)", "oklch(27% 0.012 105)", "oklch(39% 0.012 105)", "oklch(51% 0.012 105)", "oklch(63% 0.012 105)", "oklch(75% 0.012 105)", "oklch(87% 0.012 105)", "oklch(95% 0.012 105)"]
+      },
+      "surface-cream": {
+        "role": "neutral",
+        "displayName": "Surface Cream",
+        "canonical": "#f7f6ee",
+        "tonalRamp": ["oklch(15% 0.01 105)", "oklch(27% 0.01 105)", "oklch(39% 0.01 105)", "oklch(51% 0.01 105)", "oklch(63% 0.01 105)", "oklch(75% 0.01 105)", "oklch(87% 0.01 105)", "oklch(97% 0.01 105)"]
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Ink",
+        "canonical": "#2b2b2b",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(32% 0 0)", "oklch(45% 0 0)", "oklch(58% 0 0)", "oklch(71% 0 0)", "oklch(84% 0 0)", "oklch(95% 0 0)"]
+      },
+      "faded-ink": {
+        "role": "neutral",
+        "displayName": "Faded Ink",
+        "canonical": "#6b6a62",
+        "tonalRamp": ["oklch(15% 0.012 106)", "oklch(26% 0.012 106)", "oklch(38% 0.012 106)", "oklch(52% 0.012 106)", "oklch(64% 0.012 106)", "oklch(76% 0.012 106)", "oklch(88% 0.012 106)", "oklch(95% 0.012 106)"]
+      },
+      "stone": {
+        "role": "neutral",
+        "displayName": "Stone",
+        "canonical": "#e8e6da",
+        "tonalRamp": ["oklch(15% 0.015 105)", "oklch(27% 0.015 105)", "oklch(39% 0.015 105)", "oklch(51% 0.015 105)", "oklch(63% 0.015 105)", "oklch(75% 0.015 105)", "oklch(87% 0.015 105)", "oklch(93% 0.015 105)"]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#dcd9c9",
+        "tonalRamp": ["oklch(15% 0.02 102)", "oklch(27% 0.02 102)", "oklch(39% 0.02 102)", "oklch(51% 0.02 102)", "oklch(63% 0.02 102)", "oklch(75% 0.02 102)", "oklch(88% 0.02 102)", "oklch(95% 0.02 102)"]
+      },
+      "sage-ring": {
+        "role": "neutral",
+        "displayName": "Sage Ring",
+        "canonical": "#a3a091",
+        "tonalRamp": ["oklch(15% 0.02 110)", "oklch(26% 0.02 110)", "oklch(38% 0.02 110)", "oklch(50% 0.02 110)", "oklch(62% 0.02 110)", "oklch(70% 0.02 110)", "oklch(84% 0.02 110)", "oklch(95% 0.02 110)"]
+      },
+      "signal-red": {
+        "role": "tertiary",
+        "displayName": "Signal Red",
+        "canonical": "oklch(57.7% 0.245 27.325)",
+        "tonalRamp": ["oklch(15% 0.245 27.3)", "oklch(26% 0.245 27.3)", "oklch(38% 0.245 27.3)", "oklch(50% 0.245 27.3)", "oklch(57.7% 0.245 27.3)", "oklch(70% 0.18 27.3)", "oklch(84% 0.1 27.3)", "oklch(95% 0.04 27.3)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Identity moments only: the serif-italic wordmark and hero headlines. Playfair appears once or twice per viewport, no more." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings and page titles." },
+      "body": { "displayName": "Body", "purpose": "Prose, FAQ answers, descriptions. Cap at 65–75ch." },
+      "label": { "displayName": "Label", "purpose": "Buttons and nav items, set as UPPERCASE copy. Wayfinding only." },
+      "mono": { "displayName": "Mono", "purpose": "Inline code in writing posts. Never decorative." }
+    },
+    "gradients": [
+      {
+        "name": "the-ember",
+        "value": "repeating-linear-gradient(100deg, #2d1f3d 10%, #4a1942 15%, #c94c4c 20%, #f4a261 25%, #e76f51 30%, #8b5cf6 35%)",
+        "purpose": "Footer-only aurora glow behind the wordmark: blurred 20px, 70% opacity, bottom-masked, grain overlay. The site's single sanctioned burst of saturated color (The Ember Rule). Never reuse these hues as UI color."
+      }
+    ],
+    "shadows": [
+      { "name": "ambient-rest", "value": "0px 4px 12px -2px hsl(0 0% 0% / 0.1)", "purpose": "Barely-there lift for small floating elements." },
+      { "name": "floating-surface", "value": "0px 4px 12px -2px hsl(0 0% 0% / 0.2), 0px 4px 6px -3px hsl(0 0% 0% / 0.2)", "purpose": "Dialogs and popovers. Static regions use hairline borders instead." }
+    ],
+    "motion": [
+      { "name": "reveal", "value": "opacity 0.3s ease, transform 0.3s ease (y: 15px → 0)", "purpose": "Once-per-element scroll reveal used across sections." },
+      { "name": "link-color", "value": "color 0.3s ease", "purpose": "Prose link and nav hover transitions." },
+      { "name": "marquee", "value": "translateX(0 → -50%) 20s linear infinite", "purpose": "Logo strip loop; pause under prefers-reduced-motion." },
+      { "name": "aurora", "value": "background-position 60s linear infinite", "purpose": "Slow ambient background drift." },
+      { "name": "blur-recede", "value": "filter 0.2s ease, opacity 0.2s ease (siblings: blur(1px) + 50% opacity)", "purpose": "List hover focus: non-hovered items recede." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Square ink-filled CTA with uppercase label; the main conversion affordance (EVENTS FORM).",
+      "html": "<button class=\"ds-btn-primary\">EVENTS FORM</button>",
+      "css": ".ds-btn-primary { background: var(--foreground, #2b2b2b); color: var(--background, #f2f1e8); font-family: 'Neue Montreal', 'Helvetica Neue', sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.01em; height: 36px; padding: 0 14px; border: 1px solid transparent; border-radius: 0; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; cursor: pointer; transition: all 0.2s ease; } .ds-btn-primary:hover { background: color-mix(in srgb, var(--foreground, #2b2b2b) 90%, transparent); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 1px color-mix(in srgb, var(--ring, #a3a091) 50%, transparent); border-color: var(--ring, #a3a091); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Hairline-bordered transparent button; the default nav affordance (ABOUT, EVENTS).",
+      "html": "<button class=\"ds-btn-outline\">ABOUT</button>",
+      "css": ".ds-btn-outline { background: transparent; color: var(--foreground, #2b2b2b); font-family: 'Neue Montreal', 'Helvetica Neue', sans-serif; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.01em; height: 36px; padding: 0 14px; border: 1px solid var(--border, #dcd9c9); border-radius: 0; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; cursor: pointer; transition: all 0.2s ease; } .ds-btn-outline:hover { background: var(--muted, #e8e6da); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 1px color-mix(in srgb, var(--ring, #a3a091) 50%, transparent); border-color: var(--ring, #a3a091); }"
+    },
+    {
+      "name": "Navbar",
+      "kind": "nav",
+      "refersTo": "button-outline",
+      "description": "Sticky cream bar: serif-italic wordmark left, square buttons right.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-wordmark\" href=\"#\">CHELSEA COMMONS</a><div class=\"ds-nav-actions\"><button class=\"ds-nav-btn ds-nav-btn--fill\">EVENTS FORM</button><button class=\"ds-nav-btn\">ABOUT</button><button class=\"ds-nav-btn\">EVENTS</button></div></nav>",
+      "css": ".ds-nav { background: var(--background, #f2f1e8); display: flex; align-items: center; justify-content: space-between; padding: 24px; } .ds-nav-wordmark { font-family: 'Playfair Display Variable', Georgia, serif; font-style: italic; font-weight: 500; font-size: 1.25rem; color: var(--foreground, #2b2b2b); text-decoration: none; } .ds-nav-actions { display: flex; gap: 12px; } .ds-nav-btn { background: transparent; color: var(--foreground, #2b2b2b); font-family: 'Neue Montreal', 'Helvetica Neue', sans-serif; font-size: 0.875rem; font-weight: 500; height: 36px; padding: 0 14px; border: 1px solid var(--border, #dcd9c9); border-radius: 0; cursor: pointer; transition: background 0.2s ease; } .ds-nav-btn:hover { background: var(--muted, #e8e6da); } .ds-nav-btn--fill { background: var(--foreground, #2b2b2b); color: var(--background, #f2f1e8); border-color: transparent; } .ds-nav-btn--fill:hover { background: color-mix(in srgb, var(--foreground, #2b2b2b) 90%, transparent); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Surface-cream sheet with hairline border and gentle 10px rounding; no shadow at rest.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Summer Mixer</h3><p class=\"ds-card-body\">Rooftop drinks with the cohort and friends of the house. Casual, no agenda.</p></div>",
+      "css": ".ds-card { background: var(--card, #f7f6ee); border: 1px solid var(--border, #dcd9c9); border-radius: 10px; padding: 24px; max-width: 340px; } .ds-card-title { font-family: 'Neue Montreal', 'Helvetica Neue', sans-serif; font-weight: 500; font-size: 1.125rem; color: var(--foreground, #2b2b2b); margin: 0 0 8px; } .ds-card-body { font-family: 'Neue Montreal', 'Helvetica Neue', sans-serif; font-weight: 400; font-size: 1rem; line-height: 1.6; color: var(--muted-foreground, #6b6a62); margin: 0; }"
+    },
+    {
+      "name": "Prose Link",
+      "kind": "custom",
+      "refersTo": "body",
+      "description": "Ink link, underline on hover, 300ms transition; inverted selection is a system signature.",
+      "html": "<p class=\"ds-prose\">Come to an event — <a class=\"ds-link\" href=\"#\">sign up on our events page</a>.</p>",
+      "css": ".ds-prose { font-family: 'Neue Montreal', 'Helvetica Neue', sans-serif; font-size: 1rem; line-height: 1.6; color: var(--foreground, #2b2b2b); } .ds-prose ::selection { background: var(--foreground, #2b2b2b); color: var(--background, #f2f1e8); } .ds-link { color: var(--foreground, #2b2b2b); text-decoration: none; transition: color 0.3s ease; } .ds-link:hover { text-decoration: underline; }"
+    },
+    {
+      "name": "FAQ Accordion Row",
+      "kind": "custom",
+      "refersTo": "body",
+      "description": "Hairline-divided question row with body-weight answer; single-open behavior in the app.",
+      "html": "<div class=\"ds-faq\"><button class=\"ds-faq-q\">What is Chelsea Commons?<span class=\"ds-faq-icon\">+</span></button><p class=\"ds-faq-a\">A community of young, ambitious builders, operators, and founders in New York.</p></div>",
+      "css": ".ds-faq { border-bottom: 1px solid var(--border, #dcd9c9); max-width: 420px; font-family: 'Neue Montreal', 'Helvetica Neue', sans-serif; } .ds-faq-q { display: flex; justify-content: space-between; align-items: center; width: 100%; background: none; border: none; padding: 16px 0; font-family: inherit; font-size: 1rem; font-weight: 500; color: var(--foreground, #2b2b2b); cursor: pointer; text-align: left; } .ds-faq-q:hover { color: var(--muted-foreground, #6b6a62); } .ds-faq-icon { font-weight: 400; color: var(--muted-foreground, #6b6a62); } .ds-faq-a { font-size: 1rem; font-weight: 400; line-height: 1.6; color: var(--muted-foreground, #6b6a62); margin: 0; padding: 0 0 16px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Common Room",
+    "overview": "The system is a shared living room in a Chelsea brownstone rendered as a website: warm paper walls, dark ink, photographs pinned up, partner logos drifting past like conversation. Everything sits on one continuous cream surface (#f2f1e8) with soft charcoal ink (#2b2b2b) — no pure white, no pure black — so the whole site reads as a single printed object rather than a stack of app screens. The serif italic wordmark against square, uppercase sans buttons gives it the collegiate-editorial tension of young people borrowing old forms and making them their own. The system explicitly rejects SaaS startup-landing mechanics (hero metrics, feature grids, gradient CTAs), hacker-house terminal aesthetics (neon-on-dark, hustle energy), and sterile luxury-beige minimalism. Warmth is carried by photography (halftone hero treatments, candid event photos) and voice — the cream field is the paper it's printed on, not the personality itself.",
+    "keyCharacteristics": [
+      "One continuous cream paper surface; depth from hairline borders, not shadows",
+      "Serif italic reserved for identity moments; workhorse grotesque (Neue Montreal) everywhere else",
+      "Square-cornered, uppercase-labeled buttons; rounded corners reserved for imagery and cards",
+      "Photography-led: halftone treatments, candid event photos, marquee logo strips",
+      "Quiet, brief motion: 0.3s fades, infinite marquees, blur-recede hover states"
+    ],
+    "rules": [
+      { "name": "The One Paper Rule", "body": "Every page shares the same cream field — no alternating white/gray section stripes, no dark-mode sections dropped into the scroll. Section rhythm comes from hairline top-borders and spacing, never background changes.", "section": "colors" },
+      { "name": "The Inverted Selection Rule", "body": "Text selection flips the palette (ink background, cream text). It's a signature micro-detail; keep it.", "section": "colors" },
+      { "name": "The Ember Rule", "body": "The footer's aurora gradient is the site's single sanctioned burst of saturated color — the fire at the end of the evening. It appears once, in the footer send-off, always blurred and masked, never as sharp-edged UI color. Everywhere outside the footer, Signal Red remains the only saturated color.", "section": "colors" },
+      { "name": "The Rare Serif Rule", "body": "Playfair is the brand's signature, and signatures appear once. Wordmark, hero, maybe a pull-quote — everything else is Neue Montreal.", "section": "typography" },
+      { "name": "The Uppercase-Is-Wayfinding Rule", "body": "All-caps is only for short navigational labels (nav links, buttons). Never for headings or body copy.", "section": "typography" },
+      { "name": "The Border-First Rule", "body": "If you're reaching for a shadow to separate two static regions, use a hairline border instead. Shadows are for things that float above the paper, and paper rarely floats.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep every page on the single Cream field (#f2f1e8) — section rhythm comes from hairline top-borders (border-t, #dcd9c9) and 64px vertical padding.",
+      "Do keep buttons square (0px radius) with uppercase 0.875rem labels; keep cards and imagery gently rounded (10px). The contrast is the system.",
+      "Do reserve Playfair italic for identity moments (wordmark, hero) and let Neue Montreal carry everything else.",
+      "Do lead with photography — halftone hero treatments, candid event photos, real partner logos. People are the proof.",
+      "Do keep motion brief and quiet: 0.3s ease fades with ~15px rise, triggered once per element; marquees linear and slow.",
+      "Do provide prefers-reduced-motion alternatives for every animation (marquee, aurora, scroll reveals, velocity text)."
+    ],
+    "donts": [
+      "Don't import SaaS startup-landing mechanics — hero metrics, feature grids, gradient CTAs, \"Join 10,000+ builders\" counters.",
+      "Don't drift toward hacker-house tropes — terminal aesthetics, neon-on-dark, monospace-as-personality. Geist Mono is for code, not costume.",
+      "Don't let the palette go sterile-luxury-beige — if a section has no photograph, no person, and no voice, the cream field alone will read as an empty template.",
+      "Don't use pure white (#ffffff) or pure black (#000000) anywhere; the palette's warmth lives in the offsets.",
+      "Don't round button corners or add colored side-stripe borders to cards, callouts, or list items.",
+      "Don't lighten Faded Ink (#6b6a62) or set body copy in it at sizes below 1rem — it's the AA floor, not a starting point.",
+      "Don't introduce new saturated colors; Signal Red is the only saturated UI color (\"destructive\"), and The Ember gradient lives only in the footer."
+    ]
+  }
+}
