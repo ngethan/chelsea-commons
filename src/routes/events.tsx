@@ -193,12 +193,28 @@ function EventDrawer({
 						</div>
 
 						<div className="flex-1 overflow-y-auto">
-							{event.image && (
-								<img
-									src={event.image}
-									alt={event.title}
-									className="w-full h-auto"
-								/>
+							{event.gallery && event.gallery.length > 0 ? (
+								<div className="grid grid-cols-2 gap-1">
+									{event.gallery.map((src, i) => (
+										<img
+											key={src}
+											src={src}
+											alt={`${event.title} (${i + 1})`}
+											loading={i === 0 ? undefined : "lazy"}
+											className={`w-full h-full object-cover aspect-square ${
+												i === 0 ? "col-span-2 aspect-video" : ""
+											}`}
+										/>
+									))}
+								</div>
+							) : (
+								event.image && (
+									<img
+										src={event.image}
+										alt={event.title}
+										className="w-full h-auto"
+									/>
+								)
 							)}
 
 							<div className="p-6 flex flex-col gap-6">

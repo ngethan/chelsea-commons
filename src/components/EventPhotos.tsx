@@ -2,43 +2,37 @@ import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { getDisplayEvents } from "../lib/lumaEvents";
 
 type Photo = {
 	src: string;
 	alt: string;
-	/** Date stamp for real event photos; house/neighborhood shots get a label instead */
-	date?: string;
-	label?: string;
+	/** Print-style date stamp, e.g. "06.02.26" */
+	date: string;
 };
 
-const PHOTOS: Photo[] = [
-	{
-		src: "/events/menlo-rho.avif",
-		alt: "Menlo Ventures dinner",
-		date: "06.02.26",
-	},
-	{ src: "/events/cory-levy.avif", alt: "Cory Levy dinner", date: "06.03.26" },
-	{
-		src: "/events/box-group.avif",
-		alt: "Box Group game night",
-		date: "06.10.26",
-	},
-	{
-		src: "/assets/space/rooftop.jpg",
-		alt: "The rooftop of the house",
-		label: "The rooftop",
-	},
-	{
-		src: "/assets/space/surrounding.jpg",
-		alt: "The streets around the house in Chelsea",
-		label: "The neighborhood",
-	},
-	{
-		src: "/assets/space/building.jpg",
-		alt: "The house at 300 W 20th Street",
-		label: "The house",
-	},
-];
+const MAX_EVENT_PHOTOS = 9;
+
+/** "2026-06-02" -> "06.02.26", matching the print-style date stamps. */
+function stampDate(dateStr: string): string {
+	const [y, m, d] = dateStr.split("-");
+	return `${m}.${d}.${y.slice(2)}`;
+}
+
+/** The most recent past events that have a photo (gallery cover or Luma image). */
+function pastEventPhotos(): Photo[] {
+	return getDisplayEvents()
+		.filter((e) => e.status === "past" && e.image)
+		.sort((a, b) => b.date.localeCompare(a.date))
+		.slice(0, MAX_EVENT_PHOTOS)
+		.map((e) => ({
+			src: e.image as string,
+			alt: e.title,
+			date: stampDate(e.date),
+		}));
+}
+
+const PHOTOS: Photo[] = pastEventPhotos();
 
 /** Alternating tilts and vertical nudges so the reel reads as prints pinned
  *  to a board rather than a grid. Hover squares a print back up. */
@@ -87,7 +81,7 @@ function PhotoCard({ photo, index }: { photo: Photo; index: number }) {
 					className="aspect-square w-full object-cover"
 				/>
 				<figcaption className="absolute bottom-3.5 inset-x-3 text-center font-mono text-xs lowercase text-muted-foreground truncate">
-					{photo.alt} — {photo.date ?? photo.label}
+					{photo.alt} — {photo.date}
 				</figcaption>
 			</div>
 		</motion.figure>

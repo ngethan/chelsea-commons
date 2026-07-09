@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "vite dev --port 3000",
     "start": "node .output/server/index.mjs",
-    "build": "npm run sync:events && vite build",
+    "build": "npm run sync:events && npm run sync:galleries && vite build",
     "sync:events": "node scripts/sync-luma-events.mjs",
+    "sync:galleries": "node scripts/sync-event-galleries.mjs",
     "serve": "vite preview",
     "format": "biome format",
     "lint": "biome lint",

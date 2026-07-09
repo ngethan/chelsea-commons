@@ -1,7 +1,122 @@
 {
-	"generatedAt": "2026-07-06T21:27:01.832Z",
+	"generatedAt": "2026-07-09T15:19:07.702Z",
 	"calendarApiId": "cal-Ab7IiaASyPX2MKb",
 	"events": [
+		{
+			"id": "mu0akf9q",
+			"title": "NYC Healthcare Builders Rooftop Mixer",
+			"date": "2026-07-14",
+			"time": "6:30 PM",
+			"endTime": "8:30 PM",
+			"location": "148 Lafayette St",
+			"address": "148 Lafayette St, New York, NY 10013, USA",
+			"image": "https://images.lumacdn.com/uploads/bv/b1d7a017-76fc-4523-af7f-82b89eb9425e.png",
+			"rsvpUrl": "https://luma.com/mu0akf9q",
+			"status": "upcoming",
+			"lumaEventApiId": "evt-qiCYjYkAVa5ZmyN",
+			"lumaCalendarEventApiId": "calev-W51t4GYKYl1MQoH",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				}
+			],
+			"description": "Please join us for an evening on our newly unveiled rooftop on July 14th, hosted by General Catalyst, Mercury & Chelsea Commons.\n\nWe're bringing together a group of NYC's most promising young AI builders with founders and operators from the NYC ecosystem who are building at the intersection of AI and healthcare. The evening will include a rooftop reception, ice cream, and a brief, informal discussion with a few of our portfolio founders.\n\nOur hope is to spark real connections between emerging builders and the founders behind some of the most innovative healthcare companies. Whether you're early in your career, thinking about starting something, or just curious about building in healthcare, we'd love to have you join us."
+		},
+		{
+			"id": "nrletiv9",
+			"title": "🏆 Builders Cup 2026 - A Hackathon by Ramp",
+			"date": "2026-07-18",
+			"time": "10:00 AM",
+			"endTime": "4:00 PM",
+			"location": "Manhattan",
+			"image": "https://images.lumacdn.com/uploads/t7/47da0f7c-b739-40d7-be66-b66fc1128864.jpg",
+			"rsvpUrl": "https://luma.com/nrletiv9",
+			"status": "upcoming",
+			"lumaEventApiId": "evt-LlhzMiRMdutkcUe",
+			"lumaCalendarEventApiId": "calev-4qpwyGrLUYZP4EU",
+			"hosts": [
+				{
+					"name": "Richard Noguchi",
+					"avatar": "https://images.lumacdn.com/uploads/2o/05ebac70-f3f9-487e-b402-580949bfcc02.jpg",
+					"username": null
+				},
+				{
+					"name": "Cat Choy",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_4.png",
+					"username": null
+				},
+				{
+					"name": "angela",
+					"avatar": "https://images.lumacdn.com/avatars/o7/b1b22e9e-b073-40e8-bb47-6a00ec11ca18",
+					"username": null
+				},
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				}
+			],
+			"description": "Presented by Ramp and sponsored by Cursor, Codex, and Chelsea Commons.\n\nThe ball is in your court. Build something that matters.\n\nRamp is hosting Builders Cup - a one-day hackathon in New York City where the best builders compete for prizes, glory, and a shot at impressing some of the fastest-growing tech companies in the world. Whether you come with a team or work solo, this is your chance to ship something real, show what you've got, and go home with bragging rights (and maybe some cool prizes).\n\nJoin us for a full day of hacking, mentorship, demos, and - yes - very good food.\n\n💰 Prizes\n\nWe're awarding across four tracks:\n\nAudience Favorite — the crowd decides. Most votes wins.Best Game — built something fun? This one's for you.Save Time. Save Money. — build anything that saves people time and money.Best Use of Our Sponsors — more details soon.\n\n🗓️ Day of Schedule\n\n10AM — Doors Open - coffee, networking, find your people\n\n10:30AM — Kickoff remarks from Ramp and our sponsors\n\n11AM — Hacking starts\n\n12PM — Lunch\n\n3:00PM — Demos + awards ceremony\n\n🛠️ What to Expect\n\nCursor + Codex workshops: live zero-to-one workshops so you can hit the ground running - credits includedMentors on-site to help you shipCareer fair-style demos: you present at your station, the crowd votes, top builders get the spotlightPrizes for winnersFood, coffee, and good vibes all day\n\n👤 Who Should Join\n\nCS or software engineering students graduating 2027 or laterAble to attend in-person in New York City (no travel sponsorship at this time)Builders of any experience level — individual hackers and teams of up to 4 welcomeYou don't need an idea yet. You just need to show up ready to build.\n\n📍 Location\n\nFlatiron District, NYC — exact address shared upon RSVP confirmation."
+		},
+		{
+			"id": "7z6dr7uw",
+			"title": "TQ Ventures Dinner",
+			"date": "2026-07-08",
+			"time": "8:00 PM",
+			"endTime": "10:00 PM",
+			"location": "Pasquale Jones",
+			"address": "Pasquale Jones, 187 Mulberry St, New York, NY 10012, USA",
+			"image": "https://images.lumacdn.com/uploads/9t/042e6b6a-bab8-4bdb-8ccd-7ce1bf275a3c.png",
+			"rsvpUrl": "https://luma.com/7z6dr7uw",
+			"status": "past",
+			"lumaEventApiId": "evt-6hsXNT4qMg87BnZ",
+			"lumaCalendarEventApiId": "calev-ddkggaUq3qdSn9c",
+			"hosts": [
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				},
+				{
+					"name": "Alex Poudade",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_39.png",
+					"username": null
+				},
+				{
+					"name": "Schuster Tanger",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": null
+				},
+				{
+					"name": "Andrew Marks",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_40.png",
+					"username": null
+				},
+				{
+					"name": "Anika Halappanavar",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": null
+				},
+				{
+					"name": "Sandy Yao",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_16.png",
+					"username": null
+				},
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				}
+			],
+			"description": "Dinner for exceptional young builders. By invitation only."
+		},
 		{
 			"id": "tdxwxj1w",
 			"title": "Lerer Hippeau Dinner",

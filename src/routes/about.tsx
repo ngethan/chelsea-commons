@@ -17,7 +17,7 @@ export const Route = createFileRoute("/about")({
 		const seo = buildSeoTags({
 			title: "About - Chelsea Commons",
 			description:
-				"Learn more about why we're building Chelsea Commons and meet this summer's cohort: ambitious builders, operators, and founders at companies like Ramp, JPMorgan, and BlackRock.",
+				"Learn more about why we're building Chelsea Commons and meet our first summer cohort: ambitious builders, operators, and founders at companies like Ramp, JPMorgan, and BlackRock.",
 			path: "/about",
 		});
 		return {
@@ -278,7 +278,7 @@ function About() {
 							transition={{ duration: 0.4, ease: "easeOut" }}
 							className="text-3xl md:text-5xl text-foreground leading-relaxed mb-8 font-serif italic"
 						>
-							One house. A new cohort every summer.
+							One house. A new cohort every season.
 						</motion.p>
 
 						<motion.p
@@ -287,9 +287,9 @@ function About() {
 							transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
 							className="text-xl md:text-3xl text-foreground leading-relaxed mb-8"
 						>
-							Each summer, Chelsea Commons brings a new batch of ambitious
+							Each season, Chelsea Commons brings a new batch of ambitious
 							builders, operators, and founders to live together in Chelsea and
-							anchor a growing community across New York. This year's cohort
+							anchor a growing community across New York. Our first summer cohort
 							includes Stanford AI researchers, D1 athletes, and the NBA's
 							youngest ever intern, at companies like Ramp, JPMorgan, and
 							BlackRock.
@@ -302,7 +302,7 @@ function About() {
 							className="text-xl md:text-3xl text-foreground leading-relaxed mb-8"
 						>
 							We're backed by a unicorn founder and a Warp executive. Sign up
-							for our summer events and mixers.
+							for our seasonal events and mixers.
 						</motion.p>
 
 						<motion.p
