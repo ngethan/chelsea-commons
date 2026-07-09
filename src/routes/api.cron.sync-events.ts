@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 /**
- * Vercel cron target (see `crons` in vercel.json). Events are baked into the
- * bundle at build time by scripts/sync-luma-events.mjs, so "syncing" means
- * triggering a fresh deploy via a deploy hook; the build re-fetches Luma.
+ * Vercel cron target (see `crons` in vercel.json; daily — Hobby plan limit).
+ * Events are baked into the bundle at build time by
+ * scripts/sync-luma-events.mjs, so "syncing" means triggering a fresh deploy
+ * via a deploy hook; the build re-fetches Luma.
  *
  * Required Vercel env vars:
  *   VERCEL_DEPLOY_HOOK_URL — Project Settings → Git → Deploy Hooks

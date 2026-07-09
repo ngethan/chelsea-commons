@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/api/cron/sync-events",
-      "schedule": "23 */6 * * *"
+      "schedule": "23 9 * * *"
     }
   ]
 }
