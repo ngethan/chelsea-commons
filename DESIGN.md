@@ -33,7 +33,7 @@ typography:
     fontSize: "0.875rem"
     letterSpacing: "0.01em"
   mono:
-    fontFamily: "Geist Mono, Menlo, monospace"
+    fontFamily: "Sohne Mono, Geist Mono, Menlo, monospace"
     fontWeight: 400
     fontSize: "0.875rem"
 rounded:
@@ -120,7 +120,7 @@ A two-voice palette — warm paper and dark ink — with a band of tinted neutra
 
 **Display Font:** Playfair Display Variable (with Georgia fallback)
 **Body Font:** Neue Montreal (with Helvetica Neue / system sans fallback)
-**Label/Mono Font:** Geist Mono (code and technical fragments only)
+**Label/Mono Font:** Söhne Mono, Geist Mono fallback (tracked micro-labels, code, and technical fragments)
 
 **Character:** A high-contrast literary serif played against a cool Canadian grotesque — the editorial pairing of a magazine masthead over newsprint. Playfair appears *sparingly and usually in italic* (the wordmark, select display moments); Neue Montreal does everything else in four weights (300/400/500/700, with true italics).
 
@@ -129,7 +129,7 @@ A two-voice palette — warm paper and dark ink — with a band of tinted neutra
 - **Headline** (Neue Montreal 500, 1.5rem, 1.3): Section headings ("FAQ", page titles).
 - **Body** (Neue Montreal 400, 1rem, 1.6): Prose, FAQ answers, descriptions. Cap at 65–75ch.
 - **Label** (Neue Montreal 500, 0.875rem, +0.01em): Buttons and nav items, set in UPPERCASE as literal copy ("EVENTS FORM", "ABOUT"). Uppercase is reserved for these short wayfinding labels.
-- **Mono** (Geist Mono 400, 0.875rem): Inline code and technical fragments in writing posts only. Never decorative.
+- **Mono** (Söhne Mono 400, Geist Mono fallback, 0.875rem): Tracked uppercase micro-labels (brand boards, photo captions, micrographics), inline code, and technical fragments. Never monospace-as-personality.
 
 ### Named Rules
 **The Rare Serif Rule.** Playfair is the brand's signature, and signatures appear once. Wordmark, hero, maybe a pull-quote — everything else is Neue Montreal.
@@ -202,7 +202,7 @@ Flat by default. Depth is conveyed by hairline borders (#dcd9c9), the half-step 
 
 ### Don't:
 - **Don't** import SaaS startup-landing mechanics — hero metrics, feature grids, gradient CTAs, "Join 10,000+ builders" counters (PRODUCT.md anti-reference).
-- **Don't** drift toward hacker-house tropes — terminal aesthetics, neon-on-dark, monospace-as-personality (PRODUCT.md anti-reference). Geist Mono is for code, not costume.
+- **Don't** drift toward hacker-house tropes — terminal aesthetics, neon-on-dark, monospace-as-personality (PRODUCT.md anti-reference). The mono (Söhne Mono) is for labels and code, not costume.
 - **Don't** let the palette go sterile-luxury-beige — if a section has no photograph, no person, and no voice, the cream field alone will read as an empty template (PRODUCT.md anti-reference).
 - **Don't** use pure white (#ffffff) or pure black (#000000) anywhere; the palette's warmth lives in the offsets.
 - **Don't** round button corners or add colored side-stripe borders to cards, callouts, or list items.

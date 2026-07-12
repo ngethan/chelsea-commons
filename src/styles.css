@@ -20,8 +20,8 @@ body {
 }
 
 code {
-	font-family: "Geist Mono", source-code-pro, Menlo, Monaco, Consolas,
-		"Courier New", monospace;
+	font-family: "Sohne Mono", "Geist Mono", source-code-pro, Menlo, Monaco,
+		Consolas, "Courier New", monospace;
 }
 
 main a:not(.no-underline) {
@@ -57,7 +57,7 @@ main a.no-underline {
 	--font-sans: "Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI",
 		sans-serif;
 	--font-serif: "Playfair Display Variable", serif;
-	--font-mono: Geist Mono;
+	--font-mono: "Sohne Mono", "Geist Mono", Menlo, monospace;
 	--radius: 0.625rem;
 	--shadow-2xs: 0px 4px 12px -2px hsl(0 0% 0% / 0.1);
 	--shadow-xs: 0px 4px 12px -2px hsl(0 0% 0% / 0.1);

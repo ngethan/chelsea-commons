@@ -6,8 +6,7 @@
 	}
 
 	.font-mono {
-		font-family: "Geist Mono", source-code-pro, Menlo, Monaco, Consolas,
-			"Courier New", monospace;
+		font-family: var(--font-mono);
 	}
 
 	.font-display {
@@ -42,29 +41,29 @@
 		font-weight: 700;
 	}
 
-	/* Geist Mono specific weight classes */
+	/* Mono specific weight classes */
 	.font-mono-light {
-		font-family: "Geist Mono", monospace;
+		font-family: var(--font-mono);
 		font-weight: 300;
 	}
 
 	.font-mono-regular {
-		font-family: "Geist Mono", monospace;
+		font-family: var(--font-mono);
 		font-weight: 400;
 	}
 
 	.font-mono-semibold {
-		font-family: "Geist Mono", monospace;
+		font-family: var(--font-mono);
 		font-weight: 600;
 	}
 
 	.font-mono-bold {
-		font-family: "Geist Mono", monospace;
+		font-family: var(--font-mono);
 		font-weight: 700;
 	}
 
 	.font-mono-black {
-		font-family: "Geist Mono", monospace;
+		font-family: var(--font-mono);
 		font-weight: 900;
 	}
 }

@@ -38,6 +38,12 @@
         "value": "#8b5cf6",
         "reason": "User confirmed footer aurora gradient is intentional (The Ember Rule, footer-only exception)",
         "createdAt": "2026-07-02T21:19:33.804Z"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "sohne mono",
+        "reason": "User explicitly chose Söhne Mono as the site mono",
+        "createdAt": "2026-07-12T22:27:14.782Z"
       }
     ]
   }

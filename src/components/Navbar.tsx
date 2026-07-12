@@ -23,9 +23,12 @@ export function Navbar() {
 		<div className="sticky top-0 z-(--z-nav) w-full">
 			<nav className="w-full relative z-(--z-nav) bg-background">
 				<div className="px-6 md:px-12 py-6 flex items-center justify-between">
-					<Link to="/" className="text-foreground font-medium text-xl font-serif">
+					<Link
+						to="/"
+						className="text-foreground font-medium text-xl font-serif"
+					>
 						<span className="md:hidden">XII</span>
-						<span className="hidden italic md:inline">CHELSEA COMMONS</span>
+						<span className="hidden md:inline">CHELSEA COMMONS</span>
 					</Link>
 
 					<div className="hidden md:flex items-center gap-3">

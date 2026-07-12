@@ -4,6 +4,7 @@ import {
 	Outlet,
 	Scripts,
 	createRootRoute,
+	useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Analytics } from "@vercel/analytics/react";
@@ -96,7 +97,7 @@ function RootComponent() {
 	// Easter egg for the kind of person who opens devtools on a community site.
 	useEffect(() => {
 		console.log(
-			"%cChelsea Commons%c\n300 W 20th Street, New York, NY\n\nYou opened the console. You'd probably fit right in.\nhey@chelseacommons.co",
+			"%cChelsea Commons%c\nChelsea, New York, NY\n\nYou opened the console. You'd probably fit right in.\nhey@chelseacommons.co",
 			"font-family: Georgia, serif; font-style: italic; font-size: 24px;",
 			"font-size: 12px;",
 		);
@@ -112,6 +113,9 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+	const isBoardCapture = useRouterState({
+		select: (s) => s.location.pathname.startsWith("/brand/board"),
+	});
 	const structuredData = {
 		"@context": "https://schema.org",
 		"@type": "Organization",
@@ -122,10 +126,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			"A community of young, ambitious builders, operators, and founders in New York, with a new cohort living together in Chelsea each summer.",
 		address: {
 			"@type": "PostalAddress",
-			streetAddress: "300 W 20th Street",
 			addressLocality: "New York",
 			addressRegion: "NY",
-			postalCode: "10011",
 			addressCountry: "US",
 		},
 		contactPoint: {
@@ -182,7 +184,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					}}
 				/>
 				{children}
-				{process.env.NODE_ENV === "development" && (
+				{/* Keep devtools out of /brand/board/* so artboard captures stay clean */}
+				{process.env.NODE_ENV === "development" && !isBoardCapture && (
 					<TanStackDevtools
 						config={{
 							position: "bottom-left",
@@ -196,10 +199,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					/>
 				)}
 				<Scripts />
-			{/* impeccable-live-start */}
-<script src="http://localhost:8400/live.js"></script>
-{/* impeccable-live-end */}
-</body>
+			</body>
 		</html>
 	);
 }

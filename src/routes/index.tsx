@@ -1,6 +1,8 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EventPhotos } from "../components/EventPhotos";
 import { Footer } from "../components/Footer";
 import { LogoStrip } from "../components/LogoStrip";
@@ -65,7 +67,7 @@ const FAQS = [
 	{
 		question: "Where are you based?",
 		answer:
-			"Chelsea, Manhattan. The community grew out of a house at 300 W 20th Street, and most of our events happen nearby.",
+			"Chelsea, Manhattan. The community grew out of a house in the neighborhood, and most of our events happen nearby.",
 	},
 	{
 		question: "Are there organized events?",
@@ -83,6 +85,52 @@ const FAQS = [
 			"Most are at their jobs, internships, or startups during the day. Evenings and weekends are for the community: exploring the city, hosting events, and building together.",
 	},
 ];
+
+/** The hero asterisk: spins with scroll velocity and coasts to a stop. */
+function ScrollSpinGlyph() {
+	const ref = useRef<HTMLSpanElement>(null);
+
+	useEffect(() => {
+		const el = ref.current;
+		if (!el) return;
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+		gsap.registerPlugin(ScrollTrigger);
+
+		let rotation = 0;
+		let spin = 0; // deg/sec, fed by scroll velocity
+
+		const trigger = ScrollTrigger.create({
+			onUpdate: (self) => {
+				// px/sec -> deg/sec; fast flicks read as a full whirl
+				spin = gsap.utils.clamp(-1440, 1440, self.getVelocity() * 0.35);
+			},
+		});
+
+		const tick = (_time: number, deltaTime: number) => {
+			const dt = deltaTime / 1000;
+			rotation = (rotation + spin * dt) % 360;
+			spin *= Math.exp(-2.5 * dt); // friction: coast down after scrolling stops
+			el.style.transform = `rotate(${rotation}deg)`;
+		};
+		gsap.ticker.add(tick);
+
+		return () => {
+			trigger.kill();
+			gsap.ticker.remove(tick);
+		};
+	}, []);
+
+	return (
+		<span
+			ref={ref}
+			aria-hidden="true"
+			className="inline-block text-[0.6em] align-super will-change-transform"
+		>
+			{"✳︎"}
+		</span>
+	);
+}
 
 function FAQSection() {
 	const [openItem, setOpenItem] = useState<string | undefined>(undefined);
@@ -152,9 +200,7 @@ function App() {
 						Ambition
 						<br />
 						loves company
-						<span aria-hidden="true" className="text-[0.6em] align-super">
-							{"✳︎"}
-						</span>
+						<ScrollSpinGlyph />
 					</motion.h1>
 					<div className="lg:col-span-4 lg:justify-self-end lg:max-w-md flex flex-col gap-5">
 						<motion.p

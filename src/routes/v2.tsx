@@ -77,7 +77,7 @@ const FAQS = [
 	{
 		question: "Where are you based?",
 		answer:
-			"Chelsea, Manhattan. The community grew out of a house at 300 W 20th Street, and most of our events happen nearby.",
+			"Chelsea, Manhattan. The community grew out of a house in the neighborhood, and most of our events happen nearby.",
 	},
 	{
 		question: "Are there organized events?",
@@ -205,7 +205,7 @@ function HeroLockup() {
 					<Dot className="absolute left-0 top-[3px]" />
 					New York:NY
 					<br />
-					300 W 20th St, 10011
+					Chelsea, Manhattan
 				</span>
 				<span className="relative pl-3">
 					<Dot className="absolute left-0 top-[3px]" />
@@ -331,7 +331,7 @@ function StatsBand() {
 	const stats = [
 		{ n: "30", label: "Residents", note: "S/26 cohort" },
 		{ n: "12", label: "Weeks", note: "Jun — Aug" },
-		{ n: "01", label: "House", note: "300 W 20th St" },
+		{ n: "01", label: "House", note: "Chelsea, NYC" },
 		{ n: "∞", label: "Dinners", note: "approx." },
 	];
 	return (

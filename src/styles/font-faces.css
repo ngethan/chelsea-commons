@@ -63,6 +63,41 @@
 	src: url("/fonts/NeueMontreal-BoldItalic.woff2") format("woff2");
 }
 
+/* Söhne Mono — NOTE: currently Klim TRIAL cuts (letters+digits only; punctuation
+   falls back to Geist Mono). Buy the license and replace these files before
+   relying on it as the production mono. */
+@font-face {
+	font-family: "Sohne Mono";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/SohneMono-Buch.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Sohne Mono";
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/SohneMono-BuchKursiv.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Sohne Mono";
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url("/fonts/SohneMono-Kraftig.woff2") format("woff2");
+}
+
+@font-face {
+	font-family: "Sohne Mono";
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url("/fonts/SohneMono-Halbfett.woff2") format("woff2");
+}
+
 /* Geist Mono Font Family (Variable Font) */
 @font-face {
 	font-family: "Geist Mono";

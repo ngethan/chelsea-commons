@@ -103,7 +103,7 @@ function CityLockup() {
 					<Dot className="absolute left-0 top-[3px]" />
 					NEW YORK:NY
 					<br />
-					300 W 20TH ST, 10011
+					CHELSEA, MANHATTAN
 				</div>
 				<div className="relative pl-3 text-right">
 					<Dot className="absolute left-0 top-[3px]" />
@@ -235,7 +235,7 @@ function OrbitalGlobe() {
 				</svg>
 			</div>
 			<div className="font-mono text-[10px] text-center leading-[1.8]">
-				OBJ: COMMON ROOM · ORBIT: W 20TH ST
+				OBJ: COMMON ROOM · ORBIT: CHELSEA
 				<br />
 				<span className="opacity-60">PERIOD 12 WK ↺ INCLINATION: HIGH</span>
 			</div>
@@ -505,7 +505,7 @@ function ShippingLabel() {
 				</div>
 				<div className="px-3 py-2">
 					<div className="opacity-50 text-[8px]">DEST.</div>
-					CHELSEA, NYC 10011
+					CHELSEA, NYC
 				</div>
 			</div>
 			<div className="grid grid-cols-3 border-b border-border text-center">
@@ -712,7 +712,7 @@ function IndexLegend() {
 
 function TimeTable() {
 	const rows = [
-		["06.01", "MOVE-IN", "300 W 20TH ST", "CONF"],
+		["06.01", "MOVE-IN", "CHELSEA, NYC", "CONF"],
 		["06.19", "ROOFTOP 001", "CHELSEA", "CONF"],
 		["07.04", "COMMONS COOKOUT", "HIGH LINE", "CONF"],
 		["08.02", "DEMO NIGHT", "TBD", "HOLD"],
@@ -912,7 +912,7 @@ function MetroGrid() {
 				<div className="font-bold tracking-[0.2em] mb-1">GRID REF.</div>
 				AVE: 8TH — 9TH
 				<br />
-				ST: W 20TH
+				ST: CHELSEA
 				<br />
 				SECTOR: CHELSEA
 				<br />
@@ -1091,7 +1091,7 @@ function FieldRecording() {
 			</svg>
 			<div className="mt-2 flex justify-between text-[8px] tracking-[0.12em] opacity-60">
 				<span>00:00:00</span>
-				<span>W 20TH ST — STOOP</span>
+				<span>CHELSEA — STOOP</span>
 				<span>00:12:26</span>
 			</div>
 			<div className="mt-3 text-[9px] leading-[1.8] opacity-80">
