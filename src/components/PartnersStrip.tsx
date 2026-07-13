@@ -93,11 +93,15 @@ const PARTNERS = [
 	},
 ];
 
-export function PartnersStrip() {
+export function PartnersStrip({
+	label = "Made possible by",
+}: {
+	label?: string;
+}) {
 	return (
 		<section className="border-t border-border py-12 md:py-16">
 			<p className="text-xs uppercase tracking-widest text-muted-foreground mb-8 px-6 md:px-12">
-				Made possible by
+				{label}
 			</p>
 			<ScrollVelocityRow
 				baseVelocity={3}
