@@ -94,7 +94,7 @@ const PARTNERS = [
 ];
 
 export function PartnersStrip({
-	label = "Made possible by",
+	label = "In partnership with",
 }: {
 	label?: string;
 }) {

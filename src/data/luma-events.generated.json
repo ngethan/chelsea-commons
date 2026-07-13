@@ -1,5 +1,5 @@
 {
-	"generatedAt": "2026-07-09T15:19:07.702Z",
+	"generatedAt": "2026-07-13T17:37:12.853Z",
 	"calendarApiId": "cal-Ab7IiaASyPX2MKb",
 	"events": [
 		{
@@ -28,6 +28,28 @@
 				}
 			],
 			"description": "Please join us for an evening on our newly unveiled rooftop on July 14th, hosted by General Catalyst, Mercury & Chelsea Commons.\n\nWe're bringing together a group of NYC's most promising young AI builders with founders and operators from the NYC ecosystem who are building at the intersection of AI and healthcare. The evening will include a rooftop reception, ice cream, and a brief, informal discussion with a few of our portfolio founders.\n\nOur hope is to spark real connections between emerging builders and the founders behind some of the most innovative healthcare companies. Whether you're early in your career, thinking about starting something, or just curious about building in healthcare, we'd love to have you join us."
+		},
+		{
+			"id": "ir6ssuak",
+			"title": "Soxton AI Dinner",
+			"date": "2026-07-15",
+			"time": "7:30 PM",
+			"endTime": "9:30 PM",
+			"location": "Momoya SoHo",
+			"address": "Momoya SoHo, 47 Prince St, New York, NY 10012, USA",
+			"image": "https://images.lumacdn.com/uploads/sk/c717012f-6202-4bd0-b50d-6b1a112544a0.png",
+			"rsvpUrl": "https://luma.com/ir6ssuak",
+			"status": "upcoming",
+			"lumaEventApiId": "evt-yPhlgDgw6Lh0q2V",
+			"lumaCalendarEventApiId": "calev-W4CZuJ1zVy5b0eR",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				}
+			],
+			"description": "Dinner with an AI-native law firm at Momoya. By invite only"
 		},
 		{
 			"id": "nrletiv9",
@@ -63,7 +85,28 @@
 					"username": "chelseacommons"
 				}
 			],
-			"description": "Presented by Ramp and sponsored by Cursor, Codex, and Chelsea Commons.\n\nThe ball is in your court. Build something that matters.\n\nRamp is hosting Builders Cup - a one-day hackathon in New York City where the best builders compete for prizes, glory, and a shot at impressing some of the fastest-growing tech companies in the world. Whether you come with a team or work solo, this is your chance to ship something real, show what you've got, and go home with bragging rights (and maybe some cool prizes).\n\nJoin us for a full day of hacking, mentorship, demos, and - yes - very good food.\n\n💰 Prizes\n\nWe're awarding across four tracks:\n\nAudience Favorite — the crowd decides. Most votes wins.Best Game — built something fun? This one's for you.Save Time. Save Money. — build anything that saves people time and money.Best Use of Our Sponsors — more details soon.\n\n🗓️ Day of Schedule\n\n10AM — Doors Open - coffee, networking, find your people\n\n10:30AM — Kickoff remarks from Ramp and our sponsors\n\n11AM — Hacking starts\n\n12PM — Lunch\n\n3:00PM — Demos + awards ceremony\n\n🛠️ What to Expect\n\nCursor + Codex workshops: live zero-to-one workshops so you can hit the ground running - credits includedMentors on-site to help you shipCareer fair-style demos: you present at your station, the crowd votes, top builders get the spotlightPrizes for winnersFood, coffee, and good vibes all day\n\n👤 Who Should Join\n\nCS or software engineering students graduating 2027 or laterAble to attend in-person in New York City (no travel sponsorship at this time)Builders of any experience level — individual hackers and teams of up to 4 welcomeYou don't need an idea yet. You just need to show up ready to build.\n\n📍 Location\n\nFlatiron District, NYC — exact address shared upon RSVP confirmation."
+			"description": "Presented by Ramp and sponsored by Cursor, Codex, and Chelsea Commons.\n\nThe ball is in your court. Build something that matters.\n\nRamp is hosting Builders Cup, a one-day hackathon in New York City where top builders compete for prizes, glory, and a chance to impress some of the fastest-growing tech companies in the world.\n\nJoin with a team of 2 to 4 builders to ship something real, show what you’ve got, and compete for bragging rights, plus some cool prizes.\n\nExpect a full day of hacking, mentorship, demos, and yes - very good food.\n\n💰 Prizes\n\nWe're awarding across four tracks:\n\nAudience Favorite — the crowd decides. Most votes wins.Best Game — built something fun? This one's for you.Save Time. Save Money. — build anything that saves people time and money.Best Use of Our Sponsors — more details soon.\n\n🗓️ Day of Schedule\n\n10AM — Doors Open - coffee, networking, find your people\n\n10:30AM — Kickoff remarks from Ramp and our sponsors\n\n11AM — Hacking starts\n\n12:45PM — Lunch\n\n3:30PM — Demos + awards ceremony\n\n🛠️ What to Expect\n\nCursor + Codex workshops: live zero-to-one workshops so you can hit the ground running - credits includedMentors on-site to help you shipCareer fair-style demos: you present at your station, the crowd votes, top builders get the spotlightPrizes for winnersFood, coffee, and good vibes all day\n\n👤 Who Should Join\n\nCS or software engineering students graduating 2027 or laterAble to attend in-person in New York City (no travel sponsorship at this time)Builders of any experience level — teams 2 to 4 members welcomeYou don't need an idea yet. You just need to show up ready to build.\n\n📍 Location\n\nFlatiron District, NYC — exact address shared upon RSVP confirmation."
+		},
+		{
+			"id": "pg0du82x",
+			"title": "Harvey Office Mixer",
+			"date": "2026-08-04",
+			"time": "6:30 PM",
+			"endTime": "9:30 PM",
+			"location": "One Madison Ave",
+			"address": "One Madison Ave, New York, NY 10010, USA",
+			"image": "https://images.lumacdn.com/uploads/il/db47556d-f262-4774-8929-4257583f72a7.png",
+			"rsvpUrl": "https://luma.com/pg0du82x",
+			"status": "upcoming",
+			"lumaEventApiId": "evt-TliRp8FZCQsFmnN",
+			"lumaCalendarEventApiId": "calev-qfVtQQq0qZxilMl",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				}
+			]
 		},
 		{
 			"id": "7z6dr7uw",
@@ -245,7 +288,7 @@
 					"username": "chelseacommons"
 				},
 				{
-					"name": "Ava",
+					"name": "Ava Payman",
 					"avatar": "https://cdn.lu.ma/avatars-default/avatar_22.png",
 					"username": null
 				},

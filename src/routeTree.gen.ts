@@ -14,11 +14,13 @@ import { Route as V2RouteImport } from './routes/v2'
 import { Route as RsvpRouteImport } from './routes/rsvp'
 import { Route as MicrographicsRouteImport } from './routes/micrographics'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as BrandRouteImport } from './routes/brand'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WritingIndexRouteImport } from './routes/writing.index'
 import { Route as WritingSlugRouteImport } from './routes/writing.$slug'
+import { Route as BrandBoardBoardIdRouteImport } from './routes/brand_.board.$boardId'
 import { Route as ApiCronSyncEventsRouteImport } from './routes/api.cron.sync-events'
 
 const WritingRoute = WritingRouteImport.update({
@@ -46,6 +48,11 @@ const EventsRoute = EventsRouteImport.update({
   path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BrandRoute = BrandRouteImport.update({
+  id: '/brand',
+  path: '/brand',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -71,6 +78,11 @@ const WritingSlugRoute = WritingSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => WritingRoute,
 } as any)
+const BrandBoardBoardIdRoute = BrandBoardBoardIdRouteImport.update({
+  id: '/brand_/board/$boardId',
+  path: '/brand/board/$boardId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCronSyncEventsRoute = ApiCronSyncEventsRouteImport.update({
   id: '/api/cron/sync-events',
   path: '/api/cron/sync-events',
@@ -81,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/brand': typeof BrandRoute
   '/events': typeof EventsRoute
   '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
@@ -89,11 +102,13 @@ export interface FileRoutesByFullPath {
   '/writing/$slug': typeof WritingSlugRoute
   '/writing/': typeof WritingIndexRoute
   '/api/cron/sync-events': typeof ApiCronSyncEventsRoute
+  '/brand/board/$boardId': typeof BrandBoardBoardIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/brand': typeof BrandRoute
   '/events': typeof EventsRoute
   '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
@@ -101,12 +116,14 @@ export interface FileRoutesByTo {
   '/writing/$slug': typeof WritingSlugRoute
   '/writing': typeof WritingIndexRoute
   '/api/cron/sync-events': typeof ApiCronSyncEventsRoute
+  '/brand/board/$boardId': typeof BrandBoardBoardIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/brand': typeof BrandRoute
   '/events': typeof EventsRoute
   '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
@@ -115,6 +132,7 @@ export interface FileRoutesById {
   '/writing/$slug': typeof WritingSlugRoute
   '/writing/': typeof WritingIndexRoute
   '/api/cron/sync-events': typeof ApiCronSyncEventsRoute
+  '/brand_/board/$boardId': typeof BrandBoardBoardIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -122,6 +140,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/about'
+    | '/brand'
     | '/events'
     | '/micrographics'
     | '/rsvp'
@@ -130,11 +149,13 @@ export interface FileRouteTypes {
     | '/writing/$slug'
     | '/writing/'
     | '/api/cron/sync-events'
+    | '/brand/board/$boardId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$'
     | '/about'
+    | '/brand'
     | '/events'
     | '/micrographics'
     | '/rsvp'
@@ -142,11 +163,13 @@ export interface FileRouteTypes {
     | '/writing/$slug'
     | '/writing'
     | '/api/cron/sync-events'
+    | '/brand/board/$boardId'
   id:
     | '__root__'
     | '/'
     | '/$'
     | '/about'
+    | '/brand'
     | '/events'
     | '/micrographics'
     | '/rsvp'
@@ -155,18 +178,21 @@ export interface FileRouteTypes {
     | '/writing/$slug'
     | '/writing/'
     | '/api/cron/sync-events'
+    | '/brand_/board/$boardId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
+  BrandRoute: typeof BrandRoute
   EventsRoute: typeof EventsRoute
   MicrographicsRoute: typeof MicrographicsRoute
   RsvpRoute: typeof RsvpRoute
   V2Route: typeof V2Route
   WritingRoute: typeof WritingRouteWithChildren
   ApiCronSyncEventsRoute: typeof ApiCronSyncEventsRoute
+  BrandBoardBoardIdRoute: typeof BrandBoardBoardIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -206,6 +232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/brand': {
+      id: '/brand'
+      path: '/brand'
+      fullPath: '/brand'
+      preLoaderRoute: typeof BrandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -241,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WritingSlugRouteImport
       parentRoute: typeof WritingRoute
     }
+    '/brand_/board/$boardId': {
+      id: '/brand_/board/$boardId'
+      path: '/brand/board/$boardId'
+      fullPath: '/brand/board/$boardId'
+      preLoaderRoute: typeof BrandBoardBoardIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/cron/sync-events': {
       id: '/api/cron/sync-events'
       path: '/api/cron/sync-events'
@@ -268,12 +308,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
+  BrandRoute: BrandRoute,
   EventsRoute: EventsRoute,
   MicrographicsRoute: MicrographicsRoute,
   RsvpRoute: RsvpRoute,
   V2Route: V2Route,
   WritingRoute: WritingRouteWithChildren,
   ApiCronSyncEventsRoute: ApiCronSyncEventsRoute,
+  BrandBoardBoardIdRoute: BrandBoardBoardIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
