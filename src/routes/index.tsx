@@ -7,6 +7,7 @@ import { EventPhotos } from "../components/EventPhotos";
 import { Footer } from "../components/Footer";
 import { LogoStrip } from "../components/LogoStrip";
 import { Navbar } from "../components/Navbar";
+import { PartnersStrip } from "../components/PartnersStrip";
 import { HalftoneHeroImage } from "../components/halftone-hero-image";
 import {
 	Accordion,
@@ -245,6 +246,8 @@ function App() {
 					/>
 				</motion.div>
 			</main>
+
+			<PartnersStrip />
 
 			<EventPhotos />
 
