@@ -347,7 +347,7 @@ function Events() {
 				/>
 			</main>
 
-			<PartnersStrip />
+			<PartnersStrip label="Thank you to our partners" />
 
 			<Footer />
 
