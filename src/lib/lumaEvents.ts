@@ -32,6 +32,14 @@ export interface CCEvent {
 
 const galleriesById = galleriesJson.galleries as Record<string, string[]>;
 
+/** Today's date as YYYY-MM-DD in the viewer's local timezone, for comparing
+ *  against `CCEvent.date`. Prefer this over the synced `status` field, which
+ *  is only as fresh as the last Luma sync/deploy. */
+export function localDateStr(): string {
+	const d = new Date();
+	return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 /**
  * Events synced from the Chelsea Commons Luma calendar at build time
  * (scripts/sync-luma-events.mjs), merged with any uploaded photo galleries

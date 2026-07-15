@@ -6,7 +6,7 @@ import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
 import { PartnersStrip } from "../components/PartnersStrip";
 import { Button } from "../components/ui/button";
-import { type CCEvent, getDisplayEvents } from "../lib/lumaEvents";
+import { type CCEvent, getDisplayEvents, localDateStr } from "../lib/lumaEvents";
 import { buildSeoTags } from "../site-config";
 
 export const Route = createFileRoute("/events")({
@@ -25,11 +25,6 @@ export const Route = createFileRoute("/events")({
 	},
 	component: Events,
 });
-
-function localDateStr(): string {
-	const d = new Date();
-	return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
 
 function formatLongDate(dateStr: string): string {
 	const [y, m, day] = dateStr.split("-").map(Number);

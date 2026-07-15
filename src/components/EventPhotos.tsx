@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { getDisplayEvents } from "../lib/lumaEvents";
+import { getDisplayEvents, localDateStr } from "../lib/lumaEvents";
 
 type Photo = {
 	src: string;
@@ -21,8 +21,9 @@ function stampDate(dateStr: string): string {
 
 /** The most recent past events that have a photo (gallery cover or Luma image). */
 function pastEventPhotos(): Photo[] {
+	const today = localDateStr();
 	return getDisplayEvents()
-		.filter((e) => e.status === "past" && e.image)
+		.filter((e) => e.date < today && e.image)
 		.sort((a, b) => b.date.localeCompare(a.date))
 		.slice(0, MAX_EVENT_PHOTOS)
 		.map((e) => ({
