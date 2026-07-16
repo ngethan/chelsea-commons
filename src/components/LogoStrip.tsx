@@ -22,6 +22,11 @@ const COMPANIES = [
 		url: "https://jpmorgan.com",
 	},
 	{
+		name: "KPMG",
+		logo: "/assets/brands/kpmg-logo.webp",
+		url: "https://kpmg.com",
+	},
+	{
 		name: "Ramp",
 		logo: "/assets/brands/ramp-logo.png",
 		url: "https://ramp.com",
@@ -55,6 +60,11 @@ const COMPANIES = [
 		name: "Teamworthy Ventures",
 		logo: "/assets/brands/teamworthy-logo.png",
 		url: "https://www.teamworthy.com",
+	},
+	{
+		name: "Verition Fund Management",
+		logo: "/assets/brands/verition-logo.webp",
+		url: "https://www.verition.com",
 	},
 ];
 

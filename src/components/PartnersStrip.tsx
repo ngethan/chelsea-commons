@@ -22,11 +22,6 @@ const PARTNERS = [
 		url: "https://cursor.com",
 	},
 	{
-		name: "Felicis",
-		logo: "/assets/partners/felicis-logo.png",
-		url: "https://felicis.com",
-	},
-	{
 		name: "Harvey AI",
 		logo: "/assets/partners/harvey-logo.png",
 		url: "https://harvey.ai",
@@ -80,6 +75,11 @@ const PARTNERS = [
 		name: "Rho",
 		logo: "/assets/partners/rho-logo.webp",
 		url: "https://rho.co",
+	},
+	{
+		name: "Soxton",
+		logo: "/assets/partners/soxton-logo.png",
+		url: "https://soxton.com",
 	},
 	{
 		name: "TQ Ventures",
