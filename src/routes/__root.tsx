@@ -159,14 +159,24 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					dangerouslySetInnerHTML={{
 						__html: `
 							(function() {
-								// iOS Chrome remaps svh against its own collapsing bar, so CSS
-								// units alone still reflow mid-scroll there. Pin the viewport
-								// height in a custom property instead: measured before first
-								// paint, re-measured only when the width changes (rotation),
-								// never on height-only resizes (browser bar hiding).
+								// Arc mobile draws its own bottom bar without reporting it into
+								// WebKit's viewport-unit math, so CSS units alone still reflow
+								// mid-scroll there. Pin the viewport height in a custom property
+								// instead: measured before first paint, re-measured only when
+								// the width changes (rotation), never on height-only resizes
+								// (browser bar hiding). Take the smaller of innerHeight and a
+								// real 100svh probe: iOS can report the large viewport as
+								// innerHeight at load, and Arc misreports svh — the min is
+								// right in both.
 								var width = window.innerWidth;
 								function set() {
-									document.documentElement.style.setProperty('--stable-vh', window.innerHeight + 'px');
+									var probe = document.createElement('div');
+									probe.style.cssText = 'position:fixed;top:0;height:100svh;visibility:hidden;pointer-events:none;';
+									document.body.appendChild(probe);
+									var svh = probe.offsetHeight || Infinity;
+									probe.remove();
+									var h = Math.min(window.innerHeight, svh);
+									document.documentElement.style.setProperty('--stable-vh', h + 'px');
 								}
 								set();
 								window.addEventListener('resize', function() {
