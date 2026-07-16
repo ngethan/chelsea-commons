@@ -1,6 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { HalftoneHeroImage } from "../components/halftone-hero-image";
 import { buildSeoTags } from "../site-config";
 
 export const Route = createFileRoute("/$")({
@@ -22,11 +21,13 @@ function NotFound() {
 				transition={{ duration: 0.4, ease: "easeOut" }}
 				className="flex flex-col items-center justify-center space-y-6 text-center w-full max-w-lg"
 			>
-				<HalftoneHeroImage
-					image="/assets/creation-of-adam.jpg"
-					alt="Two hands reaching toward each other but not quite touching, after Michelangelo's Creation of Adam"
-					aspectClassName="aspect-[13/5]"
-				/>
+				<div className="relative w-full overflow-hidden aspect-[13/5]">
+					<img
+						src="/assets/creation-of-adam.png"
+						alt="Two hands reaching toward each other but not quite touching, after Michelangelo's Creation of Adam"
+						className="absolute inset-0 h-full w-full object-cover"
+					/>
+				</div>
 				<div className="space-y-3">
 					<h1 className="font-serif italic text-6xl md:text-8xl text-foreground">
 						404

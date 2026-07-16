@@ -8,6 +8,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @source "../node_modules/streamdown/dist/index.js";
+/* The brand artboard files are gitignored (local-only design tooling), which
+   makes Tailwind's auto-detection skip them — include them explicitly. */
+@source "./components/brand/**/*.tsx";
+@source "./routes/brand*.tsx";
 
 body {
 	@apply m-0;

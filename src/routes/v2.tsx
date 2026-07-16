@@ -6,7 +6,6 @@ import { FitText } from "../components/FitText";
 import { Footer } from "../components/Footer";
 import { LogoStrip } from "../components/LogoStrip";
 import { Navbar } from "../components/Navbar";
-import { HalftoneHeroImage } from "../components/halftone-hero-image";
 import {
 	Barcode,
 	CropCorner,
@@ -309,10 +308,13 @@ function HeroImage() {
 			<CropCorner className="absolute -left-1 -bottom-8 z-10 -rotate-90" />
 			<CropCorner className="absolute -right-1 -bottom-8 z-10 rotate-180" />
 
-			<HalftoneHeroImage
-				image="/assets/creation-of-adam.jpg"
-				alt="The hands of Adam and God reaching toward each other, after Michelangelo — rendered in halftone"
-			/>
+			<div className="relative w-full overflow-hidden aspect-[4/3] md:aspect-[21/9]">
+				<img
+					src="/assets/creation-of-adam.png"
+					alt="The hands of Adam and God reaching toward each other, after Michelangelo — rendered in halftone"
+					className="absolute inset-0 h-full w-full object-cover"
+				/>
+			</div>
 
 			<div className="mt-2 flex items-center justify-between font-mono text-[9px] tracking-[0.15em] text-muted-foreground uppercase">
 				<span>FIG. 001 — The Common Room</span>

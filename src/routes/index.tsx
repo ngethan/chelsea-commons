@@ -8,7 +8,6 @@ import { Footer } from "../components/Footer";
 import { LogoStrip } from "../components/LogoStrip";
 import { Navbar } from "../components/Navbar";
 import { PartnersStrip } from "../components/PartnersStrip";
-import { HalftoneHeroImage } from "../components/halftone-hero-image";
 import {
 	Accordion,
 	AccordionContent,
@@ -199,11 +198,13 @@ function App() {
 						transition={{ duration: 0.6, ease: "easeOut" }}
 						className="absolute inset-0"
 					>
-						<HalftoneHeroImage
-							image="/assets/creation-of-adam.jpg"
-							alt="The hands of Adam and God reaching toward each other, after Michelangelo — rendered in halftone"
-							aspectClassName="h-full"
-						/>
+						<div className="relative w-full overflow-hidden h-full">
+							<img
+								src="/assets/creation-of-adam.png"
+								alt="The hands of Adam and God reaching toward each other, after Michelangelo — rendered in halftone"
+								className="absolute inset-0 h-full w-full object-cover"
+							/>
+						</div>
 						{/* Scrims: keep the headline and logo strip legible over the image.
 						    Below lg the copy stacks and reaches much further down, so the
 						    top scrim is taller and denser there. */}
