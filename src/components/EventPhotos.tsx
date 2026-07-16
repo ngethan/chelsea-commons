@@ -35,6 +35,52 @@ function pastEventPhotos(): Photo[] {
 
 const PHOTOS: Photo[] = pastEventPhotos();
 
+/** Matches Tailwind's `sm` breakpoint. Defaults to false (desktop) until
+ *  mounted so SSR markup stays consistent. */
+function useIsMobile() {
+	const [isMobile, setIsMobile] = useState(false);
+
+	useEffect(() => {
+		const mq = window.matchMedia("(max-width: 639px)");
+		const update = () => setIsMobile(mq.matches);
+		update();
+		mq.addEventListener("change", update);
+		return () => mq.removeEventListener("change", update);
+	}, []);
+
+	return isMobile;
+}
+
+/** On mobile the reel is swiped horizontally, so cards past the first would
+ *  fade in mid-swipe; render those as plain figures instead. */
+function ReelFigure({
+	animate,
+	delay = 0,
+	className,
+	children,
+}: {
+	animate: boolean;
+	delay?: number;
+	className: string;
+	children: React.ReactNode;
+}) {
+	if (!animate) {
+		return <figure className={className}>{children}</figure>;
+	}
+
+	return (
+		<motion.figure
+			initial={{ opacity: 0, y: 20 }}
+			whileInView={{ opacity: 1, y: 0 }}
+			viewport={{ once: true, margin: "-50px" }}
+			transition={{ duration: 0.4, delay }}
+			className={className}
+		>
+			{children}
+		</motion.figure>
+	);
+}
+
 /** Alternating tilts and vertical nudges so the reel reads as prints pinned
  *  to a board rather than a grid. Hover squares a print back up. */
 const TILTS = [
@@ -56,17 +102,23 @@ function Tape({ tilt = "rotate-[-4deg]" }: { tilt?: string }) {
 	);
 }
 
-function PhotoCard({ photo, index }: { photo: Photo; index: number }) {
+function PhotoCard({
+	photo,
+	index,
+	animate,
+}: {
+	photo: Photo;
+	index: number;
+	animate: boolean;
+}) {
 	const [broken, setBroken] = useState(false);
 
 	if (broken) return null;
 
 	return (
-		<motion.figure
-			initial={{ opacity: 0, y: 20 }}
-			whileInView={{ opacity: 1, y: 0 }}
-			viewport={{ once: true, margin: "-50px" }}
-			transition={{ duration: 0.4, delay: Math.min(index, 2) * 0.05 }}
+		<ReelFigure
+			animate={animate}
+			delay={Math.min(index, 2) * 0.05}
 			className={`relative shrink-0 snap-start ${NUDGES[index % NUDGES.length]}`}
 		>
 			<div
@@ -85,20 +137,14 @@ function PhotoCard({ photo, index }: { photo: Photo; index: number }) {
 					{photo.alt} — {photo.date}
 				</figcaption>
 			</div>
-		</motion.figure>
+		</ReelFigure>
 	);
 }
 
 /** The reward at the end of the photo reel: an empty frame waiting for you. */
-function InviteCard() {
+function InviteCard({ animate }: { animate: boolean }) {
 	return (
-		<motion.figure
-			initial={{ opacity: 0, y: 20 }}
-			whileInView={{ opacity: 1, y: 0 }}
-			viewport={{ once: true, margin: "-50px" }}
-			transition={{ duration: 0.4 }}
-			className="relative shrink-0 snap-start mt-3"
-		>
+		<ReelFigure animate={animate} className="relative shrink-0 snap-start mt-3">
 			<div className="relative w-[68vw] sm:w-[300px] bg-card border border-border shadow-sm p-3 pb-13 rotate-[2deg]">
 				<Tape />
 				<div className="aspect-square w-full border border-border bg-muted/60 flex flex-col items-center justify-center gap-3 p-6 text-center">
@@ -118,11 +164,12 @@ function InviteCard() {
 					</Link>
 				</div>
 			</div>
-		</motion.figure>
+		</ReelFigure>
 	);
 }
 
 export function EventPhotos() {
+	const isMobile = useIsMobile();
 	const scrollerRef = useRef<HTMLDivElement>(null);
 	const [canScrollLeft, setCanScrollLeft] = useState(false);
 	const [canScrollRight, setCanScrollRight] = useState(true);
@@ -182,9 +229,14 @@ export function EventPhotos() {
 			>
 				<div className="flex items-start gap-5 px-6 md:px-12 pt-6 pb-4 w-max">
 					{PHOTOS.map((photo, index) => (
-						<PhotoCard key={photo.src} photo={photo} index={index} />
+						<PhotoCard
+							key={photo.src}
+							photo={photo}
+							index={index}
+							animate={!isMobile || index === 0}
+						/>
 					))}
-					<InviteCard />
+					<InviteCard animate={!isMobile} />
 				</div>
 			</div>
 
