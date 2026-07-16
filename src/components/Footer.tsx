@@ -2,7 +2,10 @@ import { FitText } from "./FitText";
 
 export function Footer() {
 	return (
-		<footer className="relative flex flex-col overflow-hidden border-t border-border">
+		// Safari's bottom toolbar is translucent and the page extends behind
+		// it; the safe-area padding pulls the aurora down to fill that strip
+		// instead of showing the bare page background.
+		<footer className="relative flex flex-col overflow-hidden border-t border-border pb-[env(safe-area-inset-bottom)]">
 			<div
 				className="absolute inset-0 overflow-hidden pointer-events-none"
 				style={

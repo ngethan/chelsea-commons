@@ -20,7 +20,10 @@ export function Navbar() {
 	}, [isOpen]);
 
 	return (
-		<div className="sticky top-0 z-(--z-nav) w-full">
+		// Safari extends the page behind its translucent status bar; the
+		// safe-area padding lets the navbar background fill that strip so
+		// content never shows above it. Zero in browsers with opaque bars.
+		<div className="sticky top-0 z-(--z-nav) w-full bg-background pt-[env(safe-area-inset-top)]">
 			<nav className="w-full relative z-(--z-nav) bg-background">
 				<div className="px-6 md:px-12 py-6 flex items-center justify-between">
 					<Link
