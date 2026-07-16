@@ -1,5 +1,4 @@
 import { FitText } from "./FitText";
-import { ScrollVelocityRow } from "./ui/scroll-based-velocity";
 
 export function Footer() {
 	return (
@@ -34,7 +33,10 @@ export function Footer() {
 				/>
 			</div>
 
-			<div className="relative z-10 flex flex-col flex-1">
+			{/* No z-index here: a stacking context would isolate the marquee's
+			    mix-blend-difference from the aurora layer behind it. DOM order
+			    already paints this above the background. */}
+			<div className="relative flex flex-col flex-1">
 				<div className="px-6 md:px-12 py-6 flex items-center justify-between">
 					<div className="text-sm text-muted-foreground">
 						<a
@@ -64,23 +66,6 @@ export function Footer() {
 					<FitText className="font-serif text-8xl tracking-tight text-foreground opacity-90 leading-none">
 						COMMONS
 					</FitText>
-				</div>
-
-				<div className="border-t border-foreground/15 py-4">
-					<ScrollVelocityRow baseVelocity={3}>
-						<span className="text-sm text-white mx-8">NEW YORK CITY</span>
-						<span className="text-sm text-white mx-8">✦</span>
-						<span className="text-sm text-white mx-8">BUILDERS</span>
-						<span className="text-sm text-white mx-8">✦</span>
-						<span className="text-sm text-white mx-8">OPERATORS</span>
-						<span className="text-sm text-white mx-8">✦</span>
-						<span className="text-sm text-white mx-8">FOUNDERS</span>
-						<span className="text-sm text-white mx-8">✦</span>
-						<span className="text-sm text-white mx-8">EST. 2026</span>
-						<span className="text-sm text-white mx-8">✦</span>
-						<span className="text-sm text-white mx-8">MANHATTAN</span>
-						<span className="text-sm text-white mx-8">✦</span>
-					</ScrollVelocityRow>
 				</div>
 			</div>
 		</footer>

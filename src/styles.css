@@ -24,7 +24,9 @@ code {
 		Consolas, "Courier New", monospace;
 }
 
-main a:not(.no-underline) {
+/* Default prose-link hover inside main. Opt out with .link-static (keeps
+   your own underline/color classes) or .no-underline (kills underlines). */
+main a:not(.no-underline):not(.link-static) {
 	@apply text-foreground transition-colors duration-300 hover:text-muted-foreground hover:underline;
 }
 

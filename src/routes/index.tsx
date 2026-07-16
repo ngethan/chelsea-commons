@@ -188,66 +188,86 @@ function App() {
 		<div className="relative z-10">
 			<Navbar />
 
-			<main className="px-6 md:px-12 pt-10 md:pt-16 pb-16">
-				<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end mb-8 md:mb-12">
-					{/* Statement headline — brand name lives in the navbar; the hero
-					    gets to say something. One consistent display size across lines. */}
-					<motion.h1
+			<main>
+				{/* Full-viewport hero (minus the sticky navbar's height): the halftone
+				    image is the backdrop, headline copy sits on top of it, and the
+				    logo marquee flows along its bottom edge. */}
+				<section className="relative flex flex-col h-[calc(100svh-5.75rem)] md:h-[calc(100svh-5.25rem)] min-h-[34rem] overflow-hidden">
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 0.6, ease: "easeOut" }}
+						className="absolute inset-0"
+					>
+						<HalftoneHeroImage
+							image="/assets/creation-of-adam.jpg"
+							alt="The hands of Adam and God reaching toward each other, after Michelangelo — rendered in halftone"
+							aspectClassName="h-full"
+						/>
+						{/* Scrims: keep the headline and logo strip legible over the image.
+						    Below lg the copy stacks and reaches much further down, so the
+						    top scrim is taller and denser there. */}
+						<div className="absolute inset-x-0 top-0 h-3/4 lg:h-1/2 bg-gradient-to-b from-background via-background/85 to-transparent lg:via-background/70 pointer-events-none" />
+						<div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-background via-background/60 to-transparent pointer-events-none" />
+					</motion.div>
+
+					<div className="relative z-10 px-6 md:px-12 pt-10 md:pt-16">
+						<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
+							{/* Statement headline — brand name lives in the navbar; the hero
+							    gets to say something. One consistent display size across lines. */}
+							<motion.h1
+								initial={{ opacity: 0, y: 15 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.4, ease: "easeOut" }}
+								className="w-full min-w-0 lg:col-span-8 font-serif text-foreground text-[clamp(2.75rem,6.5vw,5.25rem)] leading-[1.05]"
+							>
+								Ambition
+								<br />
+								loves company
+								<ScrollSpinGlyph />
+							</motion.h1>
+							<div className="lg:col-span-4 lg:justify-self-end lg:max-w-md flex flex-col gap-5">
+								<motion.p
+									initial={{ opacity: 0, y: 15 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+									className="text-lg md:text-xl text-foreground/90 leading-relaxed text-pretty"
+								>
+									A community of young, ambitious builders, operators, and
+									founders in New York, born out of a house in Chelsea. We host
+									dinners, mixers, and events across the city.
+								</motion.p>
+								<motion.p
+									initial={{ opacity: 0, y: 15 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
+									className="text-base md:text-lg text-foreground/90 leading-relaxed"
+								>
+									Want to come to an event? Fill out our{" "}
+									<Link
+										to="/rsvp"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="link-static text-foreground underline underline-offset-4 decoration-1"
+									>
+										interest form
+									</Link>
+									!
+								</motion.p>
+							</div>
+						</div>
+					</div>
+
+					<motion.div
 						initial={{ opacity: 0, y: 15 }}
 						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.4, ease: "easeOut" }}
-						className="w-full min-w-0 lg:col-span-8 font-serif text-foreground text-[clamp(2.75rem,6.5vw,5.25rem)] leading-[1.05]"
+						transition={{ duration: 0.4, ease: "easeOut", delay: 0.25 }}
+						className="relative z-10 mt-auto"
 					>
-						Ambition
-						<br />
-						loves company
-						<ScrollSpinGlyph />
-					</motion.h1>
-					<div className="lg:col-span-4 lg:justify-self-end lg:max-w-md flex flex-col gap-5">
-						<motion.p
-							initial={{ opacity: 0, y: 15 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-							className="text-base md:text-lg text-muted-foreground leading-relaxed"
-						>
-							A community of young, ambitious builders, operators, and founders
-							in New York, born out of a house in Chelsea. We host dinners,
-							mixers, and events across the city.
-						</motion.p>
-						<motion.p
-							initial={{ opacity: 0, y: 15 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
-							className="text-base md:text-lg text-muted-foreground leading-relaxed"
-						>
-							Want to come to an event? Fill out our{" "}
-							<Link
-								to="/rsvp"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="text-foreground underline underline-offset-4 decoration-1 hover:text-muted-foreground transition-colors"
-							>
-								interest form
-							</Link>
-							!
-						</motion.p>
-					</div>
-				</div>
-
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
-					className="relative"
-				>
-					<HalftoneHeroImage
-						image="/assets/creation-of-adam.jpg"
-						alt="The hands of Adam and God reaching toward each other, after Michelangelo — rendered in halftone"
-					/>
-				</motion.div>
+						<PartnersStrip overlay />
+					</motion.div>
+				</section>
 			</main>
-
-			<PartnersStrip />
 
 			<EventPhotos />
 

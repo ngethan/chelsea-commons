@@ -95,12 +95,22 @@ const PARTNERS = [
 
 export function PartnersStrip({
 	label = "In partnership with",
+	overlay = false,
 }: {
 	label?: string;
+	overlay?: boolean;
 }) {
 	return (
-		<section className="border-t border-border py-12 md:py-16">
-			<p className="text-xs uppercase tracking-widest text-muted-foreground mb-8 px-6 md:px-12">
+		<section
+			className={
+				overlay ? "py-6 md:py-8" : "border-t border-border py-12 md:py-16"
+			}
+		>
+			<p
+				className={`text-xs uppercase tracking-widest text-muted-foreground px-6 md:px-12 ${
+					overlay ? "mb-5" : "mb-8"
+				}`}
+			>
 				{label}
 			</p>
 			<ScrollVelocityRow
