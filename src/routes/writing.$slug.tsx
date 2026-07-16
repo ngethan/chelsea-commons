@@ -74,7 +74,7 @@ function BlogPost() {
 
 	if (!post) {
 		return (
-			<div className="min-h-dvh text-muted-foreground relative z-10">
+			<div className="min-h-svh text-muted-foreground relative z-10">
 				<div className="max-w-2xl mx-auto px-6 py-12 md:py-24 text-center">
 					<h1 className="text-2xl mb-4">Post not found</h1>
 					<Link
@@ -90,7 +90,7 @@ function BlogPost() {
 	}
 
 	return (
-		<div className="min-h-dvh text-muted-foreground relative z-10">
+		<div className="min-h-svh text-muted-foreground relative z-10">
 			<TableOfContents headings={headings} />
 
 			<Link

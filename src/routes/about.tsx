@@ -266,11 +266,11 @@ function About() {
 	}, []);
 
 	return (
-		<div className="min-h-dvh relative z-10">
+		<div className="min-h-svh relative z-10">
 			<Navbar />
 			<main className="px-6 md:px-12">
 				{/* Vision Section */}
-				<section className="min-h-[50vh] md:h-[calc(100dvh-110px)] flex flex-col justify-between relative">
+				<section className="min-h-[50vh] md:h-[calc(100svh-110px)] flex flex-col justify-between relative">
 					<div className="max-w-3xl py-12">
 						<motion.p
 							initial={{ opacity: 0, y: 15 }}
@@ -289,9 +289,9 @@ function About() {
 						>
 							Each season, Chelsea Commons brings a new batch of ambitious
 							builders, operators, and founders to live together in Chelsea and
-							anchor a growing community across New York. Our first summer cohort
-							includes Stanford AI researchers, D1 athletes, and the NBA's
-							youngest ever intern, at companies like Ramp, JPMorgan, and
+							anchor a growing community across New York. Our first summer
+							cohort includes Stanford AI researchers, D1 athletes, and the
+							NBA's youngest ever intern, at companies like Ramp, JPMorgan, and
 							BlackRock.
 						</motion.p>
 

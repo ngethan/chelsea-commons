@@ -91,7 +91,7 @@ function BlogIndex() {
 	if (!Array.isArray(posts)) {
 		console.error("Posts is not an array:", posts);
 		return (
-			<div className="min-h-dvh text-muted-foreground relative z-10">
+			<div className="min-h-svh text-muted-foreground relative z-10">
 				<Link
 					to="/"
 					className="fixed top-6 left-6 md:top-12 md:left-12 inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors z-20"
@@ -107,7 +107,7 @@ function BlogIndex() {
 	}
 
 	return (
-		<div className="min-h-dvh text-muted-foreground relative z-10">
+		<div className="min-h-svh text-muted-foreground relative z-10">
 			<Link
 				to="/"
 				className="fixed top-6 left-6 md:top-12 md:left-12 inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors z-20"

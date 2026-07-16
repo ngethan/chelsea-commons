@@ -15,7 +15,7 @@ export const Route = createFileRoute("/$")({
 
 function NotFound() {
 	return (
-		<div className="min-h-dvh flex items-center justify-center px-6 relative z-10">
+		<div className="min-h-svh flex items-center justify-center px-6 relative z-10">
 			<motion.div
 				initial={{ opacity: 0, y: 15 }}
 				animate={{ opacity: 1, y: 0 }}

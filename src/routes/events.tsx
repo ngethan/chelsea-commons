@@ -6,7 +6,11 @@ import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
 import { PartnersStrip } from "../components/PartnersStrip";
 import { Button } from "../components/ui/button";
-import { type CCEvent, getDisplayEvents, localDateStr } from "../lib/lumaEvents";
+import {
+	type CCEvent,
+	getDisplayEvents,
+	localDateStr,
+} from "../lib/lumaEvents";
 import { buildSeoTags } from "../site-config";
 
 export const Route = createFileRoute("/events")({
@@ -308,7 +312,7 @@ function Events() {
 		.sort((a, b) => b.date.localeCompare(a.date));
 
 	return (
-		<div className="min-h-dvh relative z-10">
+		<div className="min-h-svh relative z-10">
 			<Navbar />
 			<main className="px-6 md:px-12 pt-12 md:pt-16 pb-24">
 				<div className="flex items-end justify-between gap-6 mb-10 md:mb-14">
