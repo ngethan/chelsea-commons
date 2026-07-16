@@ -79,7 +79,7 @@ const PARTNERS = [
 	{
 		name: "Soxton",
 		logo: "/assets/partners/soxton-logo.png",
-		url: "https://soxton.com",
+		url: "https://soxton.ai",
 	},
 	{
 		name: "TQ Ventures",
