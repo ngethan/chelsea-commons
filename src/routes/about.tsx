@@ -270,7 +270,7 @@ function About() {
 			<Navbar />
 			<main className="px-6 md:px-12">
 				{/* Vision Section */}
-				<section className="min-h-[50vh] md:h-[calc(100svh-110px)] flex flex-col justify-between relative">
+				<section className="min-h-[50vh] md:h-[calc(var(--stable-vh,100svh)-110px)] flex flex-col justify-between relative">
 					<div className="max-w-3xl py-12">
 						<motion.p
 							initial={{ opacity: 0, y: 15 }}

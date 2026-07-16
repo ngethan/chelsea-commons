@@ -155,6 +155,31 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body style={{ backgroundColor: siteConfig.themeColor }}>
 				<script
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: static viewport-height shim, no dynamic input
+					dangerouslySetInnerHTML={{
+						__html: `
+							(function() {
+								// iOS Chrome remaps svh against its own collapsing bar, so CSS
+								// units alone still reflow mid-scroll there. Pin the viewport
+								// height in a custom property instead: measured before first
+								// paint, re-measured only when the width changes (rotation),
+								// never on height-only resizes (browser bar hiding).
+								var width = window.innerWidth;
+								function set() {
+									document.documentElement.style.setProperty('--stable-vh', window.innerHeight + 'px');
+								}
+								set();
+								window.addEventListener('resize', function() {
+									if (window.innerWidth !== width) {
+										width = window.innerWidth;
+										set();
+									}
+								});
+							})();
+						`,
+					}}
+				/>
+				<script
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 					dangerouslySetInnerHTML={{
 						__html: `

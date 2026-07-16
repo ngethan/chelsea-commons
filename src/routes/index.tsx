@@ -192,7 +192,7 @@ function App() {
 				{/* Full-viewport hero (minus the sticky navbar's height): the halftone
 				    image is the backdrop, headline copy sits on top of it, and the
 				    logo marquee flows along its bottom edge. */}
-				<section className="relative flex flex-col h-[calc(100svh-5.75rem)] md:h-[calc(100svh-5.25rem)] min-h-[34rem] overflow-hidden">
+				<section className="relative flex flex-col h-[calc(var(--stable-vh,100svh)-5.75rem)] md:h-[calc(var(--stable-vh,100svh)-5.25rem)] min-h-[34rem] overflow-hidden">
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
