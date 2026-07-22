@@ -77,11 +77,6 @@ const PARTNERS = [
 		url: "https://rho.co",
 	},
 	{
-		name: "Soxton",
-		logo: "/assets/partners/soxton-logo.png",
-		url: "https://soxton.ai",
-	},
-	{
 		name: "TQ Ventures",
 		logo: "/assets/partners/tqventures-logo.png",
 		url: "https://tqventures.com",

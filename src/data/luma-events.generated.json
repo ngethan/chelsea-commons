@@ -1,20 +1,20 @@
 {
-	"generatedAt": "2026-07-13T17:37:12.853Z",
+	"generatedAt": "2026-07-22T02:00:31.068Z",
 	"calendarApiId": "cal-Ab7IiaASyPX2MKb",
 	"events": [
 		{
-			"id": "mu0akf9q",
-			"title": "NYC Healthcare Builders Rooftop Mixer",
-			"date": "2026-07-14",
-			"time": "6:30 PM",
-			"endTime": "8:30 PM",
-			"location": "148 Lafayette St",
-			"address": "148 Lafayette St, New York, NY 10013, USA",
-			"image": "https://images.lumacdn.com/uploads/bv/b1d7a017-76fc-4523-af7f-82b89eb9425e.png",
-			"rsvpUrl": "https://luma.com/mu0akf9q",
+			"id": "e2h3zs8j",
+			"title": "First Round Dinner",
+			"date": "2026-07-27",
+			"time": "8:00 PM",
+			"endTime": "9:30 PM",
+			"location": "Upland",
+			"address": "Upland, 345 Park Ave S, New York, NY 10010, USA",
+			"image": "https://images.lumacdn.com/uploads/5g/69a4f5fb-6bca-4634-9a35-0e6708de7b75.png",
+			"rsvpUrl": "https://luma.com/e2h3zs8j",
 			"status": "upcoming",
-			"lumaEventApiId": "evt-qiCYjYkAVa5ZmyN",
-			"lumaCalendarEventApiId": "calev-W51t4GYKYl1MQoH",
+			"lumaEventApiId": "evt-sjJMDtndGtMzFCc",
+			"lumaCalendarEventApiId": "calev-1amH4nfCHx5XVvl",
 			"hosts": [
 				{
 					"name": "Chelsea Commons",
@@ -22,45 +22,48 @@
 					"username": "chelseacommons"
 				},
 				{
+					"name": "Nick Rubin",
+					"avatar": "https://images.lumacdn.com/avatars/6j/26206bfd-bf06-4636-a16f-25598d27222a.jpg",
+					"username": null
+				},
+				{
 					"name": "Sachin Sashti",
 					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
 					"username": "sachinsashti"
 				}
-			],
-			"description": "Please join us for an evening on our newly unveiled rooftop on July 14th, hosted by General Catalyst, Mercury & Chelsea Commons.\n\nWe're bringing together a group of NYC's most promising young AI builders with founders and operators from the NYC ecosystem who are building at the intersection of AI and healthcare. The evening will include a rooftop reception, ice cream, and a brief, informal discussion with a few of our portfolio founders.\n\nOur hope is to spark real connections between emerging builders and the founders behind some of the most innovative healthcare companies. Whether you're early in your career, thinking about starting something, or just curious about building in healthcare, we'd love to have you join us."
+			]
 		},
 		{
-			"id": "ir6ssuak",
-			"title": "Soxton AI Dinner",
-			"date": "2026-07-15",
-			"time": "7:30 PM",
+			"id": "pg0du82x",
+			"title": "Harvey Office Mixer",
+			"date": "2026-08-04",
+			"time": "6:30 PM",
 			"endTime": "9:30 PM",
-			"location": "Momoya SoHo",
-			"address": "Momoya SoHo, 47 Prince St, New York, NY 10012, USA",
-			"image": "https://images.lumacdn.com/uploads/sk/c717012f-6202-4bd0-b50d-6b1a112544a0.png",
-			"rsvpUrl": "https://luma.com/ir6ssuak",
+			"location": "One Madison Ave",
+			"address": "One Madison Ave, New York, NY 10010, USA",
+			"image": "https://images.lumacdn.com/uploads/il/db47556d-f262-4774-8929-4257583f72a7.png",
+			"rsvpUrl": "https://luma.com/pg0du82x",
 			"status": "upcoming",
-			"lumaEventApiId": "evt-yPhlgDgw6Lh0q2V",
-			"lumaCalendarEventApiId": "calev-W4CZuJ1zVy5b0eR",
+			"lumaEventApiId": "evt-TliRp8FZCQsFmnN",
+			"lumaCalendarEventApiId": "calev-qfVtQQq0qZxilMl",
 			"hosts": [
 				{
 					"name": "Chelsea Commons",
 					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
 					"username": "chelseacommons"
 				}
-			],
-			"description": "Dinner with an AI-native law firm at Momoya. By invite only"
+			]
 		},
 		{
 			"id": "nrletiv9",
 			"title": "🏆 Builders Cup 2026 - A Hackathon by Ramp",
 			"date": "2026-07-18",
 			"time": "10:00 AM",
-			"endTime": "4:00 PM",
+			"endTime": "4:30 PM",
 			"location": "Manhattan",
 			"image": "https://images.lumacdn.com/uploads/t7/47da0f7c-b739-40d7-be66-b66fc1128864.jpg",
 			"rsvpUrl": "https://luma.com/nrletiv9",
-			"status": "upcoming",
+			"status": "past",
 			"lumaEventApiId": "evt-LlhzMiRMdutkcUe",
 			"lumaCalendarEventApiId": "calev-4qpwyGrLUYZP4EU",
 			"hosts": [
@@ -88,25 +91,53 @@
 			"description": "Presented by Ramp and sponsored by Cursor, Codex, and Chelsea Commons.\n\nThe ball is in your court. Build something that matters.\n\nRamp is hosting Builders Cup, a one-day hackathon in New York City where top builders compete for prizes, glory, and a chance to impress some of the fastest-growing tech companies in the world.\n\nJoin with a team of 2 to 4 builders to ship something real, show what you’ve got, and compete for bragging rights, plus some cool prizes.\n\nExpect a full day of hacking, mentorship, demos, and yes - very good food.\n\n💰 Prizes\n\nWe're awarding across four tracks:\n\nAudience Favorite — the crowd decides. Most votes wins.Best Game — built something fun? This one's for you.Save Time. Save Money. — build anything that saves people time and money.Best Use of Our Sponsors — more details soon.\n\n🗓️ Day of Schedule\n\n10AM — Doors Open - coffee, networking, find your people\n\n10:30AM — Kickoff remarks from Ramp and our sponsors\n\n11AM — Hacking starts\n\n12:45PM — Lunch\n\n3:30PM — Demos + awards ceremony\n\n🛠️ What to Expect\n\nCursor + Codex workshops: live zero-to-one workshops so you can hit the ground running - credits includedMentors on-site to help you shipCareer fair-style demos: you present at your station, the crowd votes, top builders get the spotlightPrizes for winnersFood, coffee, and good vibes all day\n\n👤 Who Should Join\n\nCS or software engineering students graduating 2027 or laterAble to attend in-person in New York City (no travel sponsorship at this time)Builders of any experience level — teams 2 to 4 members welcomeYou don't need an idea yet. You just need to show up ready to build.\n\n📍 Location\n\nFlatiron District, NYC — exact address shared upon RSVP confirmation."
 		},
 		{
-			"id": "pg0du82x",
-			"title": "Harvey Office Mixer",
-			"date": "2026-08-04",
-			"time": "6:30 PM",
+			"id": "ir6ssuak",
+			"title": "Soxton AI Dinner",
+			"date": "2026-07-15",
+			"time": "7:30 PM",
 			"endTime": "9:30 PM",
-			"location": "One Madison Ave",
-			"address": "One Madison Ave, New York, NY 10010, USA",
-			"image": "https://images.lumacdn.com/uploads/il/db47556d-f262-4774-8929-4257583f72a7.png",
-			"rsvpUrl": "https://luma.com/pg0du82x",
-			"status": "upcoming",
-			"lumaEventApiId": "evt-TliRp8FZCQsFmnN",
-			"lumaCalendarEventApiId": "calev-qfVtQQq0qZxilMl",
+			"location": "Momoya SoHo",
+			"address": "Momoya SoHo, 47 Prince St, New York, NY 10012, USA",
+			"image": "https://images.lumacdn.com/uploads/sk/c717012f-6202-4bd0-b50d-6b1a112544a0.png",
+			"rsvpUrl": "https://luma.com/ir6ssuak",
+			"status": "past",
+			"lumaEventApiId": "evt-yPhlgDgw6Lh0q2V",
+			"lumaCalendarEventApiId": "calev-W4CZuJ1zVy5b0eR",
 			"hosts": [
 				{
 					"name": "Chelsea Commons",
 					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
 					"username": "chelseacommons"
 				}
-			]
+			],
+			"description": "Dinner with an AI-native law firm at Momoya. By invite only"
+		},
+		{
+			"id": "mu0akf9q",
+			"title": "NYC Healthcare Builders Rooftop Mixer",
+			"date": "2026-07-14",
+			"time": "6:30 PM",
+			"endTime": "8:30 PM",
+			"location": "148 Lafayette St",
+			"address": "148 Lafayette St, New York, NY 10013, USA",
+			"image": "https://images.lumacdn.com/uploads/bv/b1d7a017-76fc-4523-af7f-82b89eb9425e.png",
+			"rsvpUrl": "https://luma.com/mu0akf9q",
+			"status": "past",
+			"lumaEventApiId": "evt-qiCYjYkAVa5ZmyN",
+			"lumaCalendarEventApiId": "calev-W51t4GYKYl1MQoH",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				}
+			],
+			"description": "Please join us for an evening on our newly unveiled rooftop on July 14th, hosted by General Catalyst, Mercury & Chelsea Commons.\n\nWe're bringing together a group of NYC's most promising young AI builders with founders and operators from the NYC ecosystem who are building at the intersection of AI and healthcare. The evening will include a rooftop reception, ice cream, and a brief, informal discussion with a few of our portfolio founders.\n\nOur hope is to spark real connections between emerging builders and the founders behind some of the most innovative healthcare companies. Whether you're early in your career, thinking about starting something, or just curious about building in healthcare, we'd love to have you join us."
 		},
 		{
 			"id": "7z6dr7uw",
@@ -216,7 +247,7 @@
 					"username": null
 				},
 				{
-					"name": "amedeo lorenzotti",
+					"name": "Amedeo Lorenzotti",
 					"avatar": "https://cdn.lu.ma/avatars-default/avatar_4.png",
 					"username": null
 				},
