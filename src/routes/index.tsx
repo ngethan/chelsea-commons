@@ -185,34 +185,13 @@ function FAQSection() {
 function App() {
 	return (
 		<div className="relative z-10">
-			{/* Fellows hiring banner — scrolls away; the navbar below stays sticky */}
-			<a
-				href="mailto:hey@chelseacommons.co?subject=Chelsea%20Commons%20Fellows"
-				className="block bg-foreground text-background"
-			>
-				{/* Fixed h-10 (2.5rem) — the hero height calc below subtracts it */}
-				<div className="h-10 px-6 md:px-12 flex items-center justify-center gap-2 md:gap-4 text-center">
-					<span aria-hidden="true" className="text-xs">
-						{"✳︎"}
-					</span>
-					<span className="font-mono font-medium uppercase tracking-[0.18em] text-[11px] md:text-[13px] whitespace-nowrap">
-						We're hiring{" "}
-						<span className="hidden md:inline">Chelsea Commons Fellows</span>
-						<span className="md:hidden">fellows</span>
-					</span>
-					<span className="font-mono font-medium uppercase tracking-[0.18em] text-[11px] md:text-[13px] whitespace-nowrap underline underline-offset-4 hover:opacity-70 transition-opacity">
-						Apply here →
-					</span>
-				</div>
-			</a>
-
 			<Navbar />
 
 			<main>
-				{/* Full-viewport hero (minus the banner and sticky navbar heights): the halftone
+				{/* Full-viewport hero (minus the sticky navbar's height): the halftone
 				    image is the backdrop, headline copy sits on top of it, and the
 				    logo marquee flows along its bottom edge. */}
-				<section className="relative flex flex-col h-[calc(var(--stable-vh,100svh)-8.25rem)] md:h-[calc(var(--stable-vh,100svh)-7.75rem)] min-h-[34rem] overflow-hidden">
+				<section className="relative flex flex-col h-[calc(var(--stable-vh,100svh)-5.75rem)] md:h-[calc(var(--stable-vh,100svh)-5.25rem)] min-h-[34rem] overflow-hidden">
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
