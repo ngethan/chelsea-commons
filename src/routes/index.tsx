@@ -188,7 +188,7 @@ function App() {
 		<div className="relative z-10">
 			{/* Hiring banner — scrolls away; the navbar below stays sticky */}
 			<a
-				href="https://docs.google.com/forms/d/e/1FAIpQLSeuZU9lueyX4LcY6jRlJclqXsyFs-gfVYhoqse5JMow-XcJQw/viewform"
+				href="https://docs.google.com/forms/d/e/1FAIpQLSfNJhLNeFaaZYuFippkNdNFGp4wd_rNt2NHIMQ-R_G51ubgzw/viewform"
 				target="_blank"
 				rel="noopener noreferrer"
 				className="block bg-foreground text-background"
