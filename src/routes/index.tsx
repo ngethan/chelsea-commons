@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { EventPhotos } from "../components/EventPhotos";
@@ -185,9 +186,11 @@ function FAQSection() {
 function App() {
 	return (
 		<div className="relative z-10">
-			{/* Fellows hiring banner — scrolls away; the navbar below stays sticky */}
+			{/* Hiring banner — scrolls away; the navbar below stays sticky */}
 			<a
-				href="mailto:hey@chelseacommons.co?subject=Chelsea%20Commons%20Fellows"
+				href="https://docs.google.com/forms/d/e/1FAIpQLSeuZU9lueyX4LcY6jRlJclqXsyFs-gfVYhoqse5JMow-XcJQw/viewform"
+				target="_blank"
+				rel="noopener noreferrer"
 				className="block bg-foreground text-background"
 			>
 				{/* Fixed h-10 (2.5rem) — the hero height calc below subtracts it */}
@@ -198,10 +201,11 @@ function App() {
 					<span className="font-mono font-medium uppercase tracking-[0.18em] text-[11px] md:text-[13px] whitespace-nowrap">
 						We're hiring{" "}
 						<span className="hidden md:inline">Chelsea Commons Fellows</span>
-						<span className="md:hidden">fellows</span>
+						<span className="md:hidden">fellows</span>.
 					</span>
-					<span className="font-mono font-medium uppercase tracking-[0.18em] text-[11px] md:text-[13px] whitespace-nowrap underline underline-offset-4 hover:opacity-70 transition-opacity">
-						Apply here →
+					<span className="font-mono font-medium uppercase tracking-[0.18em] text-[11px] md:text-[13px] whitespace-nowrap underline underline-offset-4 hover:opacity-70 transition-opacity inline-flex items-center gap-1.5">
+						Apply here
+						<ArrowRight aria-hidden="true" className="size-3.5" />
 					</span>
 				</div>
 			</a>
@@ -209,9 +213,7 @@ function App() {
 			<Navbar />
 
 			<main>
-				{/* Full-viewport hero (minus the banner and sticky navbar heights): the halftone
-				    image is the backdrop, headline copy sits on top of it, and the
-				    logo marquee flows along its bottom edge. */}
+				{/* Full-viewport hero, minus the banner and sticky navbar heights */}
 				<section className="relative flex flex-col h-[calc(var(--stable-vh,100svh)-8.25rem)] md:h-[calc(var(--stable-vh,100svh)-7.75rem)] min-h-[34rem] overflow-hidden">
 					<motion.div
 						initial={{ opacity: 0 }}
@@ -235,8 +237,6 @@ function App() {
 
 					<div className="relative z-10 px-6 md:px-12 pt-10 md:pt-16">
 						<div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
-							{/* Statement headline — brand name lives in the navbar; the hero
-							    gets to say something. One consistent display size across lines. */}
 							<motion.h1
 								initial={{ opacity: 0, y: 15 }}
 								animate={{ opacity: 1, y: 0 }}
