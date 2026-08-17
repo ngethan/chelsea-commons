@@ -21,11 +21,23 @@ export function Navbar() {
 
 	return (
 		<div className="sticky top-0 z-(--z-nav) w-full">
-			<nav className="w-full relative z-(--z-nav) bg-background">
+			{/* When the mobile menu is open the bar sits above the overlay, so it
+			    goes transparent and keeps only the close button. */}
+			<nav
+				className={`w-full relative z-(--z-nav) ${
+					isOpen ? "bg-transparent md:bg-background" : "bg-background"
+				}`}
+			>
 				<div className="px-6 md:px-12 py-6 flex items-center justify-between">
 					<Link
 						to="/"
-						className="text-foreground font-medium text-xl font-serif"
+						aria-hidden={isOpen}
+						tabIndex={isOpen ? -1 : undefined}
+						className={`text-foreground font-medium text-xl font-serif transition-opacity duration-200 ${
+							isOpen
+								? "opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto"
+								: ""
+						}`}
 					>
 						<span className="md:hidden">XII</span>
 						<span className="hidden md:inline">CHELSEA COMMONS</span>
