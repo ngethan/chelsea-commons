@@ -1,7 +1,180 @@
 {
-	"generatedAt": "2026-07-22T02:00:31.068Z",
+	"generatedAt": "2026-09-01T04:10:55.691Z",
 	"calendarApiId": "cal-Ab7IiaASyPX2MKb",
 	"events": [
+		{
+			"id": "9fiw8f43",
+			"title": "Boat Party",
+			"date": "2026-08-07",
+			"time": "7:00 PM",
+			"endTime": "10:00 PM",
+			"location": "Pier 61 Chelsea Piers",
+			"address": "Pier 61 Chelsea Piers, 111C 11th Ave, New York, NY 10011, USA",
+			"image": "https://images.lumacdn.com/uploads/ve/6b31a347-df24-477b-b2ba-6e1cd55546f9.png",
+			"rsvpUrl": "https://luma.com/9fiw8f43",
+			"status": "past",
+			"lumaEventApiId": "evt-n7THY1fymEJcwoZ",
+			"lumaCalendarEventApiId": "calev-QX4g9lB3GZ9Ho4r",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Morgan Blumberg",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_13.png",
+					"username": null
+				},
+				{
+					"name": "George Wang",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_23.png",
+					"username": null
+				},
+				{
+					"name": "thomas shehadeh",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_14.png",
+					"username": null
+				},
+				{
+					"name": "Athena Krikorian",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_13.png",
+					"username": null
+				}
+			],
+			"description": "Boat party by invite only. Details:\n\nDress Code: Cocktail attire - think tailored and polished: blazers, dresses, jumpsuits, no shorts or sneakers\n\nBoarding: 7:00 PM at Pier 61, Chelsea Piers\n\nDeparture: 7:30 PM sharp. The boat waits for no one.\n\nReturn: ~10:15 PM\n\nDinner + Drinks included"
+		},
+		{
+			"id": "pg0du82x",
+			"title": "Harvey Pizza + Board Games",
+			"date": "2026-08-06",
+			"time": "6:30 PM",
+			"endTime": "9:30 PM",
+			"location": "Manhattan",
+			"image": "https://images.lumacdn.com/uploads/il/db47556d-f262-4774-8929-4257583f72a7.png",
+			"rsvpUrl": "https://luma.com/pg0du82x",
+			"status": "past",
+			"lumaEventApiId": "evt-TliRp8FZCQsFmnN",
+			"lumaCalendarEventApiId": "calev-qfVtQQq0qZxilMl",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				},
+				{
+					"name": "Lauren Williams",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_32.png",
+					"username": null
+				}
+			],
+			"description": "invite only"
+		},
+		{
+			"id": "zxcggiex",
+			"title": "Slow Ventures + Soxton",
+			"date": "2026-08-05",
+			"time": "8:00 PM",
+			"endTime": "9:30 PM",
+			"location": "Manhattan",
+			"image": "https://images.lumacdn.com/uploads/po/43384c9e-8f56-4d56-be1a-3b41075ef7cb.png",
+			"rsvpUrl": "https://luma.com/zxcggiex",
+			"status": "past",
+			"lumaEventApiId": "evt-aTmcAfiVGQ1E8mv",
+			"lumaCalendarEventApiId": "calev-v5ZOMeN5ZI1EDWe",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Jackson Dietz",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_15.png",
+					"username": null
+				}
+			],
+			"description": "by invite only"
+		},
+		{
+			"id": "pm7ju8nh",
+			"title": "Stripe Dinner",
+			"date": "2026-08-04",
+			"time": "7:00 PM",
+			"endTime": "9:00 PM",
+			"location": "Mezcali",
+			"address": "Mezcali, 83 Maiden Ln, New York, NY 10038, USA",
+			"image": "https://images.lumacdn.com/uploads/sc/2c7b0925-6336-4ee7-843f-242e6b1a5873.png",
+			"rsvpUrl": "https://luma.com/pm7ju8nh",
+			"status": "past",
+			"lumaEventApiId": "evt-TeQttNAyS54QRRv",
+			"lumaCalendarEventApiId": "calev-jkYXHfekVljygFu",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				},
+				{
+					"name": "Ethan Ng",
+					"avatar": "https://images.lumacdn.com/uploads/kx/3382a637-b1da-45e2-904a-0acd62a2b00a.jpg",
+					"username": null
+				}
+			],
+			"description": "by invite only"
+		},
+		{
+			"id": "jxxvlz64",
+			"title": "FirstMark + Rho Pasta Making",
+			"date": "2026-08-03",
+			"time": "7:00 PM",
+			"endTime": "10:00 PM",
+			"location": "Abigail's Kitchen",
+			"address": "Abigail's Kitchen, 193 Henry St, New York, NY 10002, USA",
+			"image": "https://images.lumacdn.com/uploads/ec/b61e61d1-0b07-4637-b1da-e91715f97805.png",
+			"rsvpUrl": "https://luma.com/jxxvlz64",
+			"status": "past",
+			"lumaEventApiId": "evt-ZEWq8PZaSWclwKP",
+			"lumaCalendarEventApiId": "calev-wAO4JXgNtJxvDQI",
+			"hosts": [
+				{
+					"name": "Chelsea Commons",
+					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
+					"username": "chelseacommons"
+				},
+				{
+					"name": "Sachin Sashti",
+					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
+					"username": "sachinsashti"
+				},
+				{
+					"name": "Drew Parten",
+					"avatar": "https://images.lumacdn.com/avatars/kp/3de14f53-89d0-41a7-ad1b-38d724af659c.png",
+					"username": "rhodrew"
+				},
+				{
+					"name": "Arjun Dundoo",
+					"avatar": "https://images.lumacdn.com/uploads/e6/906378b3-43ad-4a69-94b9-5c17ac842df9.jpg",
+					"username": null
+				},
+				{
+					"name": "Sean Hu",
+					"avatar": "https://images.lumacdn.com/uploads/33/0958f467-1ec0-4c52-942b-6ce772087308.jpg",
+					"username": null
+				}
+			],
+			"description": "by invite only.\n\n​Rho is the all-in-one banking platform for startups and the accountants supporting them. With banking setup in minutes, cashback cards, and powerful tools for managing spend, paying bills, and closing the books, Rho helps high-growth startups move fast and stay focused, backed by support that goes to the end of the earth to help you win.\n\nRho is a fintech company, not a bank. Checking and card services are provided by Webster Bank, N.A., member FDIC; savings account services are provided by American Deposit Management Co. and its partner banks."
+		},
 		{
 			"id": "e2h3zs8j",
 			"title": "First Round Dinner",
@@ -12,7 +185,7 @@
 			"address": "Upland, 345 Park Ave S, New York, NY 10010, USA",
 			"image": "https://images.lumacdn.com/uploads/5g/69a4f5fb-6bca-4634-9a35-0e6708de7b75.png",
 			"rsvpUrl": "https://luma.com/e2h3zs8j",
-			"status": "upcoming",
+			"status": "past",
 			"lumaEventApiId": "evt-sjJMDtndGtMzFCc",
 			"lumaCalendarEventApiId": "calev-1amH4nfCHx5XVvl",
 			"hosts": [
@@ -30,27 +203,6 @@
 					"name": "Sachin Sashti",
 					"avatar": "https://cdn.lu.ma/avatars-default/avatar_29.png",
 					"username": "sachinsashti"
-				}
-			]
-		},
-		{
-			"id": "pg0du82x",
-			"title": "Harvey Office Mixer",
-			"date": "2026-08-04",
-			"time": "6:30 PM",
-			"endTime": "9:30 PM",
-			"location": "One Madison Ave",
-			"address": "One Madison Ave, New York, NY 10010, USA",
-			"image": "https://images.lumacdn.com/uploads/il/db47556d-f262-4774-8929-4257583f72a7.png",
-			"rsvpUrl": "https://luma.com/pg0du82x",
-			"status": "upcoming",
-			"lumaEventApiId": "evt-TliRp8FZCQsFmnN",
-			"lumaCalendarEventApiId": "calev-qfVtQQq0qZxilMl",
-			"hosts": [
-				{
-					"name": "Chelsea Commons",
-					"avatar": "https://images.lumacdn.com/avatars/n0/a7632b07-7df4-450d-8ca3-733592031441.png",
-					"username": "chelseacommons"
 				}
 			]
 		},
@@ -180,7 +332,7 @@
 				},
 				{
 					"name": "Sandy Yao",
-					"avatar": "https://cdn.lu.ma/avatars-default/avatar_16.png",
+					"avatar": "https://images.lumacdn.com/uploads/7t/39082656-dad7-4f8a-8c97-86e877da5948.jpg",
 					"username": null
 				},
 				{
