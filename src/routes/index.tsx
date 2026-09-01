@@ -1,7 +1,8 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight } from "lucide-react";
+// Only used by the hiring banner below, which is commented out.
+// import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { EventPhotos } from "../components/EventPhotos";
@@ -186,14 +187,15 @@ function FAQSection() {
 function App() {
 	return (
 		<div className="relative z-10">
-			{/* Hiring banner — scrolls away; the navbar below stays sticky */}
+			{/* Hiring banner, currently off. To bring it back, uncomment this and
+			    add its h-10 (2.5rem) back to the hero height calc below
+			    (5.75rem -> 8.25rem, md 5.25rem -> 7.75rem).
 			<a
 				href="https://docs.google.com/forms/d/e/1FAIpQLSfNJhLNeFaaZYuFippkNdNFGp4wd_rNt2NHIMQ-R_G51ubgzw/viewform"
 				target="_blank"
 				rel="noopener noreferrer"
 				className="block bg-foreground text-background"
 			>
-				{/* Fixed h-10 (2.5rem) — the hero height calc below subtracts it */}
 				<div className="h-10 px-6 md:px-12 flex items-center justify-center gap-2 md:gap-4 text-center">
 					<span aria-hidden="true" className="text-xs">
 						{"✳︎"}
@@ -209,12 +211,13 @@ function App() {
 					</span>
 				</div>
 			</a>
+			*/}
 
 			<Navbar />
 
 			<main>
-				{/* Full-viewport hero, minus the banner and sticky navbar heights */}
-				<section className="relative flex flex-col h-[calc(var(--stable-vh,100svh)-8.25rem)] md:h-[calc(var(--stable-vh,100svh)-7.75rem)] min-h-[34rem] overflow-hidden">
+				{/* Full-viewport hero, minus the sticky navbar's height */}
+				<section className="relative flex flex-col h-[calc(var(--stable-vh,100svh)-5.75rem)] md:h-[calc(var(--stable-vh,100svh)-5.25rem)] min-h-[34rem] overflow-hidden">
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
