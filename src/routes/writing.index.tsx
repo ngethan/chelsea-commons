@@ -20,7 +20,7 @@ export const Route = createFileRoute("/writing/")({
 });
 
 function BlogIndex() {
-	const { posts } = Route.useLoaderData();
+	const posts = Route.useLoaderData()?.posts ?? [];
 
 	return (
 		<div className="relative z-10 min-h-svh text-muted-foreground">
