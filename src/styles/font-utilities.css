@@ -1,8 +1,6 @@
 @layer utilities {
 	.font-sans {
-		font-family: "Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI",
-			"Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-			"Helvetica Neue", sans-serif;
+		font-family: var(--font-sans);
 	}
 
 	.font-mono {
@@ -10,14 +8,18 @@
 	}
 
 	.font-display {
-		font-family: "Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI",
-			"Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-			"Helvetica Neue", sans-serif;
+		font-family: var(--font-display);
 	}
 
+	/* Reads the token so the serif can be swapped in one place, the way
+	   .font-mono already does. Hard-coding the stack here silently overrode
+	   --font-serif. */
 	.font-serif {
-		font-family: "Playfair Display Variable", Georgia, "Times New Roman", Times,
-			serif;
+		font-family: var(--font-serif);
+	}
+
+	.font-memoir {
+		font-family: var(--font-memoir);
 	}
 
 	/* Neue Montreal specific weight classes */

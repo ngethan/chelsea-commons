@@ -25,3 +25,4 @@ todos.json
 src/routes/brand.tsx
 src/routes/brand_.board.$boardId.tsx
 src/components/brand/
+.env*

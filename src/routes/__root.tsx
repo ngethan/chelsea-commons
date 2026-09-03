@@ -98,7 +98,7 @@ function RootComponent() {
 	useEffect(() => {
 		console.log(
 			"%cChelsea Commons%c\nChelsea, New York, NY\n\nYou opened the console. You'd probably fit right in.\nhey@chelseacommons.co",
-			"font-family: Georgia, serif; font-style: italic; font-size: 24px;",
+			"font-family: Georgia, serif; font-size: 24px;",
 			"font-size: 12px;",
 		);
 	}, []);
