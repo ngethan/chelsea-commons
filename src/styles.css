@@ -61,8 +61,15 @@ main a.no-underline {
 	--input: #dcd9c9;
 	--ring: #a3a091;
 	--font-sans: "Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI",
-		sans-serif;
-	--font-serif: "Playfair Display Variable", serif;
+		"Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+		"Helvetica Neue", sans-serif;
+	--font-display: var(--font-sans);
+	--font-serif: "Playfair Display Variable", Georgia, "Times New Roman", Times,
+		serif;
+	/* Caps-only display face. Not a text serif: lowercase input comes out
+	   as capitals, so use it deliberately via .font-memoir, never as the
+	   default serif. */
+	--font-memoir: "Memoir", "Playfair Display Variable", Georgia, serif;
 	--font-mono: "Sohne Mono", "Geist Mono", Menlo, monospace;
 	--radius: 0.625rem;
 	--shadow-2xs: 0px 4px 12px -2px hsl(0 0% 0% / 0.1);

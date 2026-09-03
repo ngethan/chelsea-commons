@@ -9,6 +9,7 @@
     "sync:events": "node scripts/sync-luma-events.mjs",
     "sync:galleries": "node scripts/sync-event-galleries.mjs",
     "serve": "vite preview",
+    "test": "vitest run",
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",
@@ -16,6 +17,7 @@
   },
   "dependencies": {
     "@fontsource-variable/playfair-display": "^5.2.8",
+    "@neondatabase/serverless": "^1.1.0",
     "@paper-design/shaders-react": "^0.0.76",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-dialog": "^1.1.15",

@@ -1,3 +1,16 @@
+/* Memoir — beta package (Beta-Package_260314/Memoir_250825). A caps-only
+   display face: lowercase input renders as capitals, and there is no italic or
+   bold cut (the 100-900 range reuses this one file so the browser does not
+   fake a bold). Available as `.font-memoir`; it is not the site serif. */
+@font-face {
+	font-family: "Memoir";
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url("/fonts/Memoir.woff2") format("woff2"), url("/fonts/Memoir.woff")
+		format("woff");
+}
+
 /* Neue Montreal Font Family */
 @font-face {
 	font-family: "Neue Montreal";

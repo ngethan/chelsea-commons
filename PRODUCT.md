@@ -16,7 +16,7 @@ All three arrive in an evaluative mood; the site is the community's proof of lif
 
 ## Product Purpose
 
-Chelsea Commons is a community of young, ambitious builders, operators, and founders in New York. It started as twelve people living together in a house at 300 W 20th Street in Chelsea and is growing into a network that hosts dinners, mixers, and events across the city, with a new resident cohort each summer.
+Chelsea Commons is a community of young, ambitious builders, operators, and founders in New York. It started as twelve people living together in a house in Chelsea and is growing into a network that hosts dinners, mixers, and events across the city, with a new resident cohort each summer.
 
 The site exists to make the community legible and joinable. Success means: people RSVP to events, strong candidates reach out about future cohorts, and sponsors/partners come away convinced this is a real, high-caliber community — all in roughly equal measure. Every page should give each audience an obvious next step without splitting the site into separate funnels.
 
@@ -38,7 +38,7 @@ The site exists to make the community legible and joinable. Success means: peopl
 
 1. **People are the proof.** Real photos, real events, real partner logos carry the credibility argument. The design's job is to frame them beautifully, never to compete with them.
 2. **One community, three doors.** Attendees, applicants, and partners each need a clear next step (RSVP, reach out, partner with us) from any page — without the site fragmenting into audience-specific funnels.
-3. **A place, not a platform.** Chelsea Commons is a physical place in Manhattan. Specificity (street address, event photos, named people) beats abstraction every time; write and design like a neighborhood institution, not a network product.
+3. **A place, not a platform.** Chelsea Commons is a physical place in Manhattan. Specificity (event photos, named people) beats abstraction every time; write and design like a neighborhood institution, not a network product.
 4. **Understated confidence.** Ambition is demonstrated by what the community does, not claimed with superlatives or hype mechanics. Editorial restraint, no shouting.
 
 ## Accessibility & Inclusion
