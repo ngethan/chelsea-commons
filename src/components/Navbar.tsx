@@ -3,8 +3,21 @@ import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
-export function Navbar() {
+export function Navbar({
+	transparent = false,
+}: { transparent?: boolean } = {}) {
 	const [isOpen, setIsOpen] = useState(false);
+
+	// Over a full-bleed photograph the bar sits on the picture, so the cream
+	// goes translucent and frosted. Written out as whole class strings because
+	// Tailwind only sees literals. The mobile overlay below keeps its own
+	// opaque fill either way.
+	const bar = transparent
+		? "bg-background/60 backdrop-blur-md"
+		: "bg-background";
+	const barMd = transparent
+		? "md:bg-background/60 md:backdrop-blur-md"
+		: "md:bg-background";
 
 	useEffect(() => {
 		if (!isOpen) return;
@@ -25,7 +38,7 @@ export function Navbar() {
 			    goes transparent and keeps only the close button. */}
 			<nav
 				className={`w-full relative z-(--z-nav) ${
-					isOpen ? "bg-transparent md:bg-background" : "bg-background"
+					isOpen ? `bg-transparent ${barMd}` : bar
 				}`}
 			>
 				<div className="px-6 md:px-12 py-6 flex items-center justify-between">

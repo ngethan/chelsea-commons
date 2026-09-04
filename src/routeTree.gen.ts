@@ -14,6 +14,7 @@ import { Route as V2RouteImport } from './routes/v2'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as RsvpRouteImport } from './routes/rsvp'
 import { Route as MicrographicsRouteImport } from './routes/micrographics'
+import { Route as Fall2026RouteImport } from './routes/fall2026'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as EmailTestRouteImport } from './routes/email-test'
 import { Route as BlankRouteImport } from './routes/blank'
@@ -50,6 +51,11 @@ const RsvpRoute = RsvpRouteImport.update({
 const MicrographicsRoute = MicrographicsRouteImport.update({
   id: '/micrographics',
   path: '/micrographics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Fall2026Route = Fall2026RouteImport.update({
+  id: '/fall2026',
+  path: '/fall2026',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/blank': typeof BlankRoute
   '/email-test': typeof EmailTestRoute
   '/events': typeof EventsRoute
+  '/fall2026': typeof Fall2026Route
   '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
   '/test': typeof TestRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/blank': typeof BlankRoute
   '/email-test': typeof EmailTestRoute
   '/events': typeof EventsRoute
+  '/fall2026': typeof Fall2026Route
   '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
   '/test': typeof TestRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/blank': typeof BlankRoute
   '/email-test': typeof EmailTestRoute
   '/events': typeof EventsRoute
+  '/fall2026': typeof Fall2026Route
   '/micrographics': typeof MicrographicsRoute
   '/rsvp': typeof RsvpRoute
   '/test': typeof TestRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/blank'
     | '/email-test'
     | '/events'
+    | '/fall2026'
     | '/micrographics'
     | '/rsvp'
     | '/test'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/blank'
     | '/email-test'
     | '/events'
+    | '/fall2026'
     | '/micrographics'
     | '/rsvp'
     | '/test'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/blank'
     | '/email-test'
     | '/events'
+    | '/fall2026'
     | '/micrographics'
     | '/rsvp'
     | '/test'
@@ -236,6 +248,7 @@ export interface RootRouteChildren {
   BlankRoute: typeof BlankRoute
   EmailTestRoute: typeof EmailTestRoute
   EventsRoute: typeof EventsRoute
+  Fall2026Route: typeof Fall2026Route
   MicrographicsRoute: typeof MicrographicsRoute
   RsvpRoute: typeof RsvpRoute
   TestRoute: typeof TestRoute
@@ -282,6 +295,13 @@ declare module '@tanstack/react-router' {
       path: '/micrographics'
       fullPath: '/micrographics'
       preLoaderRoute: typeof MicrographicsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fall2026': {
+      id: '/fall2026'
+      path: '/fall2026'
+      fullPath: '/fall2026'
+      preLoaderRoute: typeof Fall2026RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -391,6 +411,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlankRoute: BlankRoute,
   EmailTestRoute: EmailTestRoute,
   EventsRoute: EventsRoute,
+  Fall2026Route: Fall2026Route,
   MicrographicsRoute: MicrographicsRoute,
   RsvpRoute: RsvpRoute,
   TestRoute: TestRoute,

@@ -1,5 +1,5 @@
-import { Component, Suspense, lazy, useEffect, useState } from "react";
-import type { ReactNode } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
+import { ShaderBoundary } from "./shader-boundary";
 
 // WebGL canvas — must never evaluate during prerender, so the module is
 // loaded lazily and only after the client has mounted.
@@ -8,23 +8,6 @@ const HalftoneDots = lazy(() =>
 		default: m.HalftoneDots,
 	})),
 );
-
-// A shader crash (failed import, no WebGL context) must degrade to the
-// plain photograph, never take the page down.
-class ShaderBoundary extends Component<
-	{ fallback: ReactNode; children: ReactNode },
-	{ failed: boolean }
-> {
-	state = { failed: false };
-
-	static getDerivedStateFromError() {
-		return { failed: true };
-	}
-
-	render() {
-		return this.state.failed ? this.props.fallback : this.props.children;
-	}
-}
 
 export function HalftoneHeroImage({
 	image = "/assets/space/rooftop.jpg",
