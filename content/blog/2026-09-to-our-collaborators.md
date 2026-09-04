@@ -18,15 +18,16 @@ This letter serves as a synopsis of what we accomplished over the summer, plans 
 
 - Hosted 17 events ranging from private dinners to hackathons, sushi-making classes and a yacht party across 9 weeks.
 - Partnered with 22 VCs and tech companies to host events for over 550 interns from 74 schools and 132 companies.
-- Hosted a hackathon alongside Ramp, OpenAI, and Cursor. Here is a video we put together!
+- Hosted a hackathon alongside Ramp, OpenAI, and Cursor. [Here is a video we put together!](https://lnkd.in/p/dyDUgXe7)
 - Played basketball every Sunday together in Brooklyn, followed by a group dinner.
 
 Below are some of our favorite pictures, and here are a couple more :)
 
 ```photos
-/assets/letter/retreat-pizza.webp | The crew around a table of pizza
-/assets/letter/retreat-monopoly.webp | A game of Monopoly running long
-/assets/letter/steak-dinner.webp | Steaks coming off the stove
+/assets/letter/rooftop-social.webp | The cohort on a Manhattan rooftop at sunset
+/assets/letter/harvey-office.webp | A full room of interns at the Harvey office
+/assets/letter/ramp-hackathon.webp | The team in jerseys under the BUILD sign at the Ramp hackathon
+/assets/letter/yacht-party.webp | On deck at the yacht party, the Statue of Liberty behind
 ```
 
 ## Plans for the fall

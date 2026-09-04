@@ -35,6 +35,20 @@ const streamdownComponents = {
 			data-streamdown="horizontal-rule"
 		/>
 	),
+	// Links out of a letter (the hackathon video on LinkedIn, for one) should
+	// open alongside it rather than navigating the reader away. noreferrer
+	// keeps the unlisted letter URL out of the destination's referrer logs.
+	a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
+		const external = /^https?:\/\//.test(href ?? "");
+		return (
+			<a
+				href={href}
+				{...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+			>
+				{children}
+			</a>
+		);
+	},
 	strong: ({ children }: { children?: React.ReactNode }) => (
 		<strong
 			className="font-semibold"
@@ -154,7 +168,9 @@ function PhotoGrid({
 	const columns =
 		photos.length === 1
 			? "grid-cols-1"
-			: photos.length === 2
+			: // Two columns for two or four, so a set of four is a square rather
+				// than a row of three with one stranded underneath.
+				photos.length === 2 || photos.length === 4
 				? "grid-cols-2"
 				: "grid-cols-2 md:grid-cols-3";
 
