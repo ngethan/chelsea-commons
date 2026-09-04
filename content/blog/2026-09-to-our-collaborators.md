@@ -1,103 +1,45 @@
 ---
-name: To our collaborators
-description: Where the house and the founding cohort stand, the partners we have signed, and what we could use help with.
+name: To my collaborators
+description: A synopsis of what we accomplished over the summer, plans for the fall, and our vision for the future
 visibility: private
-date: Sep 3, 2026
+date: Sep 4, 2026
 subtitle: Chelsea Commons Team
 ---
 
-You're receiving this because you've supported Chelsea Commons, whether with time, money, or advice, and we're grateful for that.
+This past summer is an experience we will never forget and are beyond grateful for. When we first conceived this idea, its extent was 12 ambitious interns living together in NYC and exploring the city. The vision was simple: a physical space to gather and interact would serve as the basis to meet exceptional people, which would lead to incredible second and third order effects (which we are starting to see now!)
 
-For quick context, Chelsea Commons is a summer community for ambitious NYC interns, centered around a 12-person intern hacker house in Chelsea. Our residents come from schools like Harvard, Stanford, and Yale, and intern at companies like NVIDIA, Ramp, Figma, and BlackRock.
+There's no feeling in the world quite like people you respect believing in your idea and ability to execute on it, so you are receiving this because you've supported Chelsea Commons, whether with time, money, or advice, and we're grateful for that :)
 
-As we get closer to summer, we want to share updates with the people who support the mission and want to stay close to what we're building. Thank you again for being in our corner. We're excited to keep you posted as things develop.
+This letter serves as a synopsis of what we accomplished over the summer, plans for the fall, and our vision for the future, along with a couple of our favorite stories! Enjoy, and we look forward to hearing from you.
 
-## What we've done
+– Sachin, Tres, Ethan, Will, Jackson, and the Chelsea Commons team
 
-- Finalized all logistics for the 12-person apartment and the founding cohort.
-- Received 400+ resident and community applications from every top school and company.
-- Finalized partnerships with 15+ VCs and companies to throw events ranging from hackathons to game nights and rooftop socials.
+## How the summer went
 
-Some of our partners:
+- Hosted 17 events ranging from private dinners to hackathons, sushi-making classes and a yacht party across 9 weeks.
+- Partnered with 22 VCs and tech companies to host events for over 550 interns from 74 schools and 132 companies.
+- Hosted a hackathon alongside Ramp, OpenAI, and Cursor. Here is a video we put together!
+- Played basketball every Sunday together in Brooklyn, followed by a group dinner.
 
-```partners
-a16z
-General Catalyst
-First Round Capital
-Menlo Ventures
-Lerer Hippeau
-BoxGroup
-M13
-Felicis
-TQ Ventures
-Ramp
-OpenAI
-Cursor
-Mercury
-Rho
-Harvey
-Z Fellows
-```
-
-## Who we are
-
-- We come from 10 schools and are interning at 10 companies.
-- None of us knew each other before this project.
-
-Some stories on us:
-
-- Youngest ever NBA and Scale AI interns.
-- Team Alberta freestyle skier and Yale D1 center forward.
-- Previous machine learning engineers at NVIDIA, Figma, Slack, and Jane Street.
-- Summer 2027 investment bankers at Lazard and Evercore.
-- Presented to EU delegates and represented the US for Global Economics.
-- Stanford AI defense tech researcher, and published in energy economics.
-
-## Our goal, put simply
-
-> Become the greatest intern friend group in NYC.
-
-While this is funny (even to us), we fundamentally believe authentic friendship is the basis for the exceptional community we aim to create.
-
-## What we're working on
-
-The team is focused on two things: finalizing partnerships and building an events schedule.
-
-```cards
-Partnerships
-We aim to partner with VCs and top tech and finance companies looking to hire exceptional talent. For companies, we aggregate top finance and engineering talent who will recruit for internships or full time positions. For VCs, our community has a focus on early builders, including founders backed by YC and a16z.
----
-Events
-We will host both professional and social events. On the professional side, think dinners, hackathons, rooftop events, and panels. Social events are where we plan to get really creative: spikeball tournaments, galas, field days, game nights, and run clubs. Other ideas welcome.
-```
-
-## How can you help? (thanks for asking)
-
-- **Intros at companies hiring young engineers.** Think Ramp, Stripe, Datadog, and quant firms. Know anyone there who might be interested?
-
-Reply to the email that brought you here.
-
-## From the crew
-
-Some of the crew traveled to San Francisco for a resident retreat and met each other for the first time last weekend. We played too many games of Monopoly, met up with mentors, and debated existentialism, ethics, and Catan strategy. Enjoy these pics of us in action.
+Below are some of our favorite pictures, and here are a couple more :)
 
 ```photos
-/assets/letter/retreat-pizza.webp | Residents around a table of pizza boxes at the San Francisco retreat
-/assets/letter/retreat-monopoly.webp | Two residents mid-game of Monopoly
+/assets/letter/retreat-pizza.webp | The crew around a table of pizza
+/assets/letter/retreat-monopoly.webp | A game of Monopoly running long
+/assets/letter/steak-dinner.webp | Steaks coming off the stove
 ```
 
-## A shoutout to Coyne Lloyd
+## Plans for the fall
 
-- Offering to put up six figures to get the house secured before we even started this process.
-- Connecting us to 20+ people who have been amazing.
-- Hosting us at his house for dinner and some incredible steak.
+- We've established an exceptional network of students across the country, with especially strong presences in New York, Boston, SF, LA, Atlanta, Nashville, and Austin.
+- In these cities, we are going to host events for talented students to meet each other and VCs and tech companies, following the same thesis as the summer.
+- Our goal is to move further upstream and build relationships with as many exceptional students as possible.
+- When we build cohort 2 of the Chelsea Commons residents next year, we will have expanded our network and brand on campus to attract the most exceptional builders.
 
-```photos
-/assets/letter/steak-dinner.webp | Two people in the kitchen with a board of steaks
-```
+## Our vision for the future
 
----
+Fundamentally we believe in two things: exceptional young technical talent, and New York City's growth in venture and tech.
 
-Thank you again for being in our corner.
-
-– The Chelsea Commons team
+- **Our goal for next summer.** When a top student comes to NYC interested in venture, tech, or startups, we are the first name they think of. Whether they have interacted with us personally or heard of us through friends, we should be the first phone call or visit they make to meet friends, investors, and everyone else in the city.
+- **The house is fundamental to our thesis.** We are organizing two houses, one for girls and one for guys, starting next year.
+- **We believe Chelsea Commons possesses strong network effects**, both direct and indirect. If we can continue to build our brand amongst students in the fall, we have the potential to dominate access to the market of talented interns in NYC.
