@@ -38,11 +38,17 @@ const streamdownComponents = {
 	// Links out of a letter (the hackathon video on LinkedIn, for one) should
 	// open alongside it rather than navigating the reader away. noreferrer
 	// keeps the unlisted letter URL out of the destination's referrer logs.
+	//
+	// `link-static` is the opt-out from the global `main a` rule in styles.css,
+	// which underlines only on hover. In prose a link should read as a link
+	// before the pointer is anywhere near it, so it is underlined always and
+	// nothing changes underneath the cursor.
 	a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
 		const external = /^https?:\/\//.test(href ?? "");
 		return (
 			<a
 				href={href}
+				className="link-static text-foreground underline"
 				{...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
 			>
 				{children}
