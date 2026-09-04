@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { ShaderBoundary } from "./shader-boundary";
 
 // WebGL canvas — must never evaluate during prerender, so the module is
@@ -26,12 +26,22 @@ export function CityDitherPlate({
 	image,
 	alt,
 	className = "",
+	focusX = 0.5,
+	focusY = 0.5,
 }: {
 	image: string;
 	alt: string;
 	className?: string;
+	/** Where the subject sits in the photograph, 0 to 1 from the left/top. */
+	focusX?: number;
+	focusY?: number;
 }) {
 	const [decoded, setDecoded] = useState(false);
+	const [imageSize, setImageSize] = useState<{ w: number; h: number } | null>(
+		null,
+	);
+	const [box, setBox] = useState<{ w: number; h: number } | null>(null);
+	const boxRef = useRef<HTMLDivElement>(null);
 
 	// Wait for the photograph to be decoded before mounting the shader, so the
 	// texture upload has nothing to wait on and the first painted frame is
@@ -45,6 +55,10 @@ export function CityDitherPlate({
 		const img = new Image();
 		img.src = image;
 		img.decode().then(done, done);
+		img.addEventListener("load", () => {
+			if (cancelled) return;
+			setImageSize({ w: img.naturalWidth, h: img.naturalHeight });
+		});
 		// decode() can stall indefinitely, a backgrounded tab being the easy
 		// case. Waiting on it forever would leave the page a blank ink field, so
 		// mount the shader regardless after a beat.
@@ -54,6 +68,44 @@ export function CityDitherPlate({
 			clearTimeout(failsafe);
 		};
 	}, [image]);
+
+	useEffect(() => {
+		const el = boxRef.current;
+		if (!el) return;
+		const measure = () => setBox({ w: el.clientWidth, h: el.clientHeight });
+		measure();
+		const observer = new ResizeObserver(measure);
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, []);
+
+	/**
+	 * `fit: cover` crops whichever axis has spare image, and it crops around the
+	 * middle, which throws the subject away: on a portrait phone the Golden Gate
+	 * tower and One World Trade both fell outside the visible slice. Pan the
+	 * crop onto the subject instead.
+	 *
+	 * The shader adds `vec2(-offsetX, offsetY)` to a centred UV that is later
+	 * shifted by .5 (and flipped in Y), so the middle of the visible window sits
+	 * at `0.5 - offset` in texture space, hence `offset = 0.5 - focus`. Only the
+	 * cropped axis is panned, and the focus is clamped to half the visible
+	 * fraction so the crop can never run off the edge of the picture.
+	 */
+	const offset = useMemo(() => {
+		if (!imageSize || !box?.w || !box?.h) return { x: 0, y: 0 };
+
+		const imageAspect = imageSize.w / imageSize.h;
+		const boxAspect = box.w / box.h;
+		const centre = (focus: number, visible: number) => {
+			const half = visible / 2;
+			return Math.min(1 - half, Math.max(half, focus));
+		};
+
+		if (imageAspect > boxAspect) {
+			return { x: 0.5 - centre(focusX, boxAspect / imageAspect), y: 0 };
+		}
+		return { x: 0, y: 0.5 - centre(focusY, imageAspect / boxAspect) };
+	}, [imageSize, box, focusX, focusY]);
 
 	// Only for an actual shader failure (no WebGL, module won't load). Pointedly
 	// not the loading state: showing the raw photograph and then swapping it for
@@ -68,7 +120,10 @@ export function CityDitherPlate({
 	);
 
 	return (
-		<div className={`absolute inset-0 overflow-hidden ${className}`}>
+		<div
+			ref={boxRef}
+			className={`absolute inset-0 overflow-hidden ${className}`}
+		>
 			{decoded ? (
 				<ShaderBoundary fallback={fallback}>
 					<Suspense fallback={null}>
@@ -86,6 +141,8 @@ export function CityDitherPlate({
 								colorSteps={5}
 								scale={1}
 								fit="cover"
+								offsetX={offset.x}
+								offsetY={offset.y}
 								// Static grain: the dither pattern shouldn't shimmer while
 								// you read the city name.
 								speed={0}

@@ -38,15 +38,47 @@ type City = {
 	name: string;
 	state: string;
 	slug: string;
+	/**
+	 * Where the landmark sits in the photograph, 0 to 1 from the left/top, so
+	 * the crop can be panned onto it. Read off each picture by eye. Matters
+	 * most on a phone, where the portrait crop keeps only the middle ~40% of a
+	 * landscape frame and the subject is otherwise cut out entirely.
+	 */
+	focusX: number;
+	focusY: number;
 };
 
 const CITIES: City[] = [
-	{ name: "New York", state: "NY", slug: "new-york" },
-	{ name: "Boston", state: "MA", slug: "boston" },
-	{ name: "San Francisco", state: "CA", slug: "san-francisco" },
-	{ name: "Los Angeles", state: "CA", slug: "los-angeles" },
-	{ name: "Austin", state: "TX", slug: "austin" },
-	{ name: "Atlanta", state: "GA", slug: "atlanta" },
+	// One World Trade and the Brooklyn Bridge tower, right of centre.
+	{
+		name: "New York",
+		state: "NY",
+		slug: "new-york",
+		focusX: 0.68,
+		focusY: 0.45,
+	},
+	// The near Zakim tower, well left of centre.
+	{ name: "Boston", state: "MA", slug: "boston", focusX: 0.32, focusY: 0.5 },
+	// The near Golden Gate tower.
+	{
+		name: "San Francisco",
+		state: "CA",
+		slug: "san-francisco",
+		focusX: 0.31,
+		focusY: 0.42,
+	},
+	// Downtown sits small and high; the light trails carry the lower frame.
+	{
+		name: "Los Angeles",
+		state: "CA",
+		slug: "los-angeles",
+		focusX: 0.55,
+		focusY: 0.42,
+	},
+	// Skyline sits right of centre over the water.
+	{ name: "Austin", state: "TX", slug: "austin", focusX: 0.56, focusY: 0.45 },
+	// Bank of America Plaza and the tower beside it, over the light trails.
+	{ name: "Atlanta", state: "GA", slug: "atlanta", focusX: 0.52, focusY: 0.4 },
 ];
 
 const cityImage = (city: City) => `/assets/cities/${city.slug}.jpg`;
@@ -125,6 +157,8 @@ function CityBackdrop({ index }: { index: number }) {
 					<CityDitherPlate
 						image={cityImage(CITIES[slot])}
 						alt={CITIES[slot].name}
+						focusX={CITIES[slot].focusX}
+						focusY={CITIES[slot].focusY}
 					/>
 				</div>
 			))}
