@@ -29,7 +29,7 @@ export type CampaignEmail = {
 };
 
 const DEFAULT_DESCRIPTION =
-	"where the house and the founding cohort stand, the partners we've signed, and a couple of things we could genuinely use your help with";
+	"Where the house and the founding cohort stand, the partners we've signed, and a couple of things we could genuinely use your help with.";
 
 /**
  * The body, once. The HTML and plain-text parts are two renderings of these
@@ -44,7 +44,7 @@ function paragraphs(opts: CampaignEmail): Array<string | { link: string }> {
 	return [
 		greeting,
 		"You're receiving this because you've supported Chelsea Commons, whether with time, money, or advice. We're grateful for that.",
-		`We put together an update: ${description}.`,
+		`We put together an update. ${description.replace(/\.?$/, ".")}`,
 		{ link: trackedLinkUrl(opts.baseUrl, opts.ref) },
 		"Thank you again for being in our corner.",
 		"– The Chelsea Commons team",

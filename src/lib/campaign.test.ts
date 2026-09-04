@@ -5,7 +5,7 @@ const opts = {
 	ref: "ab3k9xz2",
 	name: "Coyne",
 	baseUrl: "https://chelseacommons.co",
-	description: "what we did this month",
+	description: "What we did this month",
 };
 
 describe("campaign email", () => {
@@ -14,7 +14,7 @@ describe("campaign email", () => {
 		const text = renderCampaignText(opts);
 		for (const line of [
 			"Hi Coyne,",
-			"what we did this month",
+			"What we did this month.",
 			"in our corner",
 		]) {
 			expect(html).toContain(line);
