@@ -31,12 +31,33 @@ export function CityDitherPlate({
 	alt: string;
 	className?: string;
 }) {
-	const [mounted, setMounted] = useState(false);
+	const [decoded, setDecoded] = useState(false);
 
+	// Wait for the photograph to be decoded before mounting the shader, so the
+	// texture upload has nothing to wait on and the first painted frame is
+	// already dithered. Never resets on a later image change, so switching
+	// cities doesn't blank the plate.
 	useEffect(() => {
-		setMounted(true);
-	}, []);
+		let cancelled = false;
+		const done = () => {
+			if (!cancelled) setDecoded(true);
+		};
+		const img = new Image();
+		img.src = image;
+		img.decode().then(done, done);
+		// decode() can stall indefinitely, a backgrounded tab being the easy
+		// case. Waiting on it forever would leave the page a blank ink field, so
+		// mount the shader regardless after a beat.
+		const failsafe = setTimeout(done, 1200);
+		return () => {
+			cancelled = true;
+			clearTimeout(failsafe);
+		};
+	}, [image]);
 
+	// Only for an actual shader failure (no WebGL, module won't load). Pointedly
+	// not the loading state: showing the raw photograph and then swapping it for
+	// the dithered one is a worse flash than a beat of empty ink.
 	const fallback = (
 		<img
 			src={image}
@@ -48,39 +69,39 @@ export function CityDitherPlate({
 
 	return (
 		<div className={`absolute inset-0 overflow-hidden ${className}`}>
-			{mounted ? (
+			{decoded ? (
 				<ShaderBoundary fallback={fallback}>
-					<Suspense fallback={fallback}>
-						<ImageDithering
-							image={image}
-							colorBack={DITHER_BACK}
-							// The photograph keeps its own colors. The ordered 8x8 Bayer
-							// matrix is what keeps this from reading as grain: `random`
-							// at this same pixel size was just static.
-							originalColors={true}
-							inverted={false}
-							type="8x8"
-							size={1}
-							colorSteps={5}
-							scale={1}
-							fit="cover"
-							// Static grain: the dither pattern shouldn't shimmer while
-							// you read the city name.
-							speed={0}
-							minPixelRatio={1}
-							maxPixelCount={1920 * 1080}
-							style={{
-								width: "100%",
-								height: "100%",
-								position: "absolute",
-								inset: 0,
-							}}
-						/>
+					<Suspense fallback={null}>
+						{/* Fades in on mount, which is after the lazy module resolves,
+						    covering the shader's first paint. */}
+						<div className="absolute inset-0 animate-in fade-in duration-500">
+							<ImageDithering
+								image={image}
+								colorBack={DITHER_BACK}
+								// The photograph keeps its own colors.
+								originalColors={true}
+								inverted={false}
+								type="random"
+								size={1}
+								colorSteps={5}
+								scale={1}
+								fit="cover"
+								// Static grain: the dither pattern shouldn't shimmer while
+								// you read the city name.
+								speed={0}
+								minPixelRatio={1}
+								maxPixelCount={1920 * 1080}
+								style={{
+									width: "100%",
+									height: "100%",
+									position: "absolute",
+									inset: 0,
+								}}
+							/>
+						</div>
 					</Suspense>
 				</ShaderBoundary>
-			) : (
-				fallback
-			)}
+			) : null}
 		</div>
 	);
 }
