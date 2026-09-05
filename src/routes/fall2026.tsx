@@ -183,7 +183,7 @@ function CityBackdrop({ index }: { index: number }) {
 				</div>
 			))}
 			{/* Holds the type legible over six very different photographs. */}
-			<div className="absolute inset-0 bg-foreground/70 md:bg-foreground/60" />
+			<div className="absolute inset-0 bg-foreground/70" />
 		</div>
 	);
 }
@@ -396,18 +396,20 @@ function Fall2026() {
 					))}
 				</ul>
 
-				{/* The site footer's wordmark on its own: no aurora, no contact row,
-				    and cream rather than ink because this page is a dark field. */}
+				{/* A sign-off in the site footer's display treatment: no aurora, no
+				    contact row, and cream rather than ink because this page is a
+				    dark field. Each line is scaled to fill the width on its own, so
+				    the shorter one sets larger. */}
 				{/* overflow-hidden for the same reason the site footer has it: FitText
 				    derives its size from a 10px measurement, and the real render can
 				    land a couple of pixels wider, which is enough to give the whole
 				    page a horizontal scrollbar. */}
 				<div ref={footerRef} className="overflow-hidden pb-[8svh] select-none">
 					<FitText className="font-serif text-8xl leading-none tracking-tight text-background opacity-90">
-						CHELSEA
+						SEE YOU
 					</FitText>
 					<FitText className="font-serif text-8xl leading-none tracking-tight text-background opacity-90">
-						COMMONS
+						THERE
 					</FitText>
 				</div>
 			</main>
