@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { CityDitherPlate } from "../components/CityDitherPlate";
+import { CityDitherPlate, loadCityImage } from "../components/CityDitherPlate";
 import { FitText } from "../components/FitText";
 import { Button } from "../components/ui/button";
 import { buildSeoTags } from "../site-config";
@@ -17,7 +17,15 @@ export const Route = createFileRoute("/fall2026")({
 		return {
 			title: seo.title,
 			meta: seo.meta,
-			links: seo.links,
+			links: [
+				...seo.links,
+				{
+					rel: "preload",
+					as: "image",
+					href: "/assets/cities/new-york.jpg",
+					fetchpriority: "high",
+				},
+			],
 			// The root paints cream (page background, and a full-screen
 			// #loading-screen splash) before this route's markup exists, which
 			// reads as a white flash in front of a page that is entirely ink.
@@ -125,24 +133,36 @@ function CityBackdrop({ index }: { index: number }) {
 		active: 0 | 1;
 	}>({ slots: [0, 0], active: 0 });
 
-	// Warm the browser cache so a crossfade never reveals a texture that hasn't
-	// loaded yet.
+	// Decode every photograph up front and keep them, so scrolling never waits
+	// on the network. Started after the first paint so it doesn't compete with
+	// the city you're actually looking at.
 	useEffect(() => {
-		for (const city of CITIES) {
-			const img = new Image();
-			img.src = cityImage(city);
-		}
+		const timer = setTimeout(() => {
+			for (const city of CITIES) loadCityImage(cityImage(city));
+		}, 200);
+		return () => clearTimeout(timer);
 	}, []);
 
-	// Hand the incoming city to whichever canvas is hidden, then flip.
+	// Hand the incoming city to whichever canvas is hidden, then flip, but only
+	// once its photograph is actually decoded. Flipping immediately meant that
+	// on a phone, where the decode had usually been evicted, the crossfade ran
+	// to an empty plate and the backdrop simply went dark. Holding the previous
+	// city a beat longer is much the better failure.
 	useEffect(() => {
-		setPlate((prev) => {
-			if (prev.slots[prev.active] === index) return prev;
-			const active = (1 - prev.active) as 0 | 1;
-			const slots: [number, number] = [...prev.slots];
-			slots[active] = index;
-			return { slots, active };
+		let cancelled = false;
+		loadCityImage(cityImage(CITIES[index])).then(() => {
+			if (cancelled) return;
+			setPlate((prev) => {
+				if (prev.slots[prev.active] === index) return prev;
+				const active = (1 - prev.active) as 0 | 1;
+				const slots: [number, number] = [...prev.slots];
+				slots[active] = index;
+				return { slots, active };
+			});
 		});
+		return () => {
+			cancelled = true;
+		};
 	}, [index]);
 
 	return (

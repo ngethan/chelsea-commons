@@ -18,6 +18,38 @@ const ImageDithering = lazy(() =>
 export const DITHER_BACK = "#2b2b2b";
 
 /**
+ * Decoded photographs, held for the life of the page.
+ *
+ * The retention is the point. Preloading with a bare `new Image()` keeps
+ * nothing alive, so the browser is free to collect it the moment the function
+ * returns, and a phone under memory pressure does exactly that: by the time
+ * you scrolled to a city its photograph had to be fetched and decoded all over
+ * again, and the plate sat empty while it did. Holding the promise here keeps
+ * the element reachable, so each photograph is fetched and decoded once.
+ */
+const decodedImages = new Map<string, Promise<HTMLImageElement>>();
+
+export function loadCityImage(src: string): Promise<HTMLImageElement> {
+	const existing = decodedImages.get(src);
+	if (existing) return existing;
+
+	const pending = new Promise<HTMLImageElement>((resolve) => {
+		const img = new Image();
+		img.decoding = "async";
+		// Resolve on any terminal outcome. A failed decode still resolves, so a
+		// broken photograph can never wedge the crossfade that waits on this.
+		const done = () => resolve(img);
+		img.addEventListener("load", done, { once: true });
+		img.addEventListener("error", done, { once: true });
+		img.src = src;
+		img.decode().then(done, () => {});
+	});
+
+	decodedImages.set(src, pending);
+	return pending;
+}
+
+/**
  * One city photograph, dithered. The fallback (no WebGL, or the shader module
  * failing to load) is the photo under a filter that lands in roughly the same
  * two-tone place, so the plate never renders as a hole in the page.
@@ -36,36 +68,19 @@ export function CityDitherPlate({
 	focusX?: number;
 	focusY?: number;
 }) {
-	const [decoded, setDecoded] = useState(false);
-	const [imageSize, setImageSize] = useState<{ w: number; h: number } | null>(
-		null,
-	);
+	const [element, setElement] = useState<HTMLImageElement | null>(null);
 	const [box, setBox] = useState<{ w: number; h: number } | null>(null);
 	const boxRef = useRef<HTMLDivElement>(null);
 
-	// Wait for the photograph to be decoded before mounting the shader, so the
-	// texture upload has nothing to wait on and the first painted frame is
-	// already dithered. Never resets on a later image change, so switching
-	// cities doesn't blank the plate.
+	// Hand the shader a decoded element rather than a URL, so it uploads the
+	// texture straight from memory instead of starting its own fetch.
 	useEffect(() => {
 		let cancelled = false;
-		const done = () => {
-			if (!cancelled) setDecoded(true);
-		};
-		const img = new Image();
-		img.src = image;
-		img.decode().then(done, done);
-		img.addEventListener("load", () => {
-			if (cancelled) return;
-			setImageSize({ w: img.naturalWidth, h: img.naturalHeight });
+		loadCityImage(image).then((img) => {
+			if (!cancelled) setElement(img);
 		});
-		// decode() can stall indefinitely, a backgrounded tab being the easy
-		// case. Waiting on it forever would leave the page a blank ink field, so
-		// mount the shader regardless after a beat.
-		const failsafe = setTimeout(done, 1200);
 		return () => {
 			cancelled = true;
-			clearTimeout(failsafe);
 		};
 	}, [image]);
 
@@ -92,9 +107,11 @@ export function CityDitherPlate({
 	 * fraction so the crop can never run off the edge of the picture.
 	 */
 	const offset = useMemo(() => {
-		if (!imageSize || !box?.w || !box?.h) return { x: 0, y: 0 };
+		const w = element?.naturalWidth ?? 0;
+		const h = element?.naturalHeight ?? 0;
+		if (!w || !h || !box?.w || !box?.h) return { x: 0, y: 0 };
 
-		const imageAspect = imageSize.w / imageSize.h;
+		const imageAspect = w / h;
 		const boxAspect = box.w / box.h;
 		const centre = (focus: number, visible: number) => {
 			const half = visible / 2;
@@ -105,7 +122,7 @@ export function CityDitherPlate({
 			return { x: 0.5 - centre(focusX, boxAspect / imageAspect), y: 0 };
 		}
 		return { x: 0, y: 0.5 - centre(focusY, imageAspect / boxAspect) };
-	}, [imageSize, box, focusX, focusY]);
+	}, [element, box, focusX, focusY]);
 
 	// Only for an actual shader failure (no WebGL, module won't load). Pointedly
 	// not the loading state: showing the raw photograph and then swapping it for
@@ -124,14 +141,14 @@ export function CityDitherPlate({
 			ref={boxRef}
 			className={`absolute inset-0 overflow-hidden ${className}`}
 		>
-			{decoded ? (
+			{element ? (
 				<ShaderBoundary fallback={fallback}>
 					<Suspense fallback={null}>
 						{/* Fades in on mount, which is after the lazy module resolves,
 						    covering the shader's first paint. */}
 						<div className="absolute inset-0 animate-in fade-in duration-500">
 							<ImageDithering
-								image={image}
+								image={element}
 								colorBack={DITHER_BACK}
 								// The photograph keeps its own colors.
 								originalColors={true}
