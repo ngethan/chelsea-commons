@@ -1,5 +1,5 @@
 ---
-name: Summer synopsis and the fund
+name: To my collaborators
 description: A synopsis of what we accomplished over the summer, plans for the fall, and our vision for the future
 visibility: private
 date: Sep 10, 2026
