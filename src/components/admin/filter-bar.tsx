@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, Check, ChevronRight, Search, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type FilterDef = {
 	key: string;
@@ -44,6 +44,27 @@ export function FilterBar({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const panelRef = useRef<HTMLDivElement>(null);
 
+	// The field owns what is typed; `q` (the URL) follows it. Binding the
+	// input straight to the URL made every keystroke wait on a navigation
+	// before it showed, and fast typing lost letters to the round trip.
+	const [text, setText] = useState(q);
+	const sent = useRef(q);
+	useEffect(() => {
+		// Only an outside change (a chip cleared, the back button) resets the
+		// field. The URL echoing back what was typed a moment ago must not,
+		// or a fast second keystroke is overwritten by the first's echo.
+		if (q !== sent.current) {
+			sent.current = q;
+			setText(q);
+		}
+	}, [q]);
+
+	function type(next: string) {
+		sent.current = next;
+		setText(next);
+		onQ(next);
+	}
+
 	const applied = filters.filter((f) => f.value !== null);
 	const hasPanel = filters.length > 0;
 
@@ -68,15 +89,15 @@ export function FilterBar({
 						<input
 							ref={inputRef}
 							type="text"
-							value={q}
+							value={text}
 							placeholder={placeholder}
-							onChange={(e) => onQ(e.target.value)}
+							onChange={(e) => type(e.target.value)}
 							onFocus={() => setOpen(true)}
 							onClick={() => setOpen(true)}
 							onKeyDown={(e) => {
 								if (e.key === "Escape") {
 									if (open) close();
-									else onQ("");
+									else type("");
 								} else if (e.key === "ArrowDown" && hasPanel) {
 									e.preventDefault();
 									setOpen(true);
@@ -86,13 +107,13 @@ export function FilterBar({
 							}}
 							className="h-9 w-full rounded-none border border-input bg-card pr-8 pl-9 text-[13px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus-visible:border-input-focus"
 						/>
-						{q && (
+						{text && (
 							<Button
 								variant="icon"
 								size="icon-2xs"
 								aria-label="Clear search"
 								onClick={() => {
-									onQ("");
+									type("");
 									inputRef.current?.focus();
 								}}
 								className="absolute top-1/2 right-1.5 -translate-y-1/2"
