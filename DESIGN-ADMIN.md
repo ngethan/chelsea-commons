@@ -23,15 +23,19 @@ screen without reading this file.
 ## Shape
 
 - Square in the page: buttons, inputs, selects and their lists, comboboxes,
-  the search-or-filter box and its panel, tables, badges, chips, tabs, kbd,
-  in-page cards, sheets, alert dialogs, toasts.
+  the search-or-filter box and its panel, tables, kbd, in-page cards,
+  sheets, alert dialogs, toasts.
+- **Badges, chips and tabs are pills** (`rounded-full`), the way Ramp's are:
+  they are labels that sit on a row, not controls that sit in the page. A
+  filter chip is two-tone: icon and label on the pill, the value in a darker
+  inner pill, a cross to clear.
 - Rounded only when floating over the page from a rounded trigger: the ⌘K
   palette and the topbar search that opens it, dropdown and right-click
   menus, tooltips. Rail rows keep shadcn's small radius. Icon buttons and
   avatars are circles.
-- Badges are berth's: a deep fill of the hue under a pale ink of it, no
-  border, no radius. They appear in the ⌘K palette only. A table cell shows
-  status as coloured text (`StatusText`, `Tinted`), never a chip.
+- Badges are berth's tones: a deep fill of the hue under a pale ink of it,
+  no border. They appear in the ⌘K palette only. A table cell shows status
+  as coloured text (`StatusText`, `Tinted`), never a chip.
 
 ## Layout
 
@@ -86,8 +90,8 @@ screen without reading this file.
 - Button default is 40px (`h-10`). `sm` 32, `xs` 28, `2xs` 24, `lg` 44.
   Icon sizes match. Page actions use the default; rows and toolbars use
   `sm` or `xs`.
-- Menus and the palette are the only surfaces with a radius; their rows
-  are square.
+- Menus and the palette are the only surfaces with a radius. Palette rows
+  are `rounded-md` like rail rows; rows inside a field's popover are square.
 
 ## Search
 

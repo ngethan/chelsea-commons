@@ -5,12 +5,22 @@ import {
 	PopoverContent,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, Check, ChevronRight, Search, X } from "lucide-react";
+import {
+	ArrowLeft,
+	Check,
+	ChevronRight,
+	ListFilter,
+	type LucideIcon,
+	Search,
+	X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export type FilterDef = {
 	key: string;
 	label: string;
+	/** On the chip, before the label. A generic filter glyph otherwise. */
+	icon?: LucideIcon;
 	options: Array<{ value: string; label: string }>;
 	value: string | null;
 	onChange: (value: string | null) => void;
@@ -216,10 +226,17 @@ export function FilterBar({
 			{applied.map((filter) => (
 				<Chip
 					key={filter.key}
-					label={`${filter.label}: ${
+					icon={filter.icon}
+					label={filter.label}
+					value={
 						filter.options.find((o) => o.value === filter.value)?.label ??
-						filter.value
-					}`}
+						String(filter.value)
+					}
+					onEdit={() => {
+						setPage(filter);
+						setOpen(true);
+						inputRef.current?.focus();
+					}}
 					onClear={() => filter.onChange(null)}
 				/>
 			))}
@@ -259,16 +276,42 @@ function Row({
 	);
 }
 
-function Chip({ label, onClear }: { label: string; onClear: () => void }) {
+function Chip({
+	icon: Icon = ListFilter,
+	label,
+	value,
+	onEdit,
+	onClear,
+}: {
+	icon?: LucideIcon;
+	label: string;
+	value: string;
+	onEdit: () => void;
+	onClear: () => void;
+}) {
 	return (
-		<span className="inline-flex h-7 items-center gap-1 rounded-none bg-secondary pr-1 pl-2.5 text-[12.5px] text-foreground">
-			<span className="truncate">{label}</span>
+		<span className="inline-flex h-9 items-center gap-1 rounded-full border border-border bg-secondary py-1 pr-1 pl-1 text-[13px]">
+			<button
+				type="button"
+				onClick={onEdit}
+				className="flex h-full cursor-pointer items-center gap-2 rounded-full pr-1 pl-2.5 text-foreground outline-none hover:text-foreground focus-visible:text-foreground"
+			>
+				<Icon className="size-3.5 text-muted-foreground" />
+				{label}
+			</button>
+			<button
+				type="button"
+				onClick={onEdit}
+				className="flex h-full cursor-pointer items-center rounded-full bg-background px-3 text-foreground outline-none transition-colors hover:bg-panel focus-visible:bg-panel"
+			>
+				{value}
+			</button>
 			<Button
 				variant="icon"
 				size="icon-2xs"
 				onClick={onClear}
 				aria-label={`Clear ${label}`}
-				className="size-5"
+				className="ml-0.5"
 			>
 				<X className="size-3" />
 			</Button>
