@@ -2,7 +2,7 @@
 name: We're raising a fund
 description: Why the people closest to college-age founders are the ones who should be backing them, and what we are building next
 visibility: private
-date: Sep 9, 2026
+date: Sep 10, 2026
 subtitle: Chelsea Commons Team
 ---
 

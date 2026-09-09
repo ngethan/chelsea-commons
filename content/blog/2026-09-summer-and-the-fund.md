@@ -2,7 +2,7 @@
 name: To my collaborators
 description: How the nine weeks went, what we are raising, and the three things we need help with
 visibility: private
-date: Sep 9, 2026
+date: Sep 10, 2026
 subtitle: Chelsea Commons Team
 ---
 

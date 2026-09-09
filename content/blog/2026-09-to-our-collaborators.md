@@ -2,7 +2,7 @@
 name: To my collaborators
 description: Where Chelsea Commons stands going into the summer, who the founding cohort is, and the two things we are working on now
 visibility: private
-date: Sep 4, 2026
+date: Sep 10, 2026
 subtitle: Chelsea Commons Team
 ---
 
