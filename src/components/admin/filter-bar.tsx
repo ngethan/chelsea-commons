@@ -40,7 +40,7 @@ export function FilterBar({
 	q,
 	onQ,
 	filters = [],
-	placeholder = "Search or filter",
+	placeholder = "Search or filter...",
 	className,
 }: {
 	q: string;

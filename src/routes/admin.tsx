@@ -2,6 +2,8 @@ import { AdminShell } from "@/components/admin/shell";
 import { readSidebarOpen } from "@/lib/sidebar-state";
 import { buildSeoTags } from "@/site-config";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { useRef } from "react";
+import type { RouterContext } from "./__root";
 
 /**
  * The admin's only entrance.
@@ -13,8 +15,8 @@ import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
  * piece of data behind this screen goes through.
  */
 export const Route = createFileRoute("/admin")({
-	beforeLoad: async ({ context, location }) => {
-		const user = await context.api.auth.session.query();
+	beforeLoad: async ({ context, location, cause }) => {
+		const user = await sessionFor(context.api, cause);
 		if (!user) {
 			throw redirect({
 				to: "/sign-in",
@@ -42,12 +44,56 @@ export const Route = createFileRoute("/admin")({
 	component: AdminLayout,
 });
 
+type Api = RouterContext["api"];
+type Viewer = NonNullable<Awaited<ReturnType<Api["auth"]["session"]["query"]>>>;
+
+/**
+ * The session, once per visit rather than once per URL.
+ *
+ * `beforeLoad` runs on every navigation under this route, and a search
+ * param change is a navigation: typing into a filter field re-asked the
+ * server who was signed in on each keystroke. On the client the answer is
+ * kept for a minute and reused for "stay" navigations, which are the ones
+ * that only changed the query string. Entering the admin, and every
+ * server-side render, still asks. Kept in module scope on the client only:
+ * on the server that scope is shared between requests.
+ */
+let remembered: { at: number; user: Viewer | null } | null = null;
+const REMEMBER_FOR = 60_000;
+
+async function sessionFor(
+	api: Api,
+	cause: "enter" | "stay" | "preload",
+): Promise<Viewer | null> {
+	const client = typeof window !== "undefined";
+	if (
+		client &&
+		cause === "stay" &&
+		remembered &&
+		Date.now() - remembered.at < REMEMBER_FOR
+	) {
+		return remembered.user;
+	}
+	const user = await api.auth.session.query();
+	if (client) remembered = { at: Date.now(), user };
+	return user;
+}
+
 function AdminLayout() {
-	const { user, sidebarOpen } = Route.useRouteContext();
+	const context = Route.useRouteContext();
+
+	// While a navigation is in flight the pending match's context can arrive
+	// before `beforeLoad` has filled it. The shell keeps the last viewer it
+	// was given rather than unmounting for a frame, which is what turned a
+	// keystroke in a filter field into a crashed page.
+	const last = useRef(context.user);
+	if (context.user) last.current = context.user;
+	const user = last.current;
+	if (!user) return null;
 
 	return (
 		<AdminShell
-			defaultOpen={sidebarOpen}
+			defaultOpen={context.sidebarOpen ?? true}
 			user={{
 				name: user.name,
 				email: user.email,
