@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788901088015,
+      "tag": "0000_careless_speed",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788901099130,
+      "tag": "0001_bootstrap_roster",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788986533779,
+      "tag": "0002_semantic_search",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788992673558,
+      "tag": "0003_loving_princess_powerful",
+      "breakpoints": true
+    }
+  ]
+}

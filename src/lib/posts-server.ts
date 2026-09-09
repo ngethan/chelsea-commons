@@ -1,6 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { assertAdmin } from "./admin-auth";
-import { type Post, getPost, listPosts, listPublicPosts } from "./posts";
+import { type Post, getPost, listPublicPosts } from "./posts";
 
 /**
  * The only way a route may reach post content.
@@ -29,11 +28,3 @@ export const fetchPost = createServerFn({ method: "GET" })
 export const fetchPublicPosts = createServerFn({ method: "GET" }).handler(
 	() => ({ posts: listPublicPosts().map(summarize) }),
 );
-
-/** Includes private posts, so it is behind the admin secret. */
-export const fetchAllPostSummaries = createServerFn({ method: "POST" })
-	.inputValidator((data: { password: string }) => data)
-	.handler(({ data }) => {
-		assertAdmin(data.password);
-		return { posts: listPosts().map(summarize) };
-	});

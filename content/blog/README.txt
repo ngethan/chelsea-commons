@@ -16,7 +16,7 @@ value is treated as private, so a typo fails closed.
 
 A private post still renders for anyone with its URL. It is unlisted and
 noindex, not access controlled, which is what makes it usable as the landing
-page for a tracked investor email (see /admin/emails). Private posts also drop
+page for a tracked investor update (see /admin/updates). Private posts also drop
 the blog chrome: no back link into an index they are not in, and no share
 buttons.
 

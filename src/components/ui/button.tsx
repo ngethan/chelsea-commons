@@ -3,33 +3,59 @@ import { Slot } from "radix-ui";
 
 import { cn } from "@/lib/utils";
 
+/**
+ * Square. A button is a control that sits in the page, and controls here
+ * have edges, not corners. The only round button is the icon-only one,
+ * for the reason given on the `icon` variant.
+ *
+ * There is no destructive variant. Delete is an outline button with a
+ * trash icon and a confirm behind it; the confirm is where the weight
+ * lives, not in a red fill. See DESIGN-ADMIN.md.
+ */
 const buttonVariants = cva(
-	"cursor-pointer focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 rounded-none border border-transparent bg-clip-padding text-sm font-medium focus-visible:ring-1 aria-invalid:ring-1 [&_svg:not([class*='size-'])]:size-4 inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none group/button select-none",
+	"group/button inline-flex shrink-0 cursor-pointer select-none items-center justify-center whitespace-nowrap rounded-none border border-transparent bg-clip-padding text-sm font-medium outline-none transition-colors focus-visible:border-ring disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
-				default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+				default: "bg-primary text-primary-foreground hover:bg-primary/90",
+				/** Louder than `default` without spending the accent. */
+				foreground:
+					"bg-foreground text-background hover:bg-foreground/90 focus-visible:border-primary",
 				outline:
-					"border-border bg-transparent hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
+					"border-border bg-transparent hover:bg-hover-muted hover:text-foreground aria-expanded:bg-hover-muted aria-expanded:text-foreground",
 				secondary:
-					"bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+					"bg-secondary text-secondary-foreground hover:bg-hover-accent aria-expanded:bg-hover-accent",
 				ghost:
-					"hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 aria-expanded:bg-muted aria-expanded:text-foreground",
-				destructive:
-					"bg-destructive/10 hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/20 text-destructive focus-visible:border-destructive/40 dark:hover:bg-destructive/30",
+					"hover:bg-hover-muted hover:text-foreground aria-expanded:bg-hover-muted aria-expanded:text-foreground",
+				/** Reads as a label until you hover it. */
+				text: "text-muted-foreground hover:text-foreground",
+				/**
+				 * Icon-only, no chrome until you reach for it. Pair with an
+				 * `icon*` size, which is what supplies the circular hover target.
+				 *
+				 * A circle rather than a square in a UI where everything else is
+				 * square: at 24 to 40px a rounded rectangle just reads as a corner
+				 * radius that disagrees with the rest of the page, whereas a circle
+				 * reads as a hit area. It is the same exception the avatars make.
+				 */
+				icon: "bg-transparent text-muted-foreground hover:bg-hover-muted hover:text-foreground aria-expanded:bg-hover-muted aria-expanded:text-foreground",
 				link: "text-primary underline-offset-4 hover:underline",
 			},
+			// 40px is the button. The sizes under it are for rows and toolbars,
+			// where a full-height control would be the tallest thing in sight.
 			size: {
-				default:
-					"h-9 gap-1.5 px-3.5 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
-				xs: "h-6 gap-1 rounded-none px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-				sm: "h-8 gap-1 rounded-none px-3 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3.5",
-				lg: "h-10 gap-2 px-5 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5",
-				xl: "h-12 gap-2 px-6 has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4",
-				icon: "size-9",
-				"icon-xs": "size-6 rounded-none [&_svg:not([class*='size-'])]:size-3",
-				"icon-sm": "size-8 rounded-none",
-				"icon-lg": "size-10",
+				default: "h-10 gap-2 px-4 text-[14px]",
+				sm: "h-8 gap-1.5 px-3 text-[13px] [&_svg:not([class*='size-'])]:size-3.5",
+				xs: "h-7 gap-1 px-2.5 text-[12.5px] [&_svg:not([class*='size-'])]:size-3.5",
+				"2xs":
+					"h-6 gap-1 px-2 text-[12px] [&_svg:not([class*='size-'])]:size-3",
+				lg: "h-11 gap-2 px-5 text-[14px]",
+				xl: "h-12 gap-2 px-6 text-[15px]",
+				icon: "size-10 rounded-full",
+				"icon-sm": "size-8 rounded-full",
+				"icon-xs": "size-7 rounded-full [&_svg:not([class*='size-'])]:size-3.5",
+				"icon-2xs": "size-6 rounded-full [&_svg:not([class*='size-'])]:size-3",
+				"icon-lg": "size-11 rounded-full",
 			},
 		},
 		defaultVariants: {

@@ -1,9 +1,10 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import type { QueryClient } from "@tanstack/react-query";
 import {
 	HeadContent,
 	Outlet,
 	Scripts,
-	createRootRoute,
+	createRootRouteWithContext,
 	useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
@@ -14,11 +15,22 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { AnimatePresence, MotionConfig } from "motion/react";
 import type React from "react";
 import { useEffect } from "react";
+import type { makeVanillaClient } from "../trpc/client";
 
+import { ADMIN_GROUND, isAdminPath } from "../lib/admin-theme";
 import { buildSeoTags, siteConfig } from "../site-config";
 import appCss from "../styles.css?url";
 
-export const Route = createRootRoute({
+/**
+ * `api` is a plain tRPC caller for the places React hooks cannot reach, which
+ * in practice means `beforeLoad` deciding whether to redirect to sign-in.
+ */
+export type RouterContext = {
+	queryClient: QueryClient;
+	api: ReturnType<typeof makeVanillaClient>;
+};
+
+export const Route = createRootRouteWithContext<RouterContext>()({
 	head: () => {
 		const baseSeo = buildSeoTags({
 			title: siteConfig.name,
@@ -94,15 +106,6 @@ function RootComponent() {
 		gsap.registerPlugin(ScrollTrigger);
 	}, []);
 
-	// Easter egg for the kind of person who opens devtools on a community site.
-	useEffect(() => {
-		console.log(
-			"%cChelsea Commons%c\nChelsea, New York, NY\n\nYou opened the console. You'd probably fit right in.\nhey@chelseacommons.co",
-			"font-family: Georgia, serif; font-size: 24px;",
-			"font-size: 12px;",
-		);
-	}, []);
-
 	return (
 		<MotionConfig reducedMotion="user">
 			<AnimatePresence mode="wait">
@@ -113,9 +116,13 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-	const isBoardCapture = useRouterState({
-		select: (s) => s.location.pathname.startsWith("/brand/board"),
-	});
+	const pathname = useRouterState({ select: (s) => s.location.pathname });
+	const isBoardCapture = pathname.startsWith("/brand/board");
+	// The admin is the dark half of the site. The class carries the palette
+	// and the inline colours paint the ground before the stylesheet arrives,
+	// so a reload never flashes cream behind a dark screen.
+	const dark = isAdminPath(pathname);
+	const ground = dark ? ADMIN_GROUND : siteConfig.themeColor;
 	const structuredData = {
 		"@context": "https://schema.org",
 		"@type": "Organization",
@@ -139,7 +146,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	};
 
 	return (
-		<html lang="en" style={{ backgroundColor: siteConfig.themeColor }}>
+		<html
+			lang="en"
+			className={dark ? "dark" : undefined}
+			style={{ backgroundColor: ground }}
+		>
 			<head>
 				<title>{siteConfig.name}</title>
 				<HeadContent />
@@ -153,7 +164,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					}}
 				/>
 			</head>
-			<body style={{ backgroundColor: siteConfig.themeColor }}>
+			<body style={{ backgroundColor: ground }}>
 				<script
 					// biome-ignore lint/security/noDangerouslySetInnerHtml: static viewport-height shim, no dynamic input
 					dangerouslySetInnerHTML={{
@@ -196,7 +207,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							(function() {
 								var loadingScreen = document.createElement('div');
 								loadingScreen.id = 'loading-screen';
-								loadingScreen.style.cssText = 'position:fixed;inset:0;background-color:${siteConfig.themeColor};z-index:var(--z-splash,80);transition:opacity 0.3s ease-out;pointer-events:none;';
+								loadingScreen.style.cssText = 'position:fixed;inset:0;background-color:${ground};z-index:var(--z-splash,80);transition:opacity 0.3s ease-out;pointer-events:none;';
 								document.body.appendChild(loadingScreen);
 
 								var dismissed = false;

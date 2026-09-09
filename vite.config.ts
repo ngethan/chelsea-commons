@@ -16,6 +16,13 @@ const config = defineConfig({
     tanstackStart({
       prerender: {
         enabled: true,
+        // The admin and its sign-in page are private and depend on a session,
+        // so there is nothing to prerender and a build-time render would only
+        // bake in a signed-out shell. Neither is linked from a public page, so
+        // crawlLinks would not reach them today; this keeps that from becoming
+        // true by accident the first time somebody adds a link.
+        filter: ({ path }: { path: string }) =>
+          !path.startsWith('/admin') && !path.startsWith('/sign-in'),
         autoSubfolderIndex: true,
         concurrency: 14,
         crawlLinks: true,

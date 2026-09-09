@@ -39,6 +39,233 @@ main a.no-underline {
 	text-decoration: none !important;
 }
 
+/* The admin is a dense tool, not prose. The site's default link treatment
+   (underline on hover, colour shift) turns a table of names into something
+   that flickers as the pointer crosses it, so it is switched off here.
+   Higher specificity than the rule above, so it wins without !important. */
+main.admin-main a:not(.no-underline):not(.link-static) {
+	color: inherit;
+	text-decoration: none;
+}
+
+main.admin-main a:not(.no-underline):not(.link-static):hover {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* --- Toasts ----------------------------------------------------------------
+ * sonner runs the stack: queue, stacking, swipe to dismiss, pause on hover,
+ * the enter and exit transforms, the height animation as one leaves. Every
+ * pixel of the look is here.
+ *
+ * The admin's Toaster passes `unstyled: true`, which puts `data-styled="false"`
+ * on each toast, and all of sonner's own box styling is scoped to
+ * `[data-styled='true']`: padding, background, border, radius, its own shadow,
+ * its gray ramp. None of it applies, so nothing below is fighting the library.
+ * What is left of sonner's CSS is position and animation, which is the part
+ * worth taking from a library.
+ *
+ * That attribute is also what scopes these rules. The public site raises its
+ * own toast through `toast.custom` on a Toaster that does not set `unstyled`,
+ * so its toasts are `data-styled="true"` and match none of this. Every rule
+ * below carries the attribute for that reason, not only the first.
+ *
+ * Ramp-shaped: square, a 1px edge in the tone, the tone's own ink on a fill
+ * mixed from it, the action as an underlined word rather than a second button,
+ * and the close last.
+ *
+ * Written as CSS rather than `toastOptions.classNames` because the whole design
+ * is one custom-property triple per `data-type`, one line each here against
+ * five near-identical class strings there, and because the close button has to
+ * be pulled out of the corner and into the flow, which is a layout override
+ * rather than a set of utilities.
+ *
+ * sonner writes `--width` and `--gap` as inline styles on its own elements, so
+ * declaring them here would do nothing: width comes from the library and the
+ * gap from the `gap` prop. The font is set on the toast rather than inherited,
+ * because sonner puts a system sans stack on `[data-sonner-toaster]` at exactly
+ * the specificity a rule here would have, and which won would come down to
+ * stylesheet order. A declaration on the element itself beats inheritance
+ * whatever the order.
+ */
+[data-sonner-toast][data-styled="false"] {
+	/* Neutral. Each typed toast below replaces exactly these three. */
+	--toast-line: var(--border);
+	--toast-ink: var(--foreground);
+	--toast-fill: var(--toast-surface);
+
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	padding: 11px 12px 11px 14px;
+	font-family: var(--font-sans);
+	border: 1px solid var(--toast-line);
+	/* Square, like every other control here. A toast is a thing that acts,
+	   not a card. */
+	border-radius: 0;
+	background: var(--toast-fill);
+	color: var(--toast-ink);
+	font-size: 13.5px;
+	line-height: 1.35;
+	box-shadow: var(--shadow-md);
+}
+
+/* The fill is mixed from the tone rather than picked by eye, so a palette
+   change carries into it. 10% is what keeps the tone's own ink above 4.5:1 on
+   its own fill against this cream card: success and warning land at 4.92,
+   destructive at 4.57. The fill is the lever if a tone is ever added that does
+   not clear that, because lightening it costs nothing and darkening the ink
+   would walk the colour away from the token it is named after. */
+/* Known limitation, left alone deliberately: lightningcss wraps each
+   `color-mix` in an `@supports` and writes its own fallback outside it, and
+   the fallback it picks is the solid tone, so a browser without `color-mix`
+   would get tone-coloured ink on a tone-coloured fill. Declaring a fallback by
+   hand and hoisting these into an explicit `@supports` were both tried; it
+   re-derives the fallback either way. `color-mix` in oklab has shipped
+   everywhere since 2023 and this is a private admin, so the remaining exposure
+   is an unreadable toast on a browser nobody here uses. The alternative is
+   hard-coding three tint values, which is the thing mixing from the token
+   exists to avoid. */
+[data-sonner-toast][data-styled="false"][data-type="error"] {
+	--toast-line: var(--destructive);
+	--toast-ink: var(--destructive);
+	--toast-fill: color-mix(
+		in oklab,
+		var(--destructive) 10%,
+		var(--toast-surface)
+	);
+}
+[data-sonner-toast][data-styled="false"][data-type="success"] {
+	--toast-line: var(--success);
+	--toast-ink: var(--success);
+	--toast-fill: color-mix(in oklab, var(--success) 10%, var(--toast-surface));
+}
+[data-sonner-toast][data-styled="false"][data-type="warning"],
+[data-sonner-toast][data-styled="false"][data-type="info"] {
+	--toast-line: var(--warning);
+	--toast-ink: var(--warning);
+	--toast-fill: color-mix(in oklab, var(--warning) 10%, var(--toast-surface));
+}
+
+[data-sonner-toast][data-styled="false"] [data-icon] {
+	display: flex;
+	flex-shrink: 0;
+	margin: 0;
+	color: var(--toast-line);
+}
+[data-sonner-toast][data-styled="false"] [data-icon] > svg {
+	width: 16px;
+	height: 16px;
+}
+
+[data-sonner-toast][data-styled="false"] [data-content] {
+	flex: 1;
+	min-width: 0;
+}
+[data-sonner-toast][data-styled="false"] [data-description] {
+	margin-top: 2px;
+	font-size: 12.5px;
+	color: var(--muted-foreground);
+}
+
+/* The action is a word, underlined, in the toast's own ink. A filled button
+   here would read as the primary thing on screen, and a toast is never that. */
+[data-sonner-toast][data-styled="false"] [data-button] {
+	order: 1;
+	flex-shrink: 0;
+	margin: 0;
+	padding: 0;
+	height: auto;
+	border: 0;
+	background: none;
+	cursor: pointer;
+	font: inherit;
+	color: var(--toast-ink);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* sonner renders this first in the DOM and, when styled, pins it to a corner.
+   It belongs at the trailing edge after the action, so it is ordered last and
+   put back in the flow. Muted rather than toned: it dismisses the message, it
+   is not part of it.
+
+   The selector carries `[data-sonner-theme]` and the element name because
+   sonner's own rule is four attributes deep, and the library injects its
+   styles at runtime and can land after this file. This wins outright rather
+   than by cascade order. */
+[data-sonner-toaster][data-sonner-theme]
+	[data-sonner-toast][data-styled="false"]
+	button[data-close-button] {
+	order: 2;
+	position: static;
+	flex-shrink: 0;
+	display: grid;
+	place-items: center;
+	width: 20px;
+	height: 20px;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	border-radius: 0;
+	/* Transparent, at rest and on hover. sonner ships this as a bordered chip
+	   with a fill, which puts a second box inside a toast that is already a
+	   box, and the toast is small enough that the fill reads as the louder
+	   element. The affordance is the colour lift. */
+	background: transparent;
+	color: var(--muted-foreground);
+	opacity: 1;
+	transform: none;
+	cursor: pointer;
+	transition: color 0.12s ease;
+}
+[data-sonner-toaster][data-sonner-theme]
+	[data-sonner-toast][data-styled="false"]
+	button[data-close-button]:hover {
+	color: var(--foreground);
+	background: transparent;
+}
+
+/* --- Shader panel overlays -------------------------------------------------
+ * The two tints that sit over the sign-in artwork, ported from berth.
+ *
+ * Named `.grain-overlay` rather than `.grain`, because `body::after` already
+ * owns the page's own grain and a second rule called the same thing would be a
+ * trap. This one is generated rather than shipped: an feTurbulence tile as a
+ * data URI, so there is no binary asset to keep, it never blurs at any size,
+ * and it costs one paint. `mix-blend-mode: overlay` keeps it reading as film
+ * grain rather than as a grey wash over the colour underneath.
+ */
+.grain-overlay {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 2;
+	opacity: 0.42;
+	mix-blend-mode: overlay;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+	background-repeat: repeat;
+	background-size: 140px 140px;
+}
+
+/* Scanline tint over the shader panel: pulls the dithering toward print
+   without tinting the form beside it. */
+.scanlines {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 1;
+	opacity: 0.13;
+	background-image: repeating-linear-gradient(
+		0deg,
+		oklch(0 0 0 / 0.55) 0px,
+		oklch(0 0 0 / 0.55) 1px,
+		transparent 1px,
+		transparent 3px
+	);
+}
+
 :root {
 	--background: #f2f1e8;
 	--foreground: #2b2b2b;
@@ -55,11 +282,55 @@ main a.no-underline {
 	--semi-foreground: oklch(0.45 0.008 286);
 	--accent: #e8e6da;
 	--accent-foreground: #2b2b2b;
-	--destructive: oklch(0.577 0.245 27.325);
+	/* Tone ramp for status. Darker than a dark-UI palette would set them,
+	   because these are read as *ink* on a 10% tint of themselves over cream,
+	   and each is picked so that pairing clears 4.5:1: success 4.92, warning
+	   4.92, destructive 4.57. If a tone moves, re-check that ratio; the fill
+	   percentage in the toast rules is the lever. */
+	--success: oklch(0.48 0.13 150);
+	--warning: oklch(0.5 0.105 70);
+	/* Was oklch(0.577 0.245 27.325), which could not reach 4.5:1 as text on
+	   cream even against the bare background (4.40 at best). Same hue, darker,
+	   which also lifts the destructive Button and Badge off 3.54:1. */
+	--destructive: oklch(0.54 0.22 27.325);
 	--destructive-foreground: oklch(1.0 0 0);
 	--border: #dcd9c9;
 	--input: #dcd9c9;
+	/* The edge of a focused field. Same value as the ring in light; in the
+	   admin's dark palette it is a step up the white ladder instead. */
+	--input-focus: #a3a091;
 	--ring: #a3a091;
+	/* Surfaces the admin's components name. On the public palette they fold
+	   back onto the cream ladder so nothing here introduces a new colour. */
+	--panel: #f7f6ee;
+	--avatar: #e8e6da;
+	--hover-muted: #e8e6da;
+	--hover-accent: #dcd9c9;
+	--toast-surface: var(--card);
+	/* Badge pairs: a deep fill of the hue under a pale ink of it. Berth's
+	   scale, with the light half re-derived for cream so the pair still
+	   reads on paper. */
+	--light_primary: oklch(0.42 0.1 39.95);
+	--darkest_primary: oklch(0.9 0.05 39.95);
+	--light_success: oklch(0.38 0.09 150);
+	--darkest_success: oklch(0.9 0.05 150);
+	--light_warning: oklch(0.42 0.09 70);
+	--darkest_warning: oklch(0.92 0.06 84);
+	--light_destructive: oklch(0.44 0.16 27);
+	--darkest_destructive: oklch(0.9 0.05 25);
+
+	/* The rail. Its own tokens because shadcn's Sidebar reads them by name, but
+	   they resolve onto this palette rather than introducing a second one: the
+	   rail is the card cream, one step off the page so the border is an edge
+	   rather than a shadow. */
+	--sidebar: #f7f6ee;
+	--sidebar-foreground: #2b2b2b;
+	--sidebar-border: #dcd9c9;
+	--sidebar-accent: #e8e6da;
+	--sidebar-accent-foreground: #2b2b2b;
+	--sidebar-primary: #2b2b2b;
+	--sidebar-primary-foreground: #f2f1e8;
+	--sidebar-ring: #a3a091;
 	--font-sans: "Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI",
 		"Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
 		"Helvetica Neue", sans-serif;
@@ -97,6 +368,86 @@ main a.no-underline {
 	--z-grain: 90;
 }
 
+/* --- The admin's palette ---------------------------------------------------
+ * Berth's dark theme, transcribed value for value from harbor/berth's
+ * `core/src/app/globals.css`, so the two products read as one system rather
+ * than as an approximation of each other.
+ *
+ * The admin is permanently dark and the public site is permanently cream, and
+ * the switch is one class: `__root.tsx` puts `dark` on `<html>` for `/admin`
+ * and `/sign-in` and nowhere else. Portals (menus, sheets, the palette) mount
+ * on `<body>`, which is why the class is on the root and not on the shell.
+ * Nothing in here touches the cream values above.
+ *
+ * The surface ladder is white overlays for things *in* the page (`--card`,
+ * `--muted`, `--border`) and opaque greys for things that float over it
+ * (`--popover`, `--panel`): translucency on a dropdown means reading the page
+ * through the thing covering it.
+ */
+.dark {
+	--background: oklch(0.22 0 0);
+	--foreground: oklch(0.9851 0 0);
+	--card: oklch(1 0 0 / 0.05);
+	--card-foreground: oklch(0.9851 0 0);
+	--popover: oklch(0.28 0 0);
+	--popover-foreground: oklch(0.9851 0 0);
+	--panel: oklch(0.1776 0 0);
+	--avatar: oklch(0.2512 0 0);
+	/* The one accent. Marks the few things worth reading: the primary action,
+	   the active rail item, an in-conversation badge. Not focus, not borders. */
+	--primary: oklch(0.7193 0.1317 39.95);
+	--primary-foreground: oklch(1 0 0);
+	--secondary: oklch(1 0 0 / 0.06);
+	--secondary-foreground: oklch(0.9851 0 0);
+	--muted: oklch(1 0 0 / 0.04);
+	--muted-foreground: oklch(0.7118 0.0129 286.0665);
+	--semi-foreground: oklch(0.85 0.008 286);
+	--accent: oklch(1 0 0 / 0.05);
+	--accent-foreground: oklch(0.9851 0 0);
+	--success: oklch(0.76 0.09 145);
+	--warning: oklch(0.828 0.145 84);
+	--destructive: oklch(0.6368 0.2078 25.3313);
+	--destructive-foreground: oklch(1 0 0);
+	/* One line weight. A field is told apart from a divider by its fill and by
+	   its edge brightening on focus, not by being drawn brighter at rest. The
+	   focus edge is neutral rather than the accent: a field you happen to be
+	   typing in is not one of the few things worth marking. */
+	--border: oklch(1 0 0 / 0.1);
+	--input: oklch(1 0 0 / 0.1);
+	--input-focus: oklch(1 0 0 / 0.32);
+	--ring: oklch(1 0 0 / 0.4);
+	--hover-muted: oklch(1 0 0 / 0.06);
+	--hover-accent: oklch(1 0 0 / 0.08);
+	--sidebar: oklch(0.2 0 0);
+	--sidebar-foreground: oklch(0.9851 0 0);
+	--sidebar-border: oklch(1 0 0 / 0.08);
+	--sidebar-accent: oklch(1 0 0 / 0.06);
+	--sidebar-accent-foreground: oklch(0.9851 0 0);
+	--sidebar-primary: oklch(0.7193 0.1317 39.95);
+	--sidebar-primary-foreground: oklch(1 0 0);
+	--sidebar-ring: oklch(1 0 0 / 0.4);
+	--toast-surface: var(--popover);
+	--light_primary: oklch(0.88 0.062 39.95);
+	--darkest_primary: oklch(0.31 0.055 39.95);
+	--light_success: oklch(0.9 0.055 145);
+	--darkest_success: oklch(0.3 0.04 145);
+	--light_warning: oklch(0.92 0.07 84);
+	--darkest_warning: oklch(0.32 0.052 84);
+	--light_destructive: oklch(0.87 0.075 25.33);
+	--darkest_destructive: oklch(0.29 0.075 25.33);
+	--shadow-sm: 0px 4px 12px -2px oklch(0 0 0 / 0.3), 0px 1px 2px -3px
+		oklch(0 0 0 / 0.3);
+	--shadow-md: 0px 4px 12px -2px oklch(0 0 0 / 0.35), 0px 2px 4px -3px
+		oklch(0 0 0 / 0.35);
+	--shadow-lg: 0px 8px 24px -4px oklch(0 0 0 / 0.45), 0px 4px 6px -3px
+		oklch(0 0 0 / 0.35);
+}
+
+.dark * {
+	scrollbar-width: thin;
+	scrollbar-color: oklch(1 0 0 / 0.16) transparent;
+}
+
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
@@ -114,9 +465,32 @@ main a.no-underline {
 	--color-accent-foreground: var(--accent-foreground);
 	--color-destructive: var(--destructive);
 	--color-destructive-foreground: var(--destructive-foreground);
+	--color-success: var(--success);
+	--color-warning: var(--warning);
 	--color-border: var(--border);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-panel: var(--panel);
+	--color-avatar: var(--avatar);
+	--color-hover-muted: var(--hover-muted);
+	--color-hover-accent: var(--hover-accent);
+	--color-input-focus: var(--input-focus);
+	--color-light_primary: var(--light_primary);
+	--color-darkest_primary: var(--darkest_primary);
+	--color-light_success: var(--light_success);
+	--color-darkest_success: var(--darkest_success);
+	--color-light_warning: var(--light_warning);
+	--color-darkest_warning: var(--darkest_warning);
+	--color-light_destructive: var(--light_destructive);
+	--color-darkest_destructive: var(--darkest_destructive);
 
 	--font-sans: var(--font-sans);
 	--font-mono: var(--font-mono);
@@ -145,6 +519,80 @@ main a.no-underline {
 	--radius-2xl: calc(var(--radius) + 8px);
 	--radius-3xl: calc(var(--radius) + 12px);
 	--radius-4xl: calc(var(--radius) + 16px);
+}
+
+/* --- One scrim at a time ----------------------------------------------------
+ * An alert raised from inside a drawer would otherwise dim the page twice:
+ * once by the sheet's scrim, once by its own, with the drawer left bright
+ * between them. While an alert is open the sheet's scrim steps out and the
+ * alert's, which is stacked above the drawer, does the whole job alone, so
+ * page and drawer are darkened once and evenly.
+ *
+ * `!important` because the scrim's opacity is otherwise owned by its enter
+ * animation, and an animation beats an ordinary declaration in the cascade
+ * but not an important one. */
+body:has([data-slot="alert-dialog-overlay"]) [data-slot="sheet-overlay"] {
+	opacity: 0 !important;
+}
+
+/* --- Floating labels --------------------------------------------------------
+ * Berth's field: the label sits inside the box where placeholder text would,
+ * and shrinks to the top once the field is focused or has content. It moves
+ * and it shrinks; it does not change colour, case or weight, because a label
+ * that reads "Email" at rest and "EMAIL" on focus is a different word arriving
+ * in the same place, and the eye reads that as a replacement.
+ *
+ * `:placeholder-shown` is what detects emptiness, so every input using this
+ * MUST carry `placeholder=" "`. `FloatingInput` sets it; use that rather than
+ * the raw class. Controls that have no placeholder (a select, a combobox) set
+ * `.fl-up` on the label by hand when they hold a value.
+ *
+ * `@layer components` so a utility on the element can still win: the field
+ * passes `left-*` to align the label with its own text.
+ */
+@layer components {
+	.fl-label {
+		position: absolute;
+		left: 0.875rem;
+		top: 50%;
+		transform: translateY(-50%);
+		pointer-events: none;
+		font-size: 14px;
+		color: var(--muted-foreground);
+		transition: top 0.15s ease, font-size 0.15s ease, transform 0.15s ease,
+			color 0.15s ease;
+	}
+
+	.fl-input:focus ~ .fl-label,
+	.fl-input:not(:placeholder-shown) ~ .fl-label,
+	.fl-label.fl-up {
+		top: 0.5rem;
+		transform: none;
+		font-size: 11px;
+	}
+
+	/* A textarea is tall, so its label rests on the first line rather than in
+	   the middle of an empty box, and floats to the same place as the rest. */
+	.fl-input.fl-area ~ .fl-label {
+		top: 1.15rem;
+		transform: none;
+	}
+	.fl-input.fl-area:focus ~ .fl-label,
+	.fl-input.fl-area:not(:placeholder-shown) ~ .fl-label {
+		top: 0.5rem;
+		transform: none;
+		font-size: 11px;
+	}
+
+	.fl-input[aria-invalid="true"] ~ .fl-label {
+		color: var(--destructive);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.fl-label {
+			transition: none;
+		}
+	}
 }
 
 @keyframes marquee {
@@ -278,5 +726,63 @@ main a.no-underline {
 	.projects-list .project-item:hover {
 		filter: none;
 		opacity: 1;
+	}
+}
+
+/* --- Ask AI -----------------------------------------------------------------
+ * Two signs that something is still arriving. The caret sits after the last
+ * line of prose being streamed; the shimmer is the word "Thinking" while the
+ * model has said nothing yet. Both stop when the answer is complete, and both
+ * hold still under reduced motion.
+ */
+.ask-streaming > div > :last-child::after {
+	content: "";
+	display: inline-block;
+	width: 2px;
+	height: 1em;
+	margin-left: 2px;
+	vertical-align: -0.15em;
+	background: currentColor;
+	opacity: 0.7;
+	animation: ask-caret 1s steps(2, start) infinite;
+}
+
+@keyframes ask-caret {
+	to {
+		visibility: hidden;
+	}
+}
+
+.ask-shimmer {
+	background: linear-gradient(
+		90deg,
+		var(--muted-foreground) 0%,
+		var(--foreground) 50%,
+		var(--muted-foreground) 100%
+	);
+	background-size: 200% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	animation: ask-shimmer 1.6s linear infinite;
+}
+
+@keyframes ask-shimmer {
+	from {
+		background-position: 200% 0;
+	}
+	to {
+		background-position: -200% 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ask-streaming > div > :last-child::after,
+	.ask-shimmer {
+		animation: none;
+	}
+	.ask-shimmer {
+		color: var(--muted-foreground);
+		background: none;
 	}
 }
