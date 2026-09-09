@@ -6,8 +6,6 @@ date: Sep 10, 2026
 subtitle: Chelsea Commons Team
 ---
 
-To my collaborators,
-
 You're receiving this because you've supported Chelsea Commons, whether with time, money, or advice, and we're grateful for that :)
 
 For quick context, Chelsea Commons is a summer community for ambitious NYC interns, centered around a 12-person "intern hacker house" in Chelsea. Our residents come from schools like Harvard, Stanford, Yale, and intern at companies like NVIDIA, Ramp, Figma, and BlackRock.

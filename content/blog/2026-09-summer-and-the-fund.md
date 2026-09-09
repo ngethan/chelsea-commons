@@ -6,8 +6,6 @@ date: Sep 10, 2026
 subtitle: Chelsea Commons Team
 ---
 
-To my collaborators,
-
 **Update: We're raising a fund**
 
 ## 1. Our story

@@ -6,8 +6,6 @@ date: Sep 10, 2026
 subtitle: Chelsea Commons Team
 ---
 
-To my collaborators,
-
 **Update: We're raising a fund.**
 
 This past summer, we built the Chelsea Commons, a 12-person intern hacker house and the heart of 600+ of New York's most impressive interns.

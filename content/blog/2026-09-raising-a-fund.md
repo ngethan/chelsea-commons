@@ -6,8 +6,6 @@ date: Sep 10, 2026
 subtitle: Chelsea Commons Team
 ---
 
-To my collaborators,
-
 **Update: We’re raising a fund.**
 
 We’ve seen that identifying and building relationships with the best young talent is hard. Over the past summer, we partnered with 20 VCs to help them with this task.
