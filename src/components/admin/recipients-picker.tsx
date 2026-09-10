@@ -191,7 +191,7 @@ export function RecipientsPicker({
 										data-state={picked.has(row.id) ? "selected" : undefined}
 										onClick={() => !sent && toggle(row.id)}
 									>
-										<TableCell className="w-[56px] pl-8">
+										<TableCell className="w-[64px] px-0 [&>*]:mx-auto">
 											{sent ? (
 												<Check className="size-4 text-muted-foreground" />
 											) : (

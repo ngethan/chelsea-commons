@@ -102,8 +102,11 @@ export function ListTable({
 				"[&_th]:border-b [&_th]:border-border [&_td]:border-b [&_td]:border-border",
 				"[&_td:not(:last-child)]:border-r [&_th:not(:last-child)]:border-r",
 				"[&_td]:py-3.5 [&_th]:h-10",
-				"[&_td:first-child]:pl-4 [&_th:first-child]:pl-4 md:[&_td:first-child]:pl-8 md:[&_th:first-child]:pl-8",
+				"[&_td:first-child:not([data-tick])]:pl-4 [&_th:first-child:not([data-tick])]:pl-4 md:[&_td:first-child:not([data-tick])]:pl-8 md:[&_th:first-child:not([data-tick])]:pl-8",
 				"[&_td:last-child]:pr-4 [&_th:last-child]:pr-4 md:[&_td:last-child]:pr-8 md:[&_th:last-child]:pr-8",
+				// A selection column: fixed width, box centred, so its centre sits
+				// on the gutter line the title starts from.
+				"[&_[data-tick]]:w-[64px] [&_[data-tick]]:px-0 [&_[data-tick]>*]:mx-auto",
 				className,
 			)}
 			{...props}

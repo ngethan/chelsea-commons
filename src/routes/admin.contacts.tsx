@@ -232,7 +232,7 @@ function Contacts() {
 				<ListTable>
 					<TableHeader>
 						<TableRow>
-							<TableHead className="w-[52px]">
+							<TableHead data-tick>
 								<Checkbox
 									aria-label="Select everybody shown"
 									checked={
@@ -307,7 +307,7 @@ function Contacts() {
 									{/* The tick is its own target: a click here selects and
 									    does not open. */}
 									<TableCell
-										className="w-[52px]"
+										data-tick
 										onClick={(e) => {
 											e.stopPropagation();
 											toggleSelected(row.id);
