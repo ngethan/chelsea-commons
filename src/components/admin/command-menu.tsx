@@ -267,7 +267,9 @@ export function CommandMenu({
 							>
 								<User />
 								<div className="flex min-w-0 flex-1 items-baseline gap-2">
-									<span className="truncate">{row.name || row.email}</span>
+									<span className="truncate">
+										{row.name || row.email || "Unnamed"}
+									</span>
 									{row.name && (
 										<span className="truncate font-mono text-[11px] text-muted-foreground">
 											{row.email}

@@ -80,7 +80,7 @@ function UpdateDetail() {
 		const origin = window.location.origin;
 		const lines = recipients
 			.filter((row) => !row.revokedAt)
-			.map((row) => `${row.contactEmail}\t${origin}/u/${row.ref}`);
+			.map((row) => `${row.contactEmail ?? ""}\t${origin}/u/${row.ref}`);
 		navigator.clipboard.writeText(lines.join("\n"));
 		toast.success(`${lines.length} copied, one per line.`);
 	}
@@ -151,7 +151,7 @@ function UpdateDetail() {
 								<TableRow className={row.revokedAt ? "opacity-55" : ""}>
 									<TableCell>
 										<div className="truncate">
-											{row.contactName || row.contactEmail}
+											{row.contactName || row.contactEmail || "Unnamed"}
 										</div>
 										{row.contactName && (
 											<Mono className="mt-0.5 block truncate text-[12px]">
@@ -316,12 +316,12 @@ function AddRecipients({
 											checked={picked.has(row.id)}
 											onCheckedChange={() => toggle(row.id)}
 											onClick={(e) => e.stopPropagation()}
-											aria-label={`Include ${row.email}`}
+											aria-label={`Include ${row.name || row.email || "contact"}`}
 										/>
 									</TableCell>
 									<TableCell>
 										<div className="truncate text-[14px]">
-											{row.name || row.email}
+											{row.name || row.email || "Unnamed"}
 										</div>
 										{row.name && (
 											<Mono className="block truncate">{row.email}</Mono>

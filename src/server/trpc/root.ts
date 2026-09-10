@@ -3,6 +3,7 @@ import { accessRouter } from "./routers/access";
 import { aiRouter } from "./routers/ai";
 import { authRouter } from "./routers/auth";
 import { contactsRouter } from "./routers/contacts";
+import { interactionsRouter } from "./routers/interactions";
 import { linksRouter } from "./routers/links";
 import { organizationsRouter } from "./routers/organizations";
 import { searchRouter } from "./routers/search";
@@ -20,6 +21,7 @@ const core = {
 	organizations: organizationsRouter,
 	updates: updatesRouter,
 	links: linksRouter,
+	interactions: interactionsRouter,
 	search: searchRouter,
 };
 

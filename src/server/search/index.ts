@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { contact, organization, update } from "@/db/schema";
+import { contact, interaction, organization, update } from "@/db/schema";
 import { getPost } from "@/lib/posts";
 import { STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import {
@@ -65,25 +65,44 @@ function line(label: string, value: string | null | undefined) {
 
 function documentForContact(row: {
 	name: string | null;
-	email: string;
+	email: string | null;
+	title: string | null;
 	phone: string | null;
 	status: string;
 	tags: string[];
+	pocs: string[];
 	notes: string | null;
 	organizationName: string | null;
+	/** Most recent first, already trimmed to a handful. */
+	interactions: Array<{
+		occurredAt: Date;
+		topic: string | null;
+		summary: string;
+	}>;
 }) {
 	return [
 		line("Person", row.name),
 		line("Email", row.email),
+		line("Title", row.title),
 		line("Organization", row.organizationName),
 		line("Status", STATUS_LABEL[normalizeStatus(row.status)]),
 		line("Tags", row.tags.join(", ")),
+		line("Point of contact", row.pocs.join(", ")),
 		line("Phone", row.phone),
 		line("Notes", row.notes),
+		...row.interactions.map((i) =>
+			line(
+				`Log ${i.occurredAt.toISOString().slice(0, 10)}`,
+				i.topic ? `${i.topic}: ${i.summary}` : i.summary,
+			),
+		),
 	]
 		.filter(Boolean)
 		.join("\n");
 }
+
+/** How many log entries a contact's document carries. The rest is history. */
+const LOGGED_IN_DOCUMENT = 8;
 
 function documentForOrganization(row: {
 	name: string;
@@ -165,9 +184,11 @@ export async function indexContacts({ ids, force }: IndexOptions = {}) {
 			id: contact.id,
 			name: contact.name,
 			email: contact.email,
+			title: contact.title,
 			phone: contact.phone,
 			status: contact.status,
 			tags: contact.tags,
+			pocs: contact.pocs,
 			notes: contact.notes,
 			embeddingText: contact.embeddingText,
 			organizationName: organization.name,
@@ -181,8 +202,38 @@ export async function indexContacts({ ids, force }: IndexOptions = {}) {
 			),
 		);
 
+	if (rows.length === 0) return { indexed: 0, skipped: 0 };
+
+	const logged = await db()
+		.select({
+			contactId: interaction.contactId,
+			occurredAt: interaction.occurredAt,
+			topic: interaction.topic,
+			summary: interaction.summary,
+		})
+		.from(interaction)
+		.where(
+			inArray(
+				interaction.contactId,
+				rows.map((r) => r.id),
+			),
+		)
+		.orderBy(desc(interaction.occurredAt));
+	const byContact = new Map<string, typeof logged>();
+	for (const entry of logged) {
+		const list = byContact.get(entry.contactId) ?? [];
+		if (list.length < LOGGED_IN_DOCUMENT) list.push(entry);
+		byContact.set(entry.contactId, list);
+	}
+
 	const pending = rows
-		.map((row) => ({ id: row.id, document: documentForContact(row) }))
+		.map((row) => ({
+			id: row.id,
+			document: documentForContact({
+				...row,
+				interactions: byContact.get(row.id) ?? [],
+			}),
+		}))
 		.filter((p, i) => force || p.document !== rows[i].embeddingText);
 
 	return {
@@ -226,7 +277,7 @@ export async function indexOrganizations({ ids, force }: IndexOptions = {}) {
 	for (const m of members) {
 		if (!m.organizationId) continue;
 		const list = byOrg.get(m.organizationId) ?? [];
-		list.push(m.name || m.email);
+		list.push(m.name || m.email || "Unnamed");
 		byOrg.set(m.organizationId, list);
 	}
 
@@ -359,12 +410,14 @@ async function textSearch(q: string, limit: number) {
 					or(
 						ilike(contact.name, needle),
 						ilike(contact.email, needle),
+						ilike(contact.title, needle),
 						ilike(organization.name, needle),
 						sql`array_to_string(${contact.tags}, ' ') ilike ${needle}`,
+						sql`array_to_string(${contact.pocs}, ' ') ilike ${needle}`,
 					),
 				),
 			)
-			.orderBy(asc(contact.email))
+			.orderBy(sql`lower(coalesce(${contact.name}, ${contact.email}))`)
 			.limit(limit),
 		db()
 			.select({
@@ -393,8 +446,8 @@ async function textSearch(q: string, limit: number) {
 		...people.map((r) => ({
 			kind: "contact" as const,
 			id: r.id,
-			title: r.name || r.email,
-			subtitle: r.name ? r.email : r.organizationName,
+			title: r.name || r.email || "Unnamed",
+			subtitle: r.name ? (r.email ?? r.organizationName) : r.organizationName,
 			status: r.status,
 			match: "text" as const,
 			similarity: null,
@@ -465,8 +518,8 @@ async function semanticSearch(vec: number[], limit: number) {
 		...people.map((r) => ({
 			kind: "contact" as const,
 			id: r.id,
-			title: r.name || r.email,
-			subtitle: r.name ? r.email : r.organizationName,
+			title: r.name || r.email || "Unnamed",
+			subtitle: r.name ? (r.email ?? r.organizationName) : r.organizationName,
 			status: r.status,
 			match: "semantic" as const,
 			similarity: Number(r.similarity),

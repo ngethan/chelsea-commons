@@ -58,7 +58,7 @@ class Lookups {
 	async contactByEmail(email: string) {
 		const needle = email.toLowerCase();
 		const rows = await this.contacts();
-		const direct = rows.find((r) => r.email.toLowerCase() === needle);
+		const direct = rows.find((r) => r.email?.toLowerCase() === needle);
 		if (direct) return direct;
 		const viaAlternate = (await this.alternates()).get(needle);
 		return viaAlternate ? rows.find((r) => r.id === viaAlternate) : undefined;
@@ -195,21 +195,50 @@ async function enrich(
 
 	switch (operation.op) {
 		case "create_contact": {
-			const email = operation.email.toLowerCase();
-			if (ec.introducedEmails.has(email))
-				return `${email} appears twice in this proposal`;
-			const existing = await lookups.contactByEmail(email);
-			if (existing)
-				return `${email} is already on the list (id ${existing.id}, ${existing.name ?? "no name"}); use update_contact if something about them should change`;
-			ec.introducedEmails.add(email);
+			const warnings: string[] = [];
+			const email = operation.email?.toLowerCase() ?? null;
+			if (email) {
+				if (ec.introducedEmails.has(email))
+					return `${email} appears twice in this proposal`;
+				const existing = await lookups.contactByEmail(email);
+				if (existing)
+					return `${email} is already on the list (id ${existing.id}, ${existing.name ?? "no name"}); use update_contact if something about them should change`;
+				ec.introducedEmails.add(email);
+			} else {
+				// No address to match on, so a name is the only guard against a
+				// second row for one person. A warning, not a refusal: two people
+				// can share a name, and the person applying can tell.
+				const name = (operation.name ?? "").trim().toLowerCase();
+				const twin = (await lookups.contacts()).find(
+					(r) => r.name?.trim().toLowerCase() === name,
+				);
+				if (twin)
+					warnings.push(
+						`Somebody named ${twin.name} is already on the list (${twin.email ?? "no email"}); this adds a second`,
+					);
+			}
 			const org = await resolveOrganization(operation.organization, ec);
 			if (typeof org === "string") return org;
+			warnings.push(...org.warnings);
 			return {
 				operation,
-				label: operation.name || email,
+				label: operation.name || email || "Unnamed",
 				before: null,
 				organization: org.organization,
-				warnings: org.warnings,
+				warnings,
+			};
+		}
+
+		case "log_interaction": {
+			const row = (await lookups.contacts()).find(
+				(r) => r.id === operation.contactId,
+			);
+			if (!row) return `no live contact has the id ${operation.contactId}`;
+			return {
+				operation,
+				label: row.name || row.email || "Unnamed",
+				before: null,
+				warnings: [],
 			};
 		}
 
@@ -220,12 +249,19 @@ async function enrich(
 			const warnings: string[] = [];
 			if (operation.email) {
 				const email = operation.email.toLowerCase();
-				if (email !== row.email.toLowerCase()) {
+				if (email !== row.email?.toLowerCase()) {
 					const taken = await lookups.contactByEmail(email);
 					if (taken && taken.id !== row.id)
 						return `${email} already belongs to ${taken.name ?? taken.email} (id ${taken.id})`;
 				}
 			}
+			if (
+				(operation.name === null ||
+					(operation.name === undefined && !row.name)) &&
+				(operation.email === null ||
+					(operation.email === undefined && !row.email))
+			)
+				return "a contact needs a name or an email";
 			if (operation.tags) {
 				const same =
 					operation.tags.length === row.tags.length &&
@@ -238,13 +274,15 @@ async function enrich(
 			const full = await tc.caller.contacts.byId({ id: row.id });
 			return {
 				operation,
-				label: row.name || row.email,
+				label: row.name || row.email || "Unnamed",
 				before: {
 					name: row.name,
 					email: row.email,
+					title: full.contact.title,
 					phone: row.phone,
 					status: row.status,
 					tags: row.tags,
+					pocs: full.contact.pocs,
 					notes: full.contact.notes,
 					alternateEmails: full.contact.alternateEmails,
 					organization: row.organizationName,
@@ -259,7 +297,7 @@ async function enrich(
 			if (!row) return `no live contact has the id ${operation.id}`;
 			return {
 				operation,
-				label: row.name || row.email,
+				label: row.name || row.email || "Unnamed",
 				before: {
 					name: row.name,
 					email: row.email,

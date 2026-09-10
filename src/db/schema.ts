@@ -188,7 +188,15 @@ export const contact = pgTable(
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
 		name: text("name"),
-		email: text("email").notNull(),
+		/**
+		 * Optional: half the people worth remembering were met at a dinner and
+		 * never wrote down an address. A row needs a name or an email, which
+		 * the router enforces; the database only insists that an address, when
+		 * there is one, is held by one live contact.
+		 */
+		email: text("email"),
+		/** Their role, when it is worth more than the organization: "Principal". */
+		title: text("title"),
 		/**
 		 * Old work addresses. No uniqueness and no primary flag: these exist so
 		 * a paste-import can recognise somebody already on the list, not so a
@@ -202,6 +210,12 @@ export const contact = pgTable(
 		/** Pipeline position only. What somebody *is* lives in `tags`. */
 		status: text("status").notNull().default("prospect"),
 		tags: text("tags").array().notNull().default([]),
+		/**
+		 * Who in the house holds the relationship. Names, and more than one,
+		 * because "Will's podcast guest whom Sachin then pitched" is two people
+		 * and neither of them is a user of this admin.
+		 */
+		pocs: text("pocs").array().notNull().default([]),
 		notes: text("notes"),
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.notNull()
@@ -228,6 +242,67 @@ export const contact = pgTable(
 			t.embedding.op("vector_cosine_ops"),
 		),
 	],
+);
+
+/**
+ * What we did with somebody, when. Written by a person (or proposed by the
+ * assistant and applied by a person), never by the system: the system's own
+ * record of edits and clicks is `activity`. One row per touchpoint, so
+ * "shared the update, asked about a venue" in June and "had a call" in July
+ * are two rows rather than one overwritten note.
+ */
+export const interaction = pgTable(
+	"interaction",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+		contactId: uuid("contact_id")
+			.notNull()
+			.references(() => contact.id, { onDelete: "cascade" }),
+		occurredAt: timestamp("occurred_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		/** A short category: "Investor update outreach", "Meeting". Free text. */
+		topic: text("topic"),
+		summary: text("summary").notNull(),
+		createdBy: text("created_by").references(() => user.id, {
+			onDelete: "set null",
+		}),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+	},
+	(t) => [
+		index("interaction_contact_idx").on(t.contactId, t.occurredAt.desc()),
+	],
+);
+
+/**
+ * Two contacts somebody looked at and said are not the same person.
+ * Duplicate candidates are computed on read (same name, same phone, an
+ * address that is another row's alternate), so the only thing worth storing
+ * is the decision to stop asking. `a` sorts before `b` so a pair is one row.
+ */
+export const duplicateDismissal = pgTable(
+	"duplicate_dismissal",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+		contactA: uuid("contact_a")
+			.notNull()
+			.references(() => contact.id, { onDelete: "cascade" }),
+		contactB: uuid("contact_b")
+			.notNull()
+			.references(() => contact.id, { onDelete: "cascade" }),
+		createdBy: text("created_by").references(() => user.id, {
+			onDelete: "set null",
+		}),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+	},
+	(t) => [uniqueIndex("one_dismissal_per_pair").on(t.contactA, t.contactB)],
 );
 
 /* -------------------------------------------------------------------------- *
@@ -400,6 +475,14 @@ export const contactRelations = relations(contact, ({ one, many }) => ({
 		references: [organization.id],
 	}),
 	links: many(link),
+	interactions: many(interaction),
+}));
+
+export const interactionRelations = relations(interaction, ({ one }) => ({
+	contact: one(contact, {
+		fields: [interaction.contactId],
+		references: [contact.id],
+	}),
 }));
 
 export const updateRelations = relations(update, ({ many }) => ({

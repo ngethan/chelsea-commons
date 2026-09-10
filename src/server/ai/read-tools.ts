@@ -46,10 +46,14 @@ const LIST_CAP = 150;
 export const listContacts = define({
 	name: "list_contacts",
 	description:
-		"Every live contact, optionally narrowed. Use this for counting, grouping and 'who is...' questions. Matches are exact on status and organization and case-insensitive substrings on tag and query (query looks at name, email, organization, tags and notes). Returns at most 150 rows plus the total; narrow the filters if the total is larger.",
+		"Every live contact, optionally narrowed. Use this for counting, grouping and 'who is...' questions. Matches are exact on status and organization and case-insensitive substrings on tag, poc and query (query looks at name, email, title, organization, tags and POCs). Each row carries lastTouch, the date of the latest logged interaction. Returns at most 150 rows plus the total; narrow the filters if the total is larger.",
 	schema: z.object({
 		status: z.enum(CONTACT_STATUSES).optional(),
 		tag: z.string().optional(),
+		poc: z
+			.string()
+			.optional()
+			.describe("Somebody in the house who holds the relationship."),
 		organization: z
 			.string()
 			.optional()
@@ -61,6 +65,7 @@ export const listContacts = define({
 		const rows = await caller.contacts.list();
 		const needle = input.query?.trim().toLowerCase();
 		const tag = input.tag?.trim().toLowerCase();
+		const poc = input.poc?.trim().toLowerCase();
 		const org = input.organization?.trim().toLowerCase();
 
 		const matched = rows.filter((row) => {
@@ -74,9 +79,18 @@ export const listContacts = define({
 				return false;
 			if (tag && !row.tags.some((t) => t.toLowerCase().includes(tag)))
 				return false;
+			if (poc && !row.pocs.some((p) => p.toLowerCase().includes(poc)))
+				return false;
 			if (
 				needle &&
-				![row.name, row.email, row.organizationName, ...row.tags]
+				![
+					row.name,
+					row.email,
+					row.title,
+					row.organizationName,
+					...row.tags,
+					...row.pocs,
+				]
 					.filter(Boolean)
 					.some((field) => String(field).toLowerCase().includes(needle))
 			)
@@ -103,6 +117,9 @@ export const listContacts = define({
 					id: row.id,
 					name: row.name,
 					email: row.email,
+					title: row.title,
+					pocs: row.pocs,
+					lastTouch: row.lastTouch ? row.lastTouch.slice(0, 10) : null,
 					status: row.status,
 					organization: row.organizationName,
 					organizationId: row.organizationId,
@@ -129,7 +146,7 @@ export const getContact = define({
 		if (!id && input.email) {
 			const needle = input.email.trim().toLowerCase();
 			const rows = await caller.contacts.list();
-			id = rows.find((r) => r.email.toLowerCase() === needle)?.id;
+			id = rows.find((r) => r.email?.toLowerCase() === needle)?.id;
 			if (!id) {
 				return {
 					summary: "no match",
@@ -144,23 +161,33 @@ export const getContact = define({
 			};
 		}
 
-		const [{ contact, organization }, links, timeline] = await Promise.all([
-			caller.contacts.byId({ id }),
-			caller.links.byContact({ contactId: id }),
-			caller.contacts.timeline({ id }),
-		]);
+		const [{ contact, organization }, links, timeline, logged] =
+			await Promise.all([
+				caller.contacts.byId({ id }),
+				caller.links.byContact({ contactId: id }),
+				caller.contacts.timeline({ id }),
+				caller.interactions.byContact({ contactId: id }),
+			]);
 
 		return {
-			summary: contact.name || contact.email,
+			summary: contact.name || contact.email || "Unnamed",
 			content: {
 				id: contact.id,
 				name: contact.name,
 				email: contact.email,
+				title: contact.title,
 				alternateEmails: contact.alternateEmails,
 				phone: contact.phone,
 				status: contact.status,
 				tags: contact.tags,
+				pocs: contact.pocs,
 				notes: contact.notes,
+				interactions: logged.map((i) => ({
+					id: i.id,
+					on: day(i.occurredAt),
+					topic: i.topic,
+					summary: i.summary,
+				})),
 				organization: organization
 					? { id: organization.id, name: organization.name }
 					: null,
@@ -465,7 +492,11 @@ export const parseContactList = define({
 				.where(isNull(contact.deletedAt)),
 		]);
 
-		const byEmail = new Map(contacts.map((c) => [c.email.toLowerCase(), c]));
+		const byEmail = new Map(
+			contacts
+				.filter((c) => c.email)
+				.map((c) => [(c.email as string).toLowerCase(), c]),
+		);
 		const alternates = new Map<string, string>();
 		for (const row of alternateRows) {
 			for (const alt of row.alternateEmails)

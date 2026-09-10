@@ -48,7 +48,7 @@ import {
 import { CONTACT_STATUSES, STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import { toast } from "@/lib/toast";
 import { trpc } from "@/trpc/client";
-import { Copy, Link2Off, Plus, Trash2 } from "lucide-react";
+import { Copy, Link2Off, Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const when = (value: Date | string) =>
@@ -59,40 +59,63 @@ const when = (value: Date | string) =>
 		minute: "2-digit",
 	});
 
+const day = (value: Date | string) =>
+	new Date(value).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	});
+
+/** Today as the value a date input wants. */
+const today = () => new Date().toISOString().slice(0, 10);
+
+/** "a, b" in a field to ["a", "b"] on the wire. */
+const list = (text: string) =>
+	text
+		.split(",")
+		.map((v) => v.trim())
+		.filter(Boolean);
+
 type Draft = {
 	name: string;
 	email: string;
+	title: string;
 	phone: string;
 	status: string;
 	tags: string;
+	pocs: string;
 	notes: string;
 	organizationId: string | null;
 };
 
 function draftFrom(row: {
 	name: string | null;
-	email: string;
+	email: string | null;
+	title: string | null;
 	phone: string | null;
 	status: string;
 	tags: string[];
+	pocs: string[];
 	notes: string | null;
 	organizationId: string | null;
 }): Draft {
 	return {
 		name: row.name ?? "",
-		email: row.email,
+		email: row.email ?? "",
+		title: row.title ?? "",
 		phone: row.phone ?? "",
 		status: row.status,
 		tags: row.tags.join(", "),
+		pocs: row.pocs.join(", "),
 		notes: row.notes ?? "",
 		organizationId: row.organizationId,
 	};
 }
 
 /**
- * One person. Three sections top to bottom: what we know, what we sent, and
- * what happened, which is the order you read them in when somebody's name
- * comes up.
+ * One person. Four sections top to bottom: what we know, what we did, what
+ * we sent, and what happened, which is the order you read them in when
+ * somebody's name comes up.
  */
 export function ContactDrawer({
 	id,
@@ -105,6 +128,7 @@ export function ContactDrawer({
 	const detail = trpc.contacts.byId.useQuery({ id });
 	const timeline = trpc.contacts.timeline.useQuery({ id });
 	const links = trpc.links.byContact.useQuery({ contactId: id });
+	const logged = trpc.interactions.byContact.useQuery({ contactId: id });
 	const organizations = trpc.organizations.list.useQuery();
 
 	// `seed` is what the record looked like when the draft was taken, so
@@ -128,13 +152,17 @@ export function ContactDrawer({
 		JSON.stringify(draft) !== JSON.stringify(seed);
 	const guard = useUnsavedGuard(dirty, onClose);
 
+	const invalidate = () =>
+		Promise.all([
+			utils.contacts.list.invalidate(),
+			utils.contacts.byId.invalidate({ id }),
+			utils.contacts.timeline.invalidate({ id }),
+			utils.contacts.duplicates.invalidate(),
+		]);
+
 	const save = trpc.contacts.update.useMutation({
 		onSuccess: async () => {
-			await Promise.all([
-				utils.contacts.list.invalidate(),
-				utils.contacts.byId.invalidate({ id }),
-				utils.contacts.timeline.invalidate({ id }),
-			]);
+			await invalidate();
 			toast.success("Saved.");
 		},
 		onError: (err) => toast.error(err.message),
@@ -160,18 +188,28 @@ export function ContactDrawer({
 		onError: (err) => toast.error(err.message),
 	});
 
+	const removeLog = trpc.interactions.remove.useMutation({
+		onSuccess: async () => {
+			await Promise.all([
+				utils.interactions.byContact.invalidate({ contactId: id }),
+				utils.contacts.timeline.invalidate({ id }),
+				utils.contacts.list.invalidate(),
+			]);
+		},
+		onError: (err) => toast.error(err.message),
+	});
+
 	function submit() {
 		if (!draft) return;
 		save.mutate({
 			id,
 			name: draft.name || null,
-			email: draft.email,
+			email: draft.email || null,
+			title: draft.title || null,
 			phone: draft.phone || null,
 			status: normalizeStatus(draft.status),
-			tags: draft.tags
-				.split(",")
-				.map((tag) => tag.trim())
-				.filter(Boolean),
+			tags: list(draft.tags),
+			pocs: list(draft.pocs),
 			notes: draft.notes || null,
 			organizationId: draft.organizationId,
 		});
@@ -181,22 +219,29 @@ export function ContactDrawer({
 	const org = detail.data?.organization;
 	const sent = links.data ?? [];
 	const history = timeline.data ?? [];
+	const entries = logged.data ?? [];
 
 	return (
 		<Sheet open onOpenChange={(open) => !open && guard.requestClose()}>
 			<SheetContent>
 				<SheetHeader>
 					<SheetTitle>{row?.name || row?.email || "Contact"}</SheetTitle>
-					<SheetDescription className="flex items-center gap-2">
+					<SheetDescription className="flex flex-wrap items-center gap-2">
 						{row ? (
 							<>
 								<StatusText status={row.status} />
-								<span className="text-muted-foreground/50">·</span>
-								<Mono className="text-[13px]">{row.email}</Mono>
-								{org && (
+								{row.email && (
 									<>
 										<span className="text-muted-foreground/50">·</span>
-										<span>{org.name}</span>
+										<Mono className="text-[13px]">{row.email}</Mono>
+									</>
+								)}
+								{(row.title || org) && (
+									<>
+										<span className="text-muted-foreground/50">·</span>
+										<span>
+											{[row.title, org?.name].filter(Boolean).join(", ")}
+										</span>
 									</>
 								)}
 							</>
@@ -225,6 +270,26 @@ export function ContactDrawer({
 									}
 								/>
 								<FloatingInput
+									label="Title"
+									value={draft.title}
+									onChange={(e) =>
+										setDraft({ ...draft, title: e.target.value })
+									}
+								/>
+								<FloatingCombobox
+									label="Organization"
+									value={draft.organizationId}
+									onChange={(value) =>
+										setDraft({ ...draft, organizationId: value })
+									}
+									clearLabel="None"
+									options={(organizations.data ?? []).map((o) => ({
+										value: o.id,
+										label: o.name,
+										hint: o.domain,
+									}))}
+								/>
+								<FloatingInput
 									label="Phone"
 									value={draft.phone}
 									onChange={(e) =>
@@ -240,18 +305,10 @@ export function ContactDrawer({
 										label: STATUS_LABEL[status],
 									}))}
 								/>
-								<FloatingCombobox
-									label="Organization"
-									value={draft.organizationId}
-									onChange={(value) =>
-										setDraft({ ...draft, organizationId: value })
-									}
-									clearLabel="None"
-									options={(organizations.data ?? []).map((o) => ({
-										value: o.id,
-										label: o.name,
-										hint: o.domain,
-									}))}
+								<FloatingInput
+									label="POCs"
+									value={draft.pocs}
+									onChange={(e) => setDraft({ ...draft, pocs: e.target.value })}
 								/>
 								<FloatingInput
 									label="Tags"
@@ -269,6 +326,53 @@ export function ContactDrawer({
 							</div>
 						</section>
 					)}
+
+					<section>
+						<H2 right={<LogInteraction contactId={id} />}>Interactions</H2>
+						{entries.length === 0 && <Empty>Nothing logged yet.</Empty>}
+						{entries.length > 0 && (
+							<div className="border border-border">
+								<Table>
+									<TableBody>
+										{entries.map((entry) => (
+											<TableRow key={entry.id} className="hover:bg-transparent">
+												<TableCell className="w-[120px] align-top text-[12.5px] text-muted-foreground tabular-nums">
+													{day(entry.occurredAt)}
+												</TableCell>
+												<TableCell className="align-top">
+													{entry.topic && (
+														<div className="mb-0.5 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+															{entry.topic}
+														</div>
+													)}
+													<div className="whitespace-pre-wrap text-[14px] leading-relaxed">
+														{entry.summary}
+													</div>
+												</TableCell>
+												<TableCell className="w-[48px] align-top text-right">
+													<ConfirmButton
+														title="Remove this entry?"
+														description="It comes off their log. The history keeps a note that it was removed."
+														action="Remove"
+														onConfirm={() => removeLog.mutate({ id: entry.id })}
+													>
+														<Button
+															variant="icon"
+															size="icon-xs"
+															title="Remove"
+														>
+															<X />
+															<span className="sr-only">Remove</span>
+														</Button>
+													</ConfirmButton>
+												</TableCell>
+											</TableRow>
+										))}
+									</TableBody>
+								</Table>
+							</div>
+						)}
+					</section>
 
 					<section>
 						<H2
@@ -380,6 +484,12 @@ export function ContactDrawer({
 													</span>
 												)}
 											</>
+										) : entry.kind === "interaction" ? (
+											entry.field ? (
+												entry.field
+											) : (
+												"Logged"
+											)
 										) : entry.field ? (
 											<>{entry.field} changed</>
 										) : (
@@ -387,6 +497,7 @@ export function ContactDrawer({
 										)
 									}
 								>
+									{entry.kind === "interaction" && entry.newValue}
 									{entry.kind === "edit" && entry.field && (
 										<>
 											{entry.oldValue || "empty"} to {entry.newValue || "empty"}
@@ -419,6 +530,81 @@ export function ContactDrawer({
 				{guard.dialog}
 			</SheetContent>
 		</Sheet>
+	);
+}
+
+/** Add one entry to the log: what happened, under what heading, on what day. */
+function LogInteraction({ contactId }: { contactId: string }) {
+	const utils = trpc.useUtils();
+	const [open, setOpen] = useState(false);
+	const [summary, setSummary] = useState("");
+	const [topic, setTopic] = useState("");
+	const [date, setDate] = useState(today());
+
+	const create = trpc.interactions.create.useMutation({
+		onSuccess: async () => {
+			await Promise.all([
+				utils.interactions.byContact.invalidate({ contactId }),
+				utils.contacts.timeline.invalidate({ id: contactId }),
+				utils.contacts.list.invalidate(),
+			]);
+			setSummary("");
+			setTopic("");
+			setDate(today());
+			setOpen(false);
+		},
+		onError: (err) => toast.error(err.message),
+	});
+
+	return (
+		<Popover open={open} onOpenChange={setOpen}>
+			<PopoverTrigger asChild>
+				<Button variant="outline" size="xs">
+					<Plus />
+					Log
+				</Button>
+			</PopoverTrigger>
+			<PopoverContent align="end" className="w-[420px] p-4">
+				<div className="flex flex-col gap-3">
+					<FloatingTextarea
+						label="What happened"
+						rows={3}
+						value={summary}
+						onChange={(e) => setSummary(e.target.value)}
+						autoFocus
+					/>
+					<div className="grid grid-cols-2 gap-3">
+						<FloatingInput
+							label="Topic"
+							value={topic}
+							onChange={(e) => setTopic(e.target.value)}
+						/>
+						<FloatingInput
+							label="When"
+							type="date"
+							value={date}
+							onChange={(e) => setDate(e.target.value)}
+						/>
+					</div>
+					<div className="flex justify-end">
+						<Button
+							size="sm"
+							disabled={create.isPending || !summary.trim()}
+							onClick={() =>
+								create.mutate({
+									contactId,
+									summary,
+									topic: topic || null,
+									occurredAt: date ? new Date(`${date}T12:00:00`) : undefined,
+								})
+							}
+						>
+							{create.isPending ? "Logging" : "Log"}
+						</Button>
+					</div>
+				</div>
+			</PopoverContent>
+		</Popover>
 	);
 }
 

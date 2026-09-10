@@ -143,3 +143,46 @@ describe("summarizeCounts", () => {
 		);
 	});
 });
+
+describe("people without an address", () => {
+	const id = "7b1d2f1a-6c2e-4a7f-9a2b-0f6c1d2e3f4a";
+
+	it("needs a name or an email, not both", () => {
+		expect(operationSchema.safeParse({ op: "create_contact" }).success).toBe(
+			false,
+		);
+		expect(
+			operationSchema.safeParse({ op: "create_contact", name: "Ann" }).success,
+		).toBe(true);
+		expect(
+			operationSchema.safeParse({ op: "create_contact", email: "ann@x.co" })
+				.success,
+		).toBe(true);
+	});
+
+	it("logs an interaction against a contact, dated as a day", () => {
+		expect(
+			operationSchema.parse({
+				op: "log_interaction",
+				contactId: id,
+				summary: "Had a call.",
+				topic: "Meeting",
+				occurredAt: "2026-06-02",
+			}),
+		).toMatchObject({ op: "log_interaction", topic: "Meeting" });
+		expect(
+			operationSchema.safeParse({
+				op: "log_interaction",
+				contactId: id,
+				summary: "Had a call.",
+				occurredAt: "June 2",
+			}).success,
+		).toBe(false);
+	});
+
+	it("counts a logged interaction as something added", () => {
+		expect(
+			summarizeCounts([{ op: "log_interaction", contactId: id, summary: "x" }]),
+		).toBe("1 added");
+	});
+});

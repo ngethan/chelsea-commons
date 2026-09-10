@@ -33,12 +33,23 @@ const organizationRef = z.union([
 
 const contactFields = z.object({
 	name: shortText.nullable().optional(),
-	email: email.optional(),
+	email: email.nullable().optional(),
+	title: shortText
+		.nullable()
+		.optional()
+		.describe("Their role, e.g. 'Principal' or 'Founder'. Not the company."),
 	alternateEmails: z.array(email).max(20).optional(),
 	phone: shortText.nullable().optional(),
 	organization: organizationRef.nullable().optional(),
 	status: z.enum(CONTACT_STATUSES).optional(),
 	tags: z.array(shortText.min(1)).max(40).optional(),
+	pocs: z
+		.array(shortText.min(1))
+		.max(10)
+		.optional()
+		.describe(
+			"Who in the house holds the relationship, by first name. More than one is fine.",
+		),
 	notes: text.nullable().optional(),
 });
 
@@ -49,16 +60,38 @@ const organizationFields = z.object({
 });
 
 export const operationSchema = z.discriminatedUnion("op", [
-	z.object({
-		op: z.literal("create_contact"),
-		...contactFields.extend({ email }).shape,
-	}),
+	z
+		.object({
+			op: z.literal("create_contact"),
+			...contactFields.shape,
+		})
+		.refine((o) => Boolean(o.name || o.email), {
+			message: "a contact needs a name or an email",
+		}),
 	z.object({
 		op: z.literal("update_contact"),
 		id: uuid,
 		...contactFields.shape,
 	}),
 	z.object({ op: z.literal("remove_contact"), id: uuid }),
+	z.object({
+		op: z.literal("log_interaction"),
+		contactId: uuid,
+		summary: text
+			.min(1)
+			.describe("What happened, in a sentence or two, past tense."),
+		topic: shortText
+			.nullable()
+			.optional()
+			.describe(
+				"A short category, e.g. 'Investor update outreach', 'Meeting'.",
+			),
+		occurredAt: z
+			.string()
+			.date()
+			.optional()
+			.describe("YYYY-MM-DD. Today when omitted."),
+	}),
 	z.object({
 		op: z.literal("create_organization"),
 		...organizationFields.extend({ name: shortText.min(1) }).shape,
@@ -163,6 +196,7 @@ export const OPERATION_LABEL: Record<OperationKind, string> = {
 	create_contact: "Add contact",
 	update_contact: "Update contact",
 	remove_contact: "Remove contact",
+	log_interaction: "Log interaction",
 	create_organization: "Add organization",
 	update_organization: "Update organization",
 	remove_organization: "Remove organization",
@@ -183,7 +217,7 @@ export function fieldChanges(
 	operation: Operation,
 	before: BeforeSnapshot | null,
 ): Array<{ field: string; from: string | null; to: string | null }> {
-	const skip = new Set(["op", "id", "updateId", "contactIds"]);
+	const skip = new Set(["op", "id", "updateId", "contactIds", "contactId"]);
 	const changes: Array<{
 		field: string;
 		from: string | null;
@@ -218,7 +252,11 @@ export function summarizeCounts(operations: Operation[]) {
 	let removed = 0;
 	for (const operation of operations) {
 		if (isDestructive(operation)) removed += 1;
-		else if (operation.op.startsWith("create_") || operation.op === "invite")
+		else if (
+			operation.op.startsWith("create_") ||
+			operation.op === "invite" ||
+			operation.op === "log_interaction"
+		)
 			created += 1;
 		else changed += 1;
 	}

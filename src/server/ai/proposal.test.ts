@@ -318,3 +318,27 @@ describe("validateProposal", () => {
 		}
 	});
 });
+
+describe("names without addresses", () => {
+	it("warns, rather than refuses, when the name is already on the list", async () => {
+		const out = await propose([{ op: "create_contact", name: "jane doe" }]);
+		expect(out.ok).toBe(true);
+		if (out.ok) {
+			expect(out.proposal.operations[0].label).toBe("jane doe");
+			expect(out.proposal.operations[0].warnings[0]).toContain("Jane Doe");
+		}
+	});
+
+	it("logs only against somebody live, and names them on the card", async () => {
+		const ok = await propose([
+			{ op: "log_interaction", contactId: IDS.jane, summary: "Had a call." },
+		]);
+		expect(ok.ok).toBe(true);
+		if (ok.ok) expect(ok.proposal.operations[0].label).toBe("Jane Doe");
+
+		const bad = await propose([
+			{ op: "log_interaction", contactId: IDS.nobody, summary: "Had a call." },
+		]);
+		expect(bad.ok).toBe(false);
+	});
+});

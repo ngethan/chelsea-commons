@@ -54,6 +54,21 @@ Google, and Google only admits an address that already has a live row in
   write. Every hit is stored with its user agent, including the obvious
   scanners, so the heuristic can be improved later without having thrown away
   what it was guessing from.
+- **A contact needs a name or an email, not both.** Half the people worth
+  remembering were met at a dinner and never gave an address, so `email`
+  is nullable and the one-live-contact-per-address index only applies when
+  there is one. `title` is their role; the company is the organization.
+  `pocs` is who in the house holds the relationship, several allowed.
+- **Interactions are a table, not a note.** `interaction` is one row per
+  touchpoint (date, topic, summary), written by a person or proposed by the
+  assistant through `log_interaction` and applied by a person. `notes` is
+  standing context about who somebody is. Both feed the embedding.
+- **Duplicates are found on read, resolved by hand.** `contacts.duplicates`
+  pairs rows by normalized name, phone, or a shared alternate address, minus
+  pairs somebody dismissed (`duplicate_dismissal`). `contacts.merge` folds
+  one row into another (kept row wins, lists union, the dropped address
+  becomes an alternate, interactions and links move) and soft-deletes the
+  rest. The Contacts toolbar shows a count when there is anything to look at.
 - **Search is hybrid.** cmd-K calls `search.query`, which runs a literal
   `ILIKE` first and then pgvector, in `src/server/search`. Every mutation
   re-embeds its own row through `reindexQuietly`, which never fails the save;

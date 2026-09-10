@@ -1,6 +1,8 @@
 import {
 	activity,
 	contact,
+	duplicateDismissal,
+	interaction,
 	link,
 	linkEvent,
 	organization,
@@ -16,20 +18,27 @@ import {
 	reindexQuietly,
 } from "@/server/search";
 import { TRPCError } from "@trpc/server";
-import { and, asc, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { fieldChanges, logActivity } from "../activity";
 import { createTRPCRouter, protectedProcedure } from "../init";
 
 const email = z.email("That is not an email address.").trim().toLowerCase();
 
+const optionalText = z
+	.string()
+	.trim()
+	.nullish()
+	.transform((v) => v || null);
+
 const contactInput = z.object({
-	name: z
-		.string()
-		.trim()
+	name: optionalText,
+	/** Optional, and "" from a form is the same as none. */
+	email: z
+		.union([z.literal(""), email])
 		.nullish()
 		.transform((v) => v || null),
-	email,
+	title: optionalText,
 	alternateEmails: z.array(email).default([]),
 	phone: z
 		.string()
@@ -42,12 +51,41 @@ const contactInput = z.object({
 		.transform((v) => v || null),
 	status: z.enum(CONTACT_STATUSES).default("prospect"),
 	tags: z.array(z.string().trim().min(1)).default([]),
-	notes: z
-		.string()
-		.trim()
-		.nullish()
-		.transform((v) => v || null),
+	pocs: z.array(z.string().trim().min(1)).default([]),
+	notes: optionalText,
 });
+
+/**
+ * Somebody has to be findable by something. Checked here rather than with a
+ * refinement on the schema, because `.partial()` for updates would not
+ * survive one, and an update only knows whether the row still has a name or
+ * an address once it is merged with what is there.
+ */
+function requireIdentity(row: { name: string | null; email: string | null }) {
+	if (!row.name && !row.email) {
+		throw new TRPCError({
+			code: "BAD_REQUEST",
+			message: "A name or an email is needed.",
+		});
+	}
+}
+
+/** Names compared the way a person would: case, punctuation and spacing aside. */
+function normalizeName(name: string | null) {
+	return (name ?? "")
+		.toLowerCase()
+		.replace(/[^\p{L}\p{N}\s]/gu, " ")
+		.replace(/\s+/g, " ")
+		.trim();
+}
+
+function normalizePhone(phone: string | null) {
+	return (phone ?? "").replace(/\D/g, "");
+}
+
+function pairKey(a: string, b: string) {
+	return a < b ? `${a}:${b}` : `${b}:${a}`;
+}
 
 /** Postgres reports the partial unique index by name; say something useful. */
 function rethrowDuplicate(err: unknown): never {
@@ -67,17 +105,25 @@ export const contactsRouter = createTRPCRouter({
 				id: contact.id,
 				name: contact.name,
 				email: contact.email,
+				title: contact.title,
 				phone: contact.phone,
 				status: contact.status,
 				tags: contact.tags,
+				pocs: contact.pocs,
 				createdAt: contact.createdAt,
 				organizationId: contact.organizationId,
 				organizationName: organization.name,
+				/** When we last did anything with them, from the interaction log. */
+				lastTouch: sql<string | null>`(
+					select max(${interaction.occurredAt})
+					from ${interaction}
+					where ${interaction.contactId} = ${contact.id}
+				)`,
 			})
 			.from(contact)
 			.leftJoin(organization, eq(organization.id, contact.organizationId))
 			.where(isNull(contact.deletedAt))
-			.orderBy(asc(contact.email));
+			.orderBy(sql`lower(coalesce(${contact.name}, ${contact.email}))`);
 	}),
 
 	byId: protectedProcedure
@@ -136,6 +182,17 @@ export const contactsRouter = createTRPCRouter({
 				.orderBy(desc(activity.createdAt))
 				.limit(200);
 
+			const logged = await ctx.db
+				.select({
+					at: interaction.occurredAt,
+					topic: interaction.topic,
+					summary: interaction.summary,
+				})
+				.from(interaction)
+				.where(eq(interaction.contactId, input.id))
+				.orderBy(desc(interaction.occurredAt))
+				.limit(200);
+
 			const clicks = await ctx.db
 				.select({
 					at: linkEvent.createdAt,
@@ -173,6 +230,17 @@ export const contactsRouter = createTRPCRouter({
 					updateTitle: c.updateTitle,
 					automated: isAutomatedClick(c.userAgent),
 				})),
+				...logged.map((l) => ({
+					kind: "interaction" as const,
+					at: l.at,
+					verb: "logged",
+					field: l.topic,
+					oldValue: null as string | null,
+					newValue: l.summary,
+					actorName: null as string | null,
+					updateTitle: null as string | null,
+					automated: false,
+				})),
 			];
 
 			entries.sort((a, b) => b.at.getTime() - a.at.getTime());
@@ -182,6 +250,7 @@ export const contactsRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(contactInput)
 		.mutation(async ({ ctx, input }) => {
+			requireIdentity(input);
 			const [row] = await ctx.db
 				.insert(contact)
 				.values(input)
@@ -219,6 +288,7 @@ export const contactsRouter = createTRPCRouter({
 			if (!before) {
 				throw new TRPCError({ code: "NOT_FOUND", message: "No such contact." });
 			}
+			requireIdentity({ ...before, ...patch });
 
 			const [row] = await ctx.db
 				.update(contact)
@@ -235,9 +305,11 @@ export const contactsRouter = createTRPCRouter({
 					[
 						"name",
 						"email",
+						"title",
 						"phone",
 						"status",
 						"tags",
+						"pocs",
 						"notes",
 						"organizationId",
 						"alternateEmails",
@@ -311,7 +383,7 @@ export const contactsRouter = createTRPCRouter({
 
 			const taken = new Set<string>();
 			for (const row of existing) {
-				taken.add(row.email.toLowerCase());
+				if (row.email) taken.add(row.email.toLowerCase());
 				for (const alt of row.alternates) taken.add(alt.toLowerCase());
 			}
 
@@ -365,5 +437,259 @@ export const contactsRouter = createTRPCRouter({
 					.map((r) => r.email),
 				invalid,
 			};
+		}),
+	/**
+	 * People who may be the same person, worked out on read rather than
+	 * stored: the list is small and the heuristics will change. Two rows are
+	 * candidates when their names match (case, punctuation and spacing
+	 * aside), their phone numbers match, or one's address is the other's
+	 * alternate. Pairs somebody has already looked at and dismissed are left
+	 * out. Candidates are clustered so three spellings of one person are one
+	 * group, not three pairs.
+	 */
+	duplicates: protectedProcedure.query(async ({ ctx }) => {
+		const rows = await ctx.db
+			.select({
+				id: contact.id,
+				name: contact.name,
+				email: contact.email,
+				title: contact.title,
+				phone: contact.phone,
+				alternateEmails: contact.alternateEmails,
+				status: contact.status,
+				tags: contact.tags,
+				pocs: contact.pocs,
+				createdAt: contact.createdAt,
+				organizationName: organization.name,
+			})
+			.from(contact)
+			.leftJoin(organization, eq(organization.id, contact.organizationId))
+			.where(isNull(contact.deletedAt));
+
+		const dismissed = new Set(
+			(
+				await ctx.db
+					.select({
+						a: duplicateDismissal.contactA,
+						b: duplicateDismissal.contactB,
+					})
+					.from(duplicateDismissal)
+			).map((d) => pairKey(d.a, d.b)),
+		);
+
+		const reasons = new Map<string, Set<string>>();
+		const flag = (a: string, b: string, why: string) => {
+			if (a === b) return;
+			const key = pairKey(a, b);
+			if (dismissed.has(key)) return;
+			const set = reasons.get(key) ?? new Set<string>();
+			set.add(why);
+			reasons.set(key, set);
+		};
+
+		const byName = new Map<string, string[]>();
+		const byPhone = new Map<string, string[]>();
+		const byEmail = new Map<string, string>();
+		for (const row of rows) {
+			const name = normalizeName(row.name);
+			if (name) byName.set(name, [...(byName.get(name) ?? []), row.id]);
+			const phone = normalizePhone(row.phone);
+			if (phone.length >= 7)
+				byPhone.set(phone, [...(byPhone.get(phone) ?? []), row.id]);
+			if (row.email) byEmail.set(row.email.toLowerCase(), row.id);
+		}
+		for (const ids of byName.values())
+			for (const a of ids) for (const b of ids) flag(a, b, "same name");
+		for (const ids of byPhone.values())
+			for (const a of ids) for (const b of ids) flag(a, b, "same phone");
+		for (const row of rows)
+			for (const alt of row.alternateEmails) {
+				const owner = byEmail.get(alt.toLowerCase());
+				if (owner) flag(row.id, owner, "an address they share");
+			}
+
+		// Union-find, so a chain of pairs becomes one group.
+		const parent = new Map<string, string>();
+		const find = (x: string): string => {
+			const p = parent.get(x) ?? x;
+			if (p === x) return x;
+			const root = find(p);
+			parent.set(x, root);
+			return root;
+		};
+		for (const key of reasons.keys()) {
+			const [a, b] = key.split(":");
+			parent.set(find(a), find(b));
+		}
+		const groups = new Map<string, { ids: Set<string>; why: Set<string> }>();
+		for (const [key, why] of reasons) {
+			const [a, b] = key.split(":");
+			const root = find(a);
+			const group = groups.get(root) ?? { ids: new Set(), why: new Set() };
+			group.ids.add(a);
+			group.ids.add(b);
+			for (const w of why) group.why.add(w);
+			groups.set(root, group);
+		}
+
+		const byId = new Map(rows.map((r) => [r.id, r]));
+		return [...groups.values()].map((group) => ({
+			reasons: [...group.why],
+			contacts: [...group.ids]
+				.map((id) => byId.get(id))
+				.filter((r): r is NonNullable<typeof r> => Boolean(r))
+				.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+		}));
+	}),
+
+	/**
+	 * Folds one contact into another. The kept row wins every field it has;
+	 * the dropped row fills what the kept one lacks; lists (tags, POCs,
+	 * alternate addresses) are unioned, with the dropped address becoming an
+	 * alternate so a paste still recognises it; notes are joined. The
+	 * dropped row's interactions and links move across, except a link to an
+	 * update the kept row already has one for, which stays with the dropped
+	 * row so neither reader's history is lost. Then the dropped row is
+	 * soft-deleted, which is undoable by hand like any other delete.
+	 */
+	merge: protectedProcedure
+		.input(z.object({ keepId: z.uuid(), dropId: z.uuid() }))
+		.mutation(async ({ ctx, input }) => {
+			if (input.keepId === input.dropId) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Pick two." });
+			}
+			const both = await ctx.db
+				.select()
+				.from(contact)
+				.where(
+					and(
+						inArray(contact.id, [input.keepId, input.dropId]),
+						isNull(contact.deletedAt),
+					),
+				);
+			const keep = both.find((r) => r.id === input.keepId);
+			const drop = both.find((r) => r.id === input.dropId);
+			if (!keep || !drop) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "No such contact." });
+			}
+
+			const union = (a: string[], b: string[]) => {
+				const seen = new Set<string>();
+				return [...a, ...b].filter((v) => {
+					const k = v.toLowerCase();
+					if (seen.has(k)) return false;
+					seen.add(k);
+					return true;
+				});
+			};
+			const alternates = union(
+				keep.alternateEmails,
+				[
+					...drop.alternateEmails,
+					...(drop.email && drop.email !== keep.email ? [drop.email] : []),
+				].filter((e) => e.toLowerCase() !== keep.email?.toLowerCase()),
+			);
+			const merged = {
+				name: keep.name ?? drop.name,
+				email: keep.email ?? drop.email,
+				title: keep.title ?? drop.title,
+				phone: keep.phone ?? drop.phone,
+				organizationId: keep.organizationId ?? drop.organizationId,
+				// Whichever of the two has moved further along.
+				status:
+					keep.status === "prospect" && drop.status !== "prospect"
+						? drop.status
+						: keep.status,
+				tags: union(keep.tags, drop.tags),
+				pocs: union(keep.pocs, drop.pocs),
+				alternateEmails: keep.email
+					? alternates.filter(
+							(e) => e.toLowerCase() !== keep.email?.toLowerCase(),
+						)
+					: alternates,
+				notes:
+					keep.notes && drop.notes
+						? `${keep.notes}\n\n${drop.notes}`
+						: (keep.notes ?? drop.notes),
+				updatedAt: new Date(),
+			};
+
+			// The dropped row is retired first, so its address stops holding the
+			// partial unique index before the kept row might take it over.
+			await ctx.db
+				.update(contact)
+				.set({ deletedAt: new Date() })
+				.where(eq(contact.id, drop.id));
+
+			await ctx.db
+				.update(contact)
+				.set(merged)
+				.where(eq(contact.id, keep.id))
+				.catch(rethrowDuplicate);
+
+			await ctx.db
+				.update(interaction)
+				.set({ contactId: keep.id })
+				.where(eq(interaction.contactId, drop.id));
+
+			const keptUpdates = new Set(
+				(
+					await ctx.db
+						.select({ updateId: link.updateId })
+						.from(link)
+						.where(eq(link.contactId, keep.id))
+				).map((l) => l.updateId),
+			);
+			const movable = (
+				await ctx.db
+					.select({ id: link.id, updateId: link.updateId })
+					.from(link)
+					.where(eq(link.contactId, drop.id))
+			).filter((l) => !keptUpdates.has(l.updateId));
+			if (movable.length) {
+				await ctx.db
+					.update(link)
+					.set({ contactId: keep.id })
+					.where(
+						inArray(
+							link.id,
+							movable.map((l) => l.id),
+						),
+					);
+			}
+
+			await logActivity([
+				{
+					actorUserId: ctx.user.id,
+					entityType: "contact",
+					entityId: keep.id,
+					verb: "merged in",
+					newValue: drop.name || drop.email || drop.id,
+				},
+				{
+					actorUserId: ctx.user.id,
+					entityType: "contact",
+					entityId: drop.id,
+					verb: "merged into",
+					newValue: keep.name || keep.email || keep.id,
+				},
+			]);
+
+			await reindexQuietly(() => indexContacts({ ids: [keep.id] }));
+
+			return { keptId: keep.id, movedLinks: movable.length };
+		}),
+
+	/** "These two are different people." Stops the pair being offered again. */
+	dismissDuplicate: protectedProcedure
+		.input(z.object({ a: z.uuid(), b: z.uuid() }))
+		.mutation(async ({ ctx, input }) => {
+			const [contactA, contactB] =
+				input.a < input.b ? [input.a, input.b] : [input.b, input.a];
+			await ctx.db
+				.insert(duplicateDismissal)
+				.values({ contactA, contactB, createdBy: ctx.user.id })
+				.onConflictDoNothing();
+			return { dismissed: true };
 		}),
 });

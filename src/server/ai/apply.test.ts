@@ -40,6 +40,18 @@ function fakeCaller() {
 				return { id: `org-${created.length - 1}`, name };
 			}),
 		},
+		interactions: {
+			create: vi.fn(
+				async (input: {
+					contactId: string;
+					summary: string;
+					occurredAt?: Date;
+				}) => {
+					calls.push(`interactions.create ${input.contactId}`);
+					return { id: "i-1", ...input };
+				},
+			),
+		},
 	};
 	return { caller, calls };
 }
@@ -152,5 +164,26 @@ describe("applyOperations", () => {
 			"contacts.create after@x.com",
 		]);
 		expect(out.results.map((r) => r.ok)).toEqual([false, true]);
+	});
+});
+
+describe("log_interaction", () => {
+	it("goes through the interactions procedure, dated at noon UTC", async () => {
+		const { caller, calls } = fakeCaller();
+		const out = await applyOperations(
+			[
+				{
+					op: "log_interaction",
+					contactId: JANE,
+					summary: "Had a call.",
+					occurredAt: "2026-06-02",
+				},
+			],
+			context(caller),
+		);
+		expect(out.applied).toBe(1);
+		expect(calls).toContain(`interactions.create ${JANE}`);
+		const sent = caller.interactions.create.mock.calls[0][0];
+		expect(sent.occurredAt?.toISOString()).toBe("2026-06-02T12:00:00.000Z");
 	});
 });

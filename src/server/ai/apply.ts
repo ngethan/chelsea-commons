@@ -72,18 +72,20 @@ export async function applyOperations(
 			case "create_contact": {
 				const row = await caller.contacts.create({
 					name: operation.name ?? null,
-					email: operation.email,
+					email: operation.email ?? null,
+					title: operation.title ?? null,
 					alternateEmails: operation.alternateEmails ?? [],
 					phone: operation.phone ?? null,
 					organizationId:
 						(await organizationId(operation.organization)) ?? null,
 					status: operation.status ?? "prospect",
 					tags: operation.tags ?? [],
+					pocs: operation.pocs ?? [],
 					notes: operation.notes ?? null,
 				});
 				return {
 					ok: true,
-					message: `Added ${row.name || row.email}`,
+					message: `Added ${row.name || row.email || "a contact"}`,
 					id: row.id,
 				};
 			}
@@ -96,12 +98,28 @@ export async function applyOperations(
 					...defined(fields),
 					...(orgId !== undefined ? { organizationId: orgId } : {}),
 				});
-				return { ok: true, message: `Updated ${row.name || row.email}`, id };
+				return {
+					ok: true,
+					message: `Updated ${row.name || row.email || "the contact"}`,
+					id,
+				};
 			}
 
 			case "remove_contact":
 				await caller.contacts.remove({ id: operation.id });
 				return { ok: true, message: "Removed", id: operation.id };
+
+			case "log_interaction": {
+				const row = await caller.interactions.create({
+					contactId: operation.contactId,
+					summary: operation.summary,
+					topic: operation.topic ?? null,
+					occurredAt: operation.occurredAt
+						? new Date(`${operation.occurredAt}T12:00:00Z`)
+						: undefined,
+				});
+				return { ok: true, message: "Logged", id: row.id };
+			}
 
 			case "create_organization": {
 				const row = await caller.organizations.create({

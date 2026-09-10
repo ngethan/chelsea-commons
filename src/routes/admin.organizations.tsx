@@ -327,7 +327,7 @@ function OrganizationDrawer({
 												}
 											>
 												<TableCell className="truncate text-[14px]">
-													{member.name || member.email}
+													{member.name || member.email || "Unnamed"}
 												</TableCell>
 												<TableCell>
 													<Mono>{member.email}</Mono>

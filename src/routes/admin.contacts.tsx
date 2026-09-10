@@ -1,4 +1,5 @@
 import { ContactDrawer } from "@/components/admin/contact-drawer";
+import { DuplicatesSheet } from "@/components/admin/duplicates-sheet";
 import { FilterBar } from "@/components/admin/filter-bar";
 import {
 	Empty,
@@ -39,7 +40,7 @@ import { CONTACT_STATUSES, STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import { toast } from "@/lib/toast";
 import { trpc } from "@/trpc/client";
 import { createFileRoute } from "@tanstack/react-router";
-import { Copy, Link as LinkIcon, Trash2, UserRound } from "lucide-react";
+import { Copy, Link as LinkIcon, Trash2, UserRound, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { z } from "zod";
 
@@ -48,6 +49,7 @@ const searchSchema = z.object({
 	sheet: z.enum(["new", "import"]).optional(),
 	q: z.string().optional(),
 	status: z.enum(CONTACT_STATUSES).optional(),
+	poc: z.string().optional(),
 });
 
 export const Route = createFileRoute("/admin/contacts")({
@@ -58,7 +60,7 @@ export const Route = createFileRoute("/admin/contacts")({
 type Status = (typeof CONTACT_STATUSES)[number];
 
 function Contacts() {
-	const { q, status } = Route.useSearch();
+	const { q, status, poc } = Route.useSearch();
 	const navigate = Route.useNavigate();
 	const utils = trpc.useUtils();
 	const contact = useDrawerParam("contact");
@@ -67,6 +69,19 @@ function Contacts() {
 
 	const list = trpc.contacts.list.useQuery();
 	const rows = list.data ?? [];
+	const duplicates = trpc.contacts.duplicates.useQuery();
+	const [resolving, setResolving] = useState(false);
+
+	// Everybody who holds a relationship, for the filter's own list.
+	const pocOptions = useMemo(() => {
+		const seen = new Map<string, string>();
+		for (const row of rows)
+			for (const name of row.pocs)
+				if (!seen.has(name.toLowerCase())) seen.set(name.toLowerCase(), name);
+		return [...seen.values()]
+			.sort((a, b) => a.localeCompare(b))
+			.map((name) => ({ value: name, label: name }));
+	}, [rows]);
 
 	const remove = trpc.contacts.remove.useMutation({
 		onSuccess: async () => {
@@ -80,12 +95,24 @@ function Contacts() {
 		const needle = (q ?? "").trim().toLowerCase();
 		return rows.filter((row) => {
 			if (status && normalizeStatus(row.status) !== status) return false;
+			if (
+				poc &&
+				!row.pocs.some((name) => name.toLowerCase() === poc.toLowerCase())
+			)
+				return false;
 			if (!needle) return true;
-			return [row.name, row.email, row.organizationName, ...row.tags]
+			return [
+				row.name,
+				row.email,
+				row.title,
+				row.organizationName,
+				...row.tags,
+				...row.pocs,
+			]
 				.filter(Boolean)
 				.some((field) => String(field).toLowerCase().includes(needle));
 		});
-	}, [rows, q, status]);
+	}, [rows, q, status, poc]);
 
 	function setQ(value: string) {
 		navigate({
@@ -104,6 +131,13 @@ function Contacts() {
 		});
 	}
 
+	function setPoc(value: string | null) {
+		navigate({
+			search: (prev) => ({ ...prev, poc: value ?? undefined }),
+			replace: true,
+		});
+	}
+
 	function copy(text: string, what: string) {
 		navigator.clipboard.writeText(text);
 		toast.success(`${what} copied.`);
@@ -114,22 +148,44 @@ function Contacts() {
 			<PageHead
 				title="Contacts"
 				toolbar={
-					<FilterBar
-						q={q ?? ""}
-						onQ={setQ}
-						filters={[
-							{
-								key: "status",
-								label: "Status",
-								value: status ?? null,
-								onChange: setStatus,
-								options: CONTACT_STATUSES.map((s) => ({
-									value: s,
-									label: STATUS_LABEL[s],
-								})),
-							},
-						]}
-					/>
+					<>
+						<FilterBar
+							q={q ?? ""}
+							onQ={setQ}
+							filters={[
+								{
+									key: "status",
+									label: "Status",
+									value: status ?? null,
+									onChange: setStatus,
+									options: CONTACT_STATUSES.map((s) => ({
+										value: s,
+										label: STATUS_LABEL[s],
+									})),
+								},
+								{
+									key: "poc",
+									label: "POC",
+									icon: UserRound,
+									value: poc ?? null,
+									onChange: setPoc,
+									options: pocOptions,
+								},
+							]}
+						/>
+						{(duplicates.data?.length ?? 0) > 0 && (
+							<Button
+								variant="outline"
+								size="sm"
+								className="ml-auto"
+								onClick={() => setResolving(true)}
+							>
+								<Users />
+								{duplicates.data?.length} possible{" "}
+								{duplicates.data?.length === 1 ? "duplicate" : "duplicates"}
+							</Button>
+						)}
+					</>
 				}
 				actions={
 					<>
@@ -146,17 +202,20 @@ function Contacts() {
 					<TableHeader>
 						<TableRow>
 							<TableHead>Person</TableHead>
-							<TableHead className="hidden w-[240px] md:table-cell">
+							<TableHead className="hidden w-[220px] md:table-cell">
 								Organization
 							</TableHead>
-							<TableHead className="w-[170px]">Status</TableHead>
-							<TableHead className="hidden w-[240px] lg:table-cell">
-								Tags
+							<TableHead className="w-[160px]">Status</TableHead>
+							<TableHead className="hidden w-[180px] lg:table-cell">
+								POCs
+							</TableHead>
+							<TableHead className="hidden w-[130px] text-right md:table-cell">
+								Last touch
 							</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{list.isLoading && <RowsSkeleton rows={8} cols={4} />}
+						{list.isLoading && <RowsSkeleton rows={8} cols={5} />}
 						{filtered.map((row) => (
 							<RowMenu
 								key={row.id}
@@ -169,7 +228,8 @@ function Contacts() {
 									{
 										label: "Copy email",
 										icon: Copy,
-										onSelect: () => copy(row.email, "Email"),
+										disabled: !row.email,
+										onSelect: () => row.email && copy(row.email, "Email"),
 									},
 									{
 										label: "Copy link to record",
@@ -194,12 +254,18 @@ function Contacts() {
 								>
 									<TableCell>
 										<div className="truncate font-medium">
-											{row.name || row.email}
+											{row.name || row.email || "Unnamed"}
 										</div>
-										{row.name && (
-											<Mono className="mt-0.5 block truncate text-[12px]">
-												{row.email}
-											</Mono>
+										{(row.title || (row.name && row.email)) && (
+											<div className="mt-0.5 flex items-center gap-1.5 truncate text-[12px] text-muted-foreground">
+												{row.title && <span>{row.title}</span>}
+												{row.title && row.name && row.email && (
+													<span className="text-muted-foreground/50">·</span>
+												)}
+												{row.name && row.email && (
+													<Mono className="text-[12px]">{row.email}</Mono>
+												)}
+											</div>
 										)}
 									</TableCell>
 									<TableCell className="hidden truncate text-muted-foreground md:table-cell">
@@ -209,7 +275,15 @@ function Contacts() {
 										<StatusText status={row.status} />
 									</TableCell>
 									<TableCell className="hidden truncate text-[12.5px] text-muted-foreground lg:table-cell">
-										{row.tags.length ? row.tags.join(", ") : "—"}
+										{row.pocs.length ? row.pocs.join(", ") : "—"}
+									</TableCell>
+									<TableCell className="hidden text-right text-[12.5px] text-muted-foreground tabular-nums md:table-cell">
+										{row.lastTouch
+											? new Date(row.lastTouch).toLocaleDateString("en-US", {
+													month: "short",
+													day: "numeric",
+												})
+											: "—"}
 									</TableCell>
 								</TableRow>
 							</RowMenu>
@@ -218,7 +292,9 @@ function Contacts() {
 				</ListTable>
 
 				{!list.isLoading && filtered.length === 0 && (
-					<Empty>{q || status ? "Nothing matches that." : "Nobody yet."}</Empty>
+					<Empty>
+						{q || status || poc ? "Nothing matches that." : "Nobody yet."}
+					</Empty>
 				)}
 			</PageScroll>
 
@@ -236,6 +312,7 @@ function Contacts() {
 				}}
 			/>
 
+			{resolving && <DuplicatesSheet onClose={() => setResolving(false)} />}
 			{contact.value && (
 				<ContactDrawer id={contact.value} onClose={contact.close} />
 			)}
