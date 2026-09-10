@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/popover";
 import { SelectContent, SelectItem } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Check, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronDown, ChevronsUpDown, Plus } from "lucide-react";
 import { Select as SelectPrimitive } from "radix-ui";
 import type * as React from "react";
 import { useId, useState } from "react";
@@ -209,6 +209,7 @@ export function FloatingCombobox({
 	options,
 	clearLabel,
 	searchPlaceholder = "Search",
+	onCreate,
 	className,
 }: {
 	label: string;
@@ -218,10 +219,20 @@ export function FloatingCombobox({
 	/** Offer "nothing" as a choice, worded like this. */
 	clearLabel?: string;
 	searchPlaceholder?: string;
+	/**
+	 * Offer to make what was typed when nothing matches it exactly. The
+	 * caller creates the thing and then sets the value itself.
+	 */
+	onCreate?: (text: string) => void;
 	className?: string;
 }) {
 	const [open, setOpen] = useState(false);
+	const [text, setText] = useState("");
 	const selected = options.find((o) => o.value === value) ?? null;
+	const typed = text.trim();
+	const exact = options.some(
+		(o) => o.label.toLowerCase() === typed.toLowerCase(),
+	);
 
 	function pick(next: string | null) {
 		onChange(next);
@@ -229,7 +240,13 @@ export function FloatingCombobox({
 	}
 
 	return (
-		<Popover open={open} onOpenChange={setOpen}>
+		<Popover
+			open={open}
+			onOpenChange={(next) => {
+				setOpen(next);
+				if (!next) setText("");
+			}}
+		>
 			<PopoverTrigger asChild>
 				<button
 					type="button"
@@ -252,12 +269,28 @@ export function FloatingCombobox({
 			<PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
 				<Command loop>
 					<CommandInput
+						value={text}
+						onValueChange={setText}
 						placeholder={searchPlaceholder}
 						className="text-[13px]"
 					/>
 					<CommandList className="max-h-[260px]">
 						<CommandEmpty>Nothing matches.</CommandEmpty>
 						<CommandGroup>
+							{onCreate && typed && !exact && (
+								<CommandItem
+									// cmdk filters by value; the typed text is in it so this
+									// row survives the filter that hides everything else.
+									value={`create ${typed}`}
+									onSelect={() => {
+										onCreate(typed);
+										setOpen(false);
+									}}
+								>
+									<Plus className="size-3.5" />
+									<span className="truncate">Create “{typed}”</span>
+								</CommandItem>
+							)}
 							{clearLabel && (
 								<CommandItem
 									value="__none__"

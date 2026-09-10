@@ -1,4 +1,10 @@
-import { PocPicker } from "@/components/admin/pocs";
+import {
+	ContactFields,
+	type Draft,
+	draftFrom,
+	same,
+	toInput,
+} from "@/components/admin/contact-fields";
 import {
 	Empty,
 	H2,
@@ -6,7 +12,6 @@ import {
 	StatusText,
 	Tinted,
 } from "@/components/admin/primitives";
-import { TagPicker } from "@/components/admin/tag-picker";
 import { Timeline, TimelineItem } from "@/components/admin/timeline";
 import { useUnsavedGuard } from "@/components/admin/unsaved-guard";
 import { ConfirmButton } from "@/components/ui/alert-dialog";
@@ -20,9 +25,7 @@ import {
 	CommandList,
 } from "@/components/ui/command";
 import {
-	FloatingCombobox,
 	FloatingInput,
-	FloatingSelect,
 	FloatingTextarea,
 } from "@/components/ui/floating-field";
 import {
@@ -48,7 +51,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { CONTACT_STATUSES, STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import { toast } from "@/lib/toast";
 import { trpc } from "@/trpc/client";
 import { Copy, Link2Off, Plus, Trash2, X } from "lucide-react";
@@ -72,22 +74,8 @@ const day = (value: Date | string) =>
 /** Today as the value a date input wants. */
 const today = () => new Date().toISOString().slice(0, 10);
 
-type Draft = {
-	name: string;
-	email: string;
-	title: string;
-	phone: string;
-	status: string;
-	tags: string[];
-	pocs: string[];
-	notes: string;
-	organizationId: string | null;
-};
-
 /** The form: what the record looked like when taken, and what it is now. */
 type Form = { seed: Draft; draft: Draft };
-
-const same = (a: Draft, b: Draft) => JSON.stringify(a) === JSON.stringify(b);
 
 /** A few grey lines where a section's rows will be. */
 function Lines({ rows = 2 }: { rows?: number }) {
@@ -102,30 +90,6 @@ function Lines({ rows = 2 }: { rows?: number }) {
 			))}
 		</div>
 	);
-}
-
-function draftFrom(row: {
-	name: string | null;
-	email: string | null;
-	title: string | null;
-	phone: string | null;
-	status: string;
-	tags: string[];
-	pocs: string[];
-	notes: string | null;
-	organizationId: string | null;
-}): Draft {
-	return {
-		name: row.name ?? "",
-		email: row.email ?? "",
-		title: row.title ?? "",
-		phone: row.phone ?? "",
-		status: row.status,
-		tags: row.tags,
-		pocs: row.pocs,
-		notes: row.notes ?? "",
-		organizationId: row.organizationId,
-	};
 }
 
 /**
@@ -145,7 +109,6 @@ export function ContactDrawer({
 	const timeline = trpc.contacts.timeline.useQuery({ id });
 	const links = trpc.links.byContact.useQuery({ contactId: id });
 	const logged = trpc.interactions.byContact.useQuery({ contactId: id });
-	const organizations = trpc.organizations.list.useQuery();
 
 	// The list you opened this from already knows almost everything about
 	// the row, so the form is drawn from that copy at once and the full
@@ -235,18 +198,7 @@ export function ContactDrawer({
 
 	function submit() {
 		if (!draft) return;
-		save.mutate({
-			id,
-			name: draft.name || null,
-			email: draft.email || null,
-			title: draft.title || null,
-			phone: draft.phone || null,
-			status: normalizeStatus(draft.status),
-			tags: draft.tags,
-			pocs: draft.pocs,
-			notes: draft.notes || null,
-			organizationId: draft.organizationId,
-		});
+		save.mutate({ id, ...toInput(draft) });
 	}
 
 	// The header reads from whichever copy is here first.
@@ -292,73 +244,7 @@ export function ContactDrawer({
 					{draft && (
 						<section>
 							<H2>Details</H2>
-							<div className="grid grid-cols-2 gap-4">
-								<FloatingInput
-									label="Name"
-									value={draft.name}
-									onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-								/>
-								<FloatingInput
-									label="Email"
-									type="email"
-									value={draft.email}
-									onChange={(e) =>
-										setDraft({ ...draft, email: e.target.value })
-									}
-								/>
-								<FloatingInput
-									label="Title"
-									value={draft.title}
-									onChange={(e) =>
-										setDraft({ ...draft, title: e.target.value })
-									}
-								/>
-								<FloatingCombobox
-									label="Organization"
-									value={draft.organizationId}
-									onChange={(value) =>
-										setDraft({ ...draft, organizationId: value })
-									}
-									clearLabel="None"
-									options={(organizations.data ?? []).map((o) => ({
-										value: o.id,
-										label: o.name,
-										hint: o.domain,
-									}))}
-								/>
-								<FloatingInput
-									label="Phone"
-									value={draft.phone}
-									onChange={(e) =>
-										setDraft({ ...draft, phone: e.target.value })
-									}
-								/>
-								<FloatingSelect
-									label="Status"
-									value={draft.status}
-									onChange={(value) => setDraft({ ...draft, status: value })}
-									options={CONTACT_STATUSES.map((status) => ({
-										value: status,
-										label: STATUS_LABEL[status],
-									}))}
-								/>
-								<PocPicker
-									value={draft.pocs}
-									onChange={(pocs) => setDraft({ ...draft, pocs })}
-								/>
-								<TagPicker
-									value={draft.tags}
-									onChange={(tags) => setDraft({ ...draft, tags })}
-								/>
-								<FloatingTextarea
-									label="Notes"
-									className="col-span-2"
-									value={draft.notes}
-									onChange={(e) =>
-										setDraft({ ...draft, notes: e.target.value })
-									}
-								/>
-							</div>
+							<ContactFields draft={draft} onChange={setDraft} />
 						</section>
 					)}
 

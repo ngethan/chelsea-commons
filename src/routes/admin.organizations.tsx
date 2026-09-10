@@ -382,7 +382,8 @@ function NewOrganization({ onClose }: { onClose: () => void }) {
 	const utils = trpc.useUtils();
 	const [name, setName] = useState("");
 	const [domain, setDomain] = useState("");
-	const guard = useUnsavedGuard(Boolean(name || domain), onClose);
+	const [notes, setNotes] = useState("");
+	const guard = useUnsavedGuard(Boolean(name || domain || notes), onClose);
 
 	const create = trpc.organizations.create.useMutation({
 		onSuccess: async () => {
@@ -411,11 +412,22 @@ function NewOrganization({ onClose }: { onClose: () => void }) {
 						value={domain}
 						onChange={(e) => setDomain(e.target.value)}
 					/>
+					<FloatingTextarea
+						label="Notes"
+						value={notes}
+						onChange={(e) => setNotes(e.target.value)}
+					/>
 				</SheetBody>
 				<SheetFooter>
 					<Button
 						disabled={create.isPending || !name.trim()}
-						onClick={() => create.mutate({ name, domain: domain || null })}
+						onClick={() =>
+							create.mutate({
+								name,
+								domain: domain || null,
+								notes: notes || null,
+							})
+						}
 					>
 						{create.isPending ? "Adding" : "Add"}
 					</Button>

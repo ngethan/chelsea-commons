@@ -1,4 +1,11 @@
 import { ContactDrawer } from "@/components/admin/contact-drawer";
+import {
+	ContactFields,
+	type Draft,
+	EMPTY_DRAFT,
+	same,
+	toInput,
+} from "@/components/admin/contact-fields";
 import { DuplicatesSheet } from "@/components/admin/duplicates-sheet";
 import {
 	FilterBar,
@@ -25,10 +32,7 @@ import { useDrawerParam } from "@/components/admin/use-drawer-param";
 import { ConfirmDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-	FloatingInput,
-	FloatingTextarea,
-} from "@/components/ui/floating-field";
+import { FloatingTextarea } from "@/components/ui/floating-field";
 import {
 	Sheet,
 	SheetBody,
@@ -499,43 +503,41 @@ function Contacts() {
 
 function NewContact({ onClose }: { onClose: () => void }) {
 	const utils = trpc.useUtils();
-	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-	const guard = useUnsavedGuard(Boolean(name || email), onClose);
+	const navigate = Route.useNavigate();
+	const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
+	const dirty = !same(draft, EMPTY_DRAFT);
+	const guard = useUnsavedGuard(dirty, onClose);
+	const ready = Boolean(draft.name.trim() || draft.email.trim());
 
 	const create = trpc.contacts.create.useMutation({
-		onSuccess: async () => {
-			await utils.contacts.list.invalidate();
+		onSuccess: async (row) => {
+			await Promise.all([
+				utils.contacts.list.invalidate(),
+				utils.tags.list.invalidate(),
+			]);
 			toast.success("Added.");
-			onClose();
+			// Land in their drawer: the log and links are usually next.
+			navigate({
+				search: (prev) => ({ ...prev, sheet: undefined, contact: row.id }),
+				replace: true,
+			});
 		},
 		onError: (err) => toast.error(err.message),
 	});
 
 	return (
 		<Sheet open onOpenChange={(open) => !open && guard.requestClose()}>
-			<SheetContent className="max-w-[520px]" aria-describedby={undefined}>
+			<SheetContent aria-describedby={undefined}>
 				<SheetHeader>
 					<SheetTitle>Add somebody</SheetTitle>
 				</SheetHeader>
-				<SheetBody className="flex flex-col gap-4">
-					<FloatingInput
-						label="Name"
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-						autoFocus
-					/>
-					<FloatingInput
-						label="Email"
-						type="email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
+				<SheetBody>
+					<ContactFields draft={draft} onChange={setDraft} autoFocus />
 				</SheetBody>
 				<SheetFooter>
 					<Button
-						disabled={create.isPending || !email.trim()}
-						onClick={() => create.mutate({ name: name || null, email })}
+						disabled={create.isPending || !ready}
+						onClick={() => create.mutate(toInput(draft))}
 					>
 						{create.isPending ? "Adding" : "Add"}
 					</Button>
