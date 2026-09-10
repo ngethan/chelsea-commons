@@ -1,6 +1,7 @@
 import { ContactDrawer } from "@/components/admin/contact-drawer";
 import { DuplicatesSheet } from "@/components/admin/duplicates-sheet";
 import { FilterBar } from "@/components/admin/filter-bar";
+import { IssueUpdate } from "@/components/admin/issue-update";
 import {
 	Empty,
 	ListTable,
@@ -17,6 +18,7 @@ import { useUnsavedGuard } from "@/components/admin/unsaved-guard";
 import { useDrawerParam } from "@/components/admin/use-drawer-param";
 import { ConfirmDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
 	FloatingInput,
 	FloatingTextarea,
@@ -40,7 +42,15 @@ import { CONTACT_STATUSES, STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import { toast } from "@/lib/toast";
 import { trpc } from "@/trpc/client";
 import { createFileRoute } from "@tanstack/react-router";
-import { Copy, Link as LinkIcon, Trash2, UserRound, Users } from "lucide-react";
+import {
+	Copy,
+	FileText,
+	Link as LinkIcon,
+	Trash2,
+	UserRound,
+	Users,
+	X,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { z } from "zod";
 
@@ -71,6 +81,18 @@ function Contacts() {
 	const rows = list.data ?? [];
 	const duplicates = trpc.contacts.duplicates.useQuery();
 	const [resolving, setResolving] = useState(false);
+
+	// Rows ticked for a bulk action. Ids, not rows, so a selection survives
+	// a refetch; it is cleared once the action has run.
+	const [selected, setSelected] = useState<Set<string>>(new Set());
+	function toggleSelected(id: string) {
+		setSelected((prev) => {
+			const next = new Set(prev);
+			if (next.has(id)) next.delete(id);
+			else next.add(id);
+			return next;
+		});
+	}
 
 	// Everybody who holds a relationship, for the filter's own list.
 	const pocOptions = useMemo(() => {
@@ -210,6 +232,25 @@ function Contacts() {
 				<ListTable>
 					<TableHeader>
 						<TableRow>
+							<TableHead className="w-[52px]">
+								<Checkbox
+									aria-label="Select everybody shown"
+									checked={
+										filtered.length > 0 &&
+										filtered.every((row) => selected.has(row.id))
+									}
+									onCheckedChange={(checked) =>
+										setSelected((prev) => {
+											const next = new Set(prev);
+											for (const row of filtered) {
+												if (checked) next.add(row.id);
+												else next.delete(row.id);
+											}
+											return next;
+										})
+									}
+								/>
+							</TableHead>
 							<TableHead>Person</TableHead>
 							<TableHead className="hidden w-[220px] md:table-cell">
 								Organization
@@ -224,7 +265,7 @@ function Contacts() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{list.isLoading && <RowsSkeleton rows={8} cols={5} />}
+						{list.isLoading && <RowsSkeleton rows={8} cols={6} />}
 						{filtered.map((row) => (
 							<RowMenu
 								key={row.id}
@@ -259,9 +300,26 @@ function Contacts() {
 							>
 								<TableRow
 									className="cursor-pointer"
+									data-state={selected.has(row.id) ? "selected" : undefined}
 									onClick={() => contact.open(row.id)}
 									onPointerEnter={() => warm(row.id)}
 								>
+									{/* The tick is its own target: a click here selects and
+									    does not open. */}
+									<TableCell
+										className="w-[52px]"
+										onClick={(e) => {
+											e.stopPropagation();
+											toggleSelected(row.id);
+										}}
+									>
+										<Checkbox
+											checked={selected.has(row.id)}
+											onCheckedChange={() => toggleSelected(row.id)}
+											onClick={(e) => e.stopPropagation()}
+											aria-label={`Select ${row.name || row.email || "contact"}`}
+										/>
+									</TableCell>
 									<TableCell>
 										<div className="truncate font-medium">
 											{row.name || row.email || "Unnamed"}
@@ -308,7 +366,38 @@ function Contacts() {
 				)}
 			</PageScroll>
 
-			<TableFoot shown={filtered.length} total={rows.length} noun="contacts" />
+			{selected.size > 0 ? (
+				<div className="flex h-12 shrink-0 items-center gap-3 border-t border-border bg-panel px-4 md:px-8">
+					<Button
+						variant="icon"
+						size="icon-xs"
+						aria-label="Clear selection"
+						onClick={() => setSelected(new Set())}
+					>
+						<X />
+					</Button>
+					<span className="text-[13px] tabular-nums">
+						{selected.size} selected
+					</span>
+					<div className="ml-auto flex items-center gap-2">
+						<IssueUpdate
+							contactIds={[...selected]}
+							onDone={() => setSelected(new Set())}
+						>
+							<Button size="sm">
+								<FileText />
+								Issue update
+							</Button>
+						</IssueUpdate>
+					</div>
+				</div>
+			) : (
+				<TableFoot
+					shown={filtered.length}
+					total={rows.length}
+					noun="contacts"
+				/>
+			)}
 
 			<ConfirmDialog
 				open={removing !== null}
