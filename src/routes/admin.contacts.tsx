@@ -14,6 +14,7 @@ import {
 	TableFoot,
 } from "@/components/admin/primitives";
 import { RowMenu } from "@/components/admin/row-menu";
+import { TagChooser, TagPill } from "@/components/admin/tag-picker";
 import { useUnsavedGuard } from "@/components/admin/unsaved-guard";
 import { useDrawerParam } from "@/components/admin/use-drawer-param";
 import { ConfirmDialog } from "@/components/ui/alert-dialog";
@@ -46,6 +47,7 @@ import {
 	Copy,
 	FileText,
 	Link as LinkIcon,
+	Tag,
 	Trash2,
 	UserRound,
 	Users,
@@ -60,6 +62,7 @@ const searchSchema = z.object({
 	q: z.string().optional(),
 	status: z.enum(CONTACT_STATUSES).optional(),
 	poc: z.string().optional(),
+	tag: z.string().optional(),
 });
 
 export const Route = createFileRoute("/admin/contacts")({
@@ -70,7 +73,7 @@ export const Route = createFileRoute("/admin/contacts")({
 type Status = (typeof CONTACT_STATUSES)[number];
 
 function Contacts() {
-	const { q, status, poc } = Route.useSearch();
+	const { q, status, poc, tag } = Route.useSearch();
 	const navigate = Route.useNavigate();
 	const utils = trpc.useUtils();
 	const contact = useDrawerParam("contact");
@@ -80,6 +83,23 @@ function Contacts() {
 	const list = trpc.contacts.list.useQuery();
 	const rows = list.data ?? [];
 	const duplicates = trpc.contacts.duplicates.useQuery();
+	const tags = trpc.tags.list.useQuery();
+
+	const addTag = trpc.contacts.addTag.useMutation({
+		onSuccess: async (result) => {
+			await Promise.all([
+				utils.contacts.list.invalidate(),
+				utils.tags.list.invalidate(),
+			]);
+			toast.success(
+				result.tagged === 0
+					? `Everybody already had “${result.tag}”.`
+					: `Tagged ${result.tagged} with “${result.tag}”.`,
+			);
+			setSelected(new Set());
+		},
+		onError: (err) => toast.error(err.message),
+	});
 	const [resolving, setResolving] = useState(false);
 
 	// Rows ticked for a bulk action. Ids, not rows, so a selection survives
@@ -122,6 +142,8 @@ function Contacts() {
 				!row.pocs.some((name) => name.toLowerCase() === poc.toLowerCase())
 			)
 				return false;
+			if (tag && !row.tags.some((t) => t.toLowerCase() === tag.toLowerCase()))
+				return false;
 			if (!needle) return true;
 			return [
 				row.name,
@@ -134,7 +156,7 @@ function Contacts() {
 				.filter(Boolean)
 				.some((field) => String(field).toLowerCase().includes(needle));
 		});
-	}, [rows, q, status, poc]);
+	}, [rows, q, status, poc, tag]);
 
 	function setQ(value: string) {
 		navigate({
@@ -156,6 +178,13 @@ function Contacts() {
 	function setPoc(value: string | null) {
 		navigate({
 			search: (prev) => ({ ...prev, poc: value ?? undefined }),
+			replace: true,
+		});
+	}
+
+	function setTag(value: string | null) {
+		navigate({
+			search: (prev) => ({ ...prev, tag: value ?? undefined }),
 			replace: true,
 		});
 	}
@@ -201,6 +230,17 @@ function Contacts() {
 									value: poc ?? null,
 									onChange: setPoc,
 									options: pocOptions,
+								},
+								{
+									key: "tag",
+									label: "Tag",
+									icon: Tag,
+									value: tag ?? null,
+									onChange: setTag,
+									options: (tags.data ?? []).map((t) => ({
+										value: t.name,
+										label: t.name,
+									})),
 								},
 							]}
 						/>
@@ -256,8 +296,11 @@ function Contacts() {
 								Organization
 							</TableHead>
 							<TableHead className="w-[160px]">Status</TableHead>
-							<TableHead className="hidden w-[180px] lg:table-cell">
+							<TableHead className="hidden w-[160px] lg:table-cell">
 								POCs
+							</TableHead>
+							<TableHead className="hidden w-[240px] xl:table-cell">
+								Tags
 							</TableHead>
 							<TableHead className="hidden w-[130px] text-right md:table-cell">
 								Last touch
@@ -265,7 +308,7 @@ function Contacts() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{list.isLoading && <RowsSkeleton rows={8} cols={6} />}
+						{list.isLoading && <RowsSkeleton rows={8} cols={7} />}
 						{filtered.map((row) => (
 							<RowMenu
 								key={row.id}
@@ -345,6 +388,19 @@ function Contacts() {
 									<TableCell className="hidden truncate text-[12.5px] text-muted-foreground lg:table-cell">
 										{row.pocs.length ? row.pocs.join(", ") : "—"}
 									</TableCell>
+									<TableCell className="hidden xl:table-cell">
+										{row.tags.length ? (
+											<div className="flex flex-wrap gap-1">
+												{row.tags.map((t) => (
+													<TagPill key={t} name={t} />
+												))}
+											</div>
+										) : (
+											<span className="text-[12.5px] text-muted-foreground">
+												—
+											</span>
+										)}
+									</TableCell>
 									<TableCell className="hidden text-right text-[12.5px] text-muted-foreground tabular-nums md:table-cell">
 										{row.lastTouch
 											? new Date(row.lastTouch).toLocaleDateString("en-US", {
@@ -361,25 +417,39 @@ function Contacts() {
 
 				{!list.isLoading && filtered.length === 0 && (
 					<Empty>
-						{q || status || poc ? "Nothing matches that." : "Nobody yet."}
+						{q || status || poc || tag
+							? "Nothing matches that."
+							: "Nobody yet."}
 					</Empty>
 				)}
 			</PageScroll>
 
 			{selected.size > 0 ? (
 				<div className="flex h-12 shrink-0 items-center gap-3 border-t border-border bg-panel px-4 md:px-8">
-					<Button
-						variant="icon"
-						size="icon-xs"
-						aria-label="Clear selection"
-						onClick={() => setSelected(new Set())}
-					>
-						<X />
-					</Button>
-					<span className="text-[13px] tabular-nums">
-						{selected.size} selected
-					</span>
+					<div className="-ml-1.5 flex items-center gap-1.5">
+						<Button
+							variant="icon"
+							size="icon-2xs"
+							aria-label="Clear selection"
+							onClick={() => setSelected(new Set())}
+						>
+							<X />
+						</Button>
+						<span className="text-[13px] leading-none tabular-nums">
+							{selected.size} selected
+						</span>
+					</div>
 					<div className="ml-auto flex items-center gap-2">
+						<TagChooser
+							onPick={(name) =>
+								addTag.mutate({ contactIds: [...selected], tag: name })
+							}
+						>
+							<Button size="sm" variant="outline" disabled={addTag.isPending}>
+								<Tag />
+								Add tag
+							</Button>
+						</TagChooser>
 						<IssueUpdate
 							contactIds={[...selected]}
 							onDone={() => setSelected(new Set())}

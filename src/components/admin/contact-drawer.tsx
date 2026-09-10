@@ -5,6 +5,7 @@ import {
 	StatusText,
 	Tinted,
 } from "@/components/admin/primitives";
+import { TagPicker } from "@/components/admin/tag-picker";
 import { Timeline, TimelineItem } from "@/components/admin/timeline";
 import { useUnsavedGuard } from "@/components/admin/unsaved-guard";
 import { ConfirmButton } from "@/components/ui/alert-dialog";
@@ -83,7 +84,7 @@ type Draft = {
 	title: string;
 	phone: string;
 	status: string;
-	tags: string;
+	tags: string[];
 	pocs: string;
 	notes: string;
 	organizationId: string | null;
@@ -126,7 +127,7 @@ function draftFrom(row: {
 		title: row.title ?? "",
 		phone: row.phone ?? "",
 		status: row.status,
-		tags: row.tags.join(", "),
+		tags: row.tags,
 		pocs: row.pocs.join(", "),
 		notes: row.notes ?? "",
 		organizationId: row.organizationId,
@@ -247,7 +248,7 @@ export function ContactDrawer({
 			title: draft.title || null,
 			phone: draft.phone || null,
 			status: normalizeStatus(draft.status),
-			tags: list(draft.tags),
+			tags: draft.tags,
 			pocs: list(draft.pocs),
 			notes: draft.notes || null,
 			organizationId: draft.organizationId,
@@ -352,10 +353,9 @@ export function ContactDrawer({
 									value={draft.pocs}
 									onChange={(e) => setDraft({ ...draft, pocs: e.target.value })}
 								/>
-								<FloatingInput
-									label="Tags"
+								<TagPicker
 									value={draft.tags}
-									onChange={(e) => setDraft({ ...draft, tags: e.target.value })}
+									onChange={(tags) => setDraft({ ...draft, tags })}
 								/>
 								<FloatingTextarea
 									label="Notes"

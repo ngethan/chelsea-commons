@@ -8,7 +8,7 @@ import * as schema from "./schema";
  * driver has no transactions, which is why the Better Auth adapter is
  * configured with `transaction: false` in `src/lib/auth.ts`.
  */
-type Db = ReturnType<typeof create>;
+export type Db = ReturnType<typeof create>;
 
 function create() {
 	const url = process.env.DATABASE_URL;

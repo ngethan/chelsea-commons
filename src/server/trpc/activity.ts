@@ -6,7 +6,8 @@ export type EntityType =
 	| "organization"
 	| "update"
 	| "link"
-	| "invite";
+	| "invite"
+	| "tag";
 
 export type ActivityEntry = {
 	actorUserId: string | null;

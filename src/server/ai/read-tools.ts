@@ -536,6 +536,20 @@ export const parseContactList = define({
 	},
 });
 
+export const listTags = define({
+	name: "list_tags",
+	description:
+		"Every tag that exists, with how many people carry it. Check this before tagging so an existing spelling is reused; a tag given to a contact that does not exist yet is created.",
+	schema: z.object({}),
+	async run(_input, { caller }) {
+		const rows = await caller.tags.list();
+		return {
+			summary: plural(rows.length, "tag"),
+			content: rows.map((t) => ({ id: t.id, name: t.name, people: t.count })),
+		};
+	},
+});
+
 export const READ_TOOLS: ReadTool[] = [
 	getStats,
 	listContacts,
@@ -546,6 +560,7 @@ export const READ_TOOLS: ReadTool[] = [
 	getUpdate,
 	listPosts,
 	listAccess,
+	listTags,
 	searchRecords,
 	parseContactList,
 ] as unknown as ReadTool[];

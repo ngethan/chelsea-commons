@@ -11,7 +11,14 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@/components/ui/sheet";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
 import { CONTACT_STATUSES, STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import { toast } from "@/lib/toast";
 import { trpc } from "@/trpc/client";
@@ -161,18 +168,6 @@ export function RecipientsPicker({
 								},
 							]}
 						/>
-						{selectable.length > 0 && (
-							<Button
-								variant="text"
-								size="xs"
-								className="ml-auto"
-								onClick={toggleShown}
-							>
-								{allShownPicked
-									? "Clear shown"
-									: `Select shown (${selectable.length})`}
-							</Button>
-						)}
 					</div>
 
 					{contacts.isLoading && <Empty>Loading.</Empty>}
@@ -181,6 +176,25 @@ export function RecipientsPicker({
 					)}
 
 					<Table>
+						<TableHeader>
+							<TableRow>
+								<TableHead className="w-[64px] px-0 [&>*]:mx-auto">
+									<Checkbox
+										aria-label="Select everybody shown"
+										checked={allShownPicked}
+										disabled={selectable.length === 0}
+										onCheckedChange={toggleShown}
+									/>
+								</TableHead>
+								<TableHead>Person</TableHead>
+								<TableHead className="hidden w-[180px] sm:table-cell">
+									Organization
+								</TableHead>
+								<TableHead className="w-[140px] pr-8 text-right">
+									Status
+								</TableHead>
+							</TableRow>
+						</TableHeader>
 						<TableBody>
 							{rows.map((row) => {
 								const sent = linked.has(row.id);

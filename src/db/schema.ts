@@ -245,6 +245,28 @@ export const contact = pgTable(
 );
 
 /**
+ * The tags that exist. A contact's tags are still the names in its `tags`
+ * array, which is what every list, filter and embedding reads; this table
+ * is the registry behind the picker, so a tag can be made before anybody
+ * has it, and renamed or deleted in one place with the arrays following.
+ * Names are unique case-insensitively and kept in the spelling first used.
+ */
+export const tag = pgTable(
+	"tag",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+		name: text("name").notNull(),
+		createdBy: text("created_by").references(() => user.id, {
+			onDelete: "set null",
+		}),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+	},
+	(t) => [uniqueIndex("one_tag_per_name").on(sql`lower(${t.name})`)],
+);
+
+/**
  * What we did with somebody, when. Written by a person (or proposed by the
  * assistant and applied by a person), never by the system: the system's own
  * record of edits and clicks is `activity`. One row per touchpoint, so

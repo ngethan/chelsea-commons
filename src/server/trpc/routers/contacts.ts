@@ -22,6 +22,7 @@ import { and, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { fieldChanges, logActivity } from "../activity";
 import { createTRPCRouter, protectedProcedure } from "../init";
+import { registerTags } from "./tags";
 
 const email = z.email("That is not an email address.").trim().toLowerCase();
 
@@ -251,9 +252,10 @@ export const contactsRouter = createTRPCRouter({
 		.input(contactInput)
 		.mutation(async ({ ctx, input }) => {
 			requireIdentity(input);
+			const tags = await registerTags(ctx.db, input.tags, ctx.user.id);
 			const [row] = await ctx.db
 				.insert(contact)
-				.values(input)
+				.values({ ...input, tags })
 				.returning()
 				.catch(rethrowDuplicate);
 
@@ -289,6 +291,9 @@ export const contactsRouter = createTRPCRouter({
 				throw new TRPCError({ code: "NOT_FOUND", message: "No such contact." });
 			}
 			requireIdentity({ ...before, ...patch });
+			if (patch.tags) {
+				patch.tags = await registerTags(ctx.db, patch.tags, ctx.user.id);
+			}
 
 			const [row] = await ctx.db
 				.update(contact)
@@ -438,6 +443,53 @@ export const contactsRouter = createTRPCRouter({
 				invalid,
 			};
 		}),
+	/**
+	 * One tag onto many people, from the selection bar. Skips anybody who
+	 * already has it, so the count in the toast is the number that changed.
+	 */
+	addTag: protectedProcedure
+		.input(
+			z.object({
+				contactIds: z.array(z.uuid()).min(1).max(500),
+				tag: z.string().trim().min(1).max(60),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const [name] = await registerTags(ctx.db, [input.tag], ctx.user.id);
+			const touched = await ctx.db
+				.update(contact)
+				.set({
+					tags: sql`array_append(${contact.tags}, ${name})`,
+					updatedAt: new Date(),
+				})
+				.where(
+					and(
+						inArray(contact.id, input.contactIds),
+						isNull(contact.deletedAt),
+						sql`not (${name} = any(${contact.tags}))`,
+					),
+				)
+				.returning({ id: contact.id });
+
+			await logActivity(
+				touched.map((row) => ({
+					actorUserId: ctx.user.id,
+					entityType: "contact" as const,
+					entityId: row.id,
+					verb: "tagged",
+					newValue: name,
+				})),
+			);
+
+			if (touched.length) {
+				await reindexQuietly(() =>
+					indexContacts({ ids: touched.map((t) => t.id) }),
+				);
+			}
+
+			return { tag: name, tagged: touched.length };
+		}),
+
 	/**
 	 * People who may be the same person, worked out on read rather than
 	 * stored: the list is small and the heuristics will change. Two rows are

@@ -7,6 +7,7 @@ import { interactionsRouter } from "./routers/interactions";
 import { linksRouter } from "./routers/links";
 import { organizationsRouter } from "./routers/organizations";
 import { searchRouter } from "./routers/search";
+import { tagsRouter } from "./routers/tags";
 import { updatesRouter } from "./routers/updates";
 
 /**
@@ -22,6 +23,7 @@ const core = {
 	updates: updatesRouter,
 	links: linksRouter,
 	interactions: interactionsRouter,
+	tags: tagsRouter,
 	search: searchRouter,
 };
 

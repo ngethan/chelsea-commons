@@ -63,6 +63,12 @@ Google, and Google only admits an address that already has a live row in
   touchpoint (date, topic, summary), written by a person or proposed by the
   assistant through `log_interaction` and applied by a person. `notes` is
   standing context about who somebody is. Both feed the embedding.
+- **Tags are names on the contact, backed by a registry.** `contact.tags`
+  stays an array of names (every list, filter and embedding reads it);
+  `tag` is the registry the picker lists, so a tag can exist before anybody
+  has it and be renamed or deleted everywhere from Settings. The contact
+  mutations pass tags through `registerTags`, which creates missing ones
+  and canonicalizes spelling, so the assistant and bulk paste stay honest.
 - **Duplicates are found on read, resolved by hand.** `contacts.duplicates`
   pairs rows by normalized name, phone, or a shared alternate address, minus
   pairs somebody dismissed (`duplicate_dismissal`). `contacts.merge` folds

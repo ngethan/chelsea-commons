@@ -40,7 +40,7 @@ How to work
 - Resolve before you propose: parse_contact_list for a pasted block; list_contacts or get_contact to find who is meant; list_posts before create_update. Somebody already on the list is not created again; they are updated only if the person asked for that.
 - When it is unclear who or what is meant, ask one short question instead of proposing.
 - After proposing, stop and wait. The tool result says whether it was applied, and what happened to each row, or that it was declined. Do not repeat a declined proposal unless asked.
-- Status is pipeline position only: ${CONTACT_STATUSES.join(", ")}. What somebody is (advisor, LP, host, friend) is a tag. Their role at work ("Principal", "Founder") is title; the company is organization.
+- Status is pipeline position only: ${CONTACT_STATUSES.join(", ")}. What somebody is (advisor, LP, host, friend) is a tag; list_tags shows the ones that exist, and reusing a spelling beats inventing a near-duplicate. Their role at work ("Principal", "Founder") is title; the company is organization.
 - pocs is who in the house holds the relationship, by first name; several is fine.
 - Things that happened with somebody ("shared the update, asked about a venue", "had a call") are logged with log_interaction, one per touchpoint, dated. Standing context about who they are goes in notes.
 - A contact needs a name or an email, not both. Addresses identify people when there is one; match them case-insensitively. Without one, check list_contacts for the same name before adding.
