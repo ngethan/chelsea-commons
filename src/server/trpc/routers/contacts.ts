@@ -1,3 +1,4 @@
+import type { Db } from "@/db";
 import {
 	activity,
 	contact,
@@ -82,6 +83,39 @@ function normalizeName(name: string | null) {
 
 function normalizePhone(phone: string | null) {
 	return (phone ?? "").replace(/\D/g, "");
+}
+
+/**
+ * POCs are user ids. Anything else handed in (a first name from the
+ * assistant, "Will" from an import) is matched to the roster when exactly
+ * one person fits, and otherwise kept as written so it is not lost: the
+ * UI shows it as plain text until that person has an account.
+ */
+async function resolvePocs(db: Db, values: string[]): Promise<string[]> {
+	const wanted = [...new Set(values.map((v) => v.trim()).filter(Boolean))];
+	if (wanted.length === 0) return [];
+	const people = await db
+		.select({ id: user.id, name: user.name, email: user.email })
+		.from(user);
+	const ids = new Set(people.map((p) => p.id));
+	return [
+		...new Set(
+			wanted.map((v) => {
+				if (ids.has(v)) return v;
+				const needle = v.toLowerCase();
+				const fits = people.filter((p) => {
+					const name = p.name.toLowerCase();
+					return (
+						name === needle ||
+						name.split(/\s+/)[0] === needle ||
+						p.email.toLowerCase() === needle ||
+						p.email.toLowerCase().split("@")[0] === needle
+					);
+				});
+				return fits.length === 1 ? fits[0].id : v;
+			}),
+		),
+	];
 }
 
 function pairKey(a: string, b: string) {
@@ -253,9 +287,10 @@ export const contactsRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			requireIdentity(input);
 			const tags = await registerTags(ctx.db, input.tags, ctx.user.id);
+			const pocs = await resolvePocs(ctx.db, input.pocs);
 			const [row] = await ctx.db
 				.insert(contact)
-				.values({ ...input, tags })
+				.values({ ...input, tags, pocs })
 				.returning()
 				.catch(rethrowDuplicate);
 
@@ -293,6 +328,9 @@ export const contactsRouter = createTRPCRouter({
 			requireIdentity({ ...before, ...patch });
 			if (patch.tags) {
 				patch.tags = await registerTags(ctx.db, patch.tags, ctx.user.id);
+			}
+			if (patch.pocs) {
+				patch.pocs = await resolvePocs(ctx.db, patch.pocs);
 			}
 
 			const [row] = await ctx.db
@@ -653,7 +691,7 @@ export const contactsRouter = createTRPCRouter({
 						? drop.status
 						: keep.status,
 				tags: union(keep.tags, drop.tags),
-				pocs: union(keep.pocs, drop.pocs),
+				pocs: await resolvePocs(ctx.db, union(keep.pocs, drop.pocs)),
 				alternateEmails: keep.email
 					? alternates.filter(
 							(e) => e.toLowerCase() !== keep.email?.toLowerCase(),

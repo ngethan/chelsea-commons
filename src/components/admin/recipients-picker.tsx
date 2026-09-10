@@ -1,4 +1,5 @@
-import { FilterBar } from "@/components/admin/filter-bar";
+import { FilterBar, organizationFilter } from "@/components/admin/filter-bar";
+import { usePocs } from "@/components/admin/pocs";
 import { Empty, Mono, StatusText } from "@/components/admin/primitives";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,7 +23,7 @@ import {
 import { CONTACT_STATUSES, STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import { toast } from "@/lib/toast";
 import { trpc } from "@/trpc/client";
-import { Building2, Check, UserRound } from "lucide-react";
+import { Check, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
 
 /**
@@ -46,46 +47,39 @@ export function RecipientsPicker({
 	const contacts = trpc.contacts.list.useQuery();
 	const [picked, setPicked] = useState<Set<string>>(new Set());
 	const [q, setQ] = useState("");
-	const [status, setStatus] = useState<string | null>(null);
-	const [poc, setPoc] = useState<string | null>(null);
-	const [org, setOrg] = useState<string | null>(null);
+	const [statuses, setStatuses] = useState<string[]>([]);
+	const [pocs, setPocs] = useState<string[]>([]);
+	const [orgs, setOrgs] = useState<string[]>([]);
 
 	const all = contacts.data ?? [];
 	const linked = useMemo(() => new Set(linkedContactIds), [linkedContactIds]);
 
+	const roster = usePocs();
 	const pocOptions = useMemo(() => {
-		const seen = new Map<string, string>();
+		const options = roster.users.map((u) => ({ value: u.id, label: u.name }));
+		const known = new Set(options.map((o) => o.value));
+		const stray = new Set<string>();
 		for (const row of all)
-			for (const name of row.pocs)
-				if (!seen.has(name.toLowerCase())) seen.set(name.toLowerCase(), name);
-		return [...seen.values()]
-			.sort((a, b) => a.localeCompare(b))
-			.map((name) => ({ value: name, label: name }));
-	}, [all]);
-
-	const orgOptions = useMemo(() => {
-		const seen = new Map<string, string>();
-		for (const row of all)
-			if (row.organizationId && row.organizationName)
-				seen.set(row.organizationId, row.organizationName);
-		return [...seen.entries()]
-			.sort((a, b) => a[1].localeCompare(b[1]))
-			.map(([value, label]) => ({ value, label }));
-	}, [all]);
+			for (const value of row.pocs) if (!known.has(value)) stray.add(value);
+		return [
+			...options,
+			...[...stray].sort().map((name) => ({ value: name, label: name })),
+		];
+	}, [all, roster.users]);
 
 	const rows = useMemo(() => {
 		const needle = q.trim().toLowerCase();
 		return all.filter((row) => {
-			if (status && normalizeStatus(row.status) !== status) return false;
-			if (poc && !row.pocs.some((n) => n.toLowerCase() === poc.toLowerCase()))
+			if (statuses.length && !statuses.includes(normalizeStatus(row.status)))
 				return false;
-			if (org && row.organizationId !== org) return false;
+			if (pocs.length && !row.pocs.some((p) => pocs.includes(p))) return false;
+			if (orgs.length && !orgs.includes(row.organizationId ?? "")) return false;
 			if (!needle) return true;
 			return [row.name, row.email, row.title, row.organizationName, ...row.tags]
 				.filter(Boolean)
 				.some((field) => String(field).toLowerCase().includes(needle));
 		});
-	}, [all, q, status, poc, org]);
+	}, [all, q, statuses, pocs, orgs]);
 
 	const create = trpc.links.createForContacts.useMutation({
 		onSuccess: async (result) => {
@@ -143,8 +137,8 @@ export function RecipientsPicker({
 								{
 									key: "status",
 									label: "Status",
-									value: status,
-									onChange: setStatus,
+									value: statuses,
+									onChange: setStatuses,
 									options: CONTACT_STATUSES.map((s) => ({
 										value: s,
 										label: STATUS_LABEL[s],
@@ -154,18 +148,11 @@ export function RecipientsPicker({
 									key: "poc",
 									label: "POC",
 									icon: UserRound,
-									value: poc,
-									onChange: setPoc,
+									value: pocs,
+									onChange: setPocs,
 									options: pocOptions,
 								},
-								{
-									key: "org",
-									label: "Organization",
-									icon: Building2,
-									value: org,
-									onChange: setOrg,
-									options: orgOptions,
-								},
+								organizationFilter(all, orgs, setOrgs),
 							]}
 						/>
 					</div>

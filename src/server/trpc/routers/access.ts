@@ -1,6 +1,6 @@
 import { invitedUser, session, user } from "@/db/schema";
 import { TRPCError } from "@trpc/server";
-import { desc, eq, sql } from "drizzle-orm";
+import { asc, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { logActivity } from "../activity";
 import { createTRPCRouter, protectedProcedure } from "../init";
@@ -8,6 +8,22 @@ import { createTRPCRouter, protectedProcedure } from "../init";
 const email = z.email("That is not an email address.").trim().toLowerCase();
 
 export const accessRouter = createTRPCRouter({
+	/**
+	 * Everybody with an account, for anything that points at a person in the
+	 * house rather than a contact: the POC picker, the assistant's roster.
+	 */
+	users: protectedProcedure.query(async ({ ctx }) => {
+		return ctx.db
+			.select({
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				image: user.image,
+			})
+			.from(user)
+			.orderBy(asc(user.name));
+	}),
+
 	/**
 	 * The roster, live rows first. `signedInAt` is null for somebody invited
 	 * who has never used the link, which is a state worth being able to see:

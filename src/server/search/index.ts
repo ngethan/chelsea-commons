@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { contact, interaction, organization, update } from "@/db/schema";
+import { contact, interaction, organization, update, user } from "@/db/schema";
 import { getPost } from "@/lib/posts";
 import { STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import {
@@ -226,11 +226,19 @@ export async function indexContacts({ ids, force }: IndexOptions = {}) {
 		byContact.set(entry.contactId, list);
 	}
 
+	// POCs are user ids; the document wants the names.
+	const names = new Map(
+		(await db().select({ id: user.id, name: user.name }).from(user)).map(
+			(u) => [u.id, u.name],
+		),
+	);
+
 	const pending = rows
 		.map((row) => ({
 			id: row.id,
 			document: documentForContact({
 				...row,
+				pocs: row.pocs.map((p) => names.get(p) ?? p),
 				interactions: byContact.get(row.id) ?? [],
 			}),
 		}))

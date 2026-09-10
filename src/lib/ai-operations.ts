@@ -48,7 +48,7 @@ const contactFields = z.object({
 		.max(10)
 		.optional()
 		.describe(
-			"Who in the house holds the relationship, by first name. More than one is fine.",
+			"Who in the house holds the relationship: user ids from list_access, or first names, which are matched to the roster. More than one is fine.",
 		),
 	notes: text.nullable().optional(),
 });

@@ -1,7 +1,12 @@
 import { ContactDrawer } from "@/components/admin/contact-drawer";
 import { DuplicatesSheet } from "@/components/admin/duplicates-sheet";
-import { FilterBar } from "@/components/admin/filter-bar";
+import {
+	FilterBar,
+	csv,
+	organizationFilter,
+} from "@/components/admin/filter-bar";
 import { IssueUpdate } from "@/components/admin/issue-update";
+import { PocList, usePocs } from "@/components/admin/pocs";
 import {
 	Empty,
 	ListTable,
@@ -60,9 +65,11 @@ const searchSchema = z.object({
 	contact: z.string().optional(),
 	sheet: z.enum(["new", "import"]).optional(),
 	q: z.string().optional(),
-	status: z.enum(CONTACT_STATUSES).optional(),
+	/** Each a comma-joined list; see `csv` in filter-bar. */
+	status: z.string().optional(),
 	poc: z.string().optional(),
 	tag: z.string().optional(),
+	org: z.string().optional(),
 });
 
 export const Route = createFileRoute("/admin/contacts")({
@@ -70,10 +77,13 @@ export const Route = createFileRoute("/admin/contacts")({
 	component: Contacts,
 });
 
-type Status = (typeof CONTACT_STATUSES)[number];
-
 function Contacts() {
-	const { q, status, poc, tag } = Route.useSearch();
+	const search = Route.useSearch();
+	const q = search.q;
+	const statuses = csv.parse(search.status);
+	const pocs = csv.parse(search.poc);
+	const tagNames = csv.parse(search.tag);
+	const orgs = csv.parse(search.org);
 	const navigate = Route.useNavigate();
 	const utils = trpc.useUtils();
 	const contact = useDrawerParam("contact");
@@ -114,16 +124,20 @@ function Contacts() {
 		});
 	}
 
-	// Everybody who holds a relationship, for the filter's own list.
+	// Everybody on the roster, plus any name an import wrote before that
+	// person had an account, so old values can still be filtered on.
+	const roster = usePocs();
 	const pocOptions = useMemo(() => {
-		const seen = new Map<string, string>();
+		const options = roster.users.map((u) => ({ value: u.id, label: u.name }));
+		const known = new Set(options.map((o) => o.value));
+		const stray = new Set<string>();
 		for (const row of rows)
-			for (const name of row.pocs)
-				if (!seen.has(name.toLowerCase())) seen.set(name.toLowerCase(), name);
-		return [...seen.values()]
-			.sort((a, b) => a.localeCompare(b))
-			.map((name) => ({ value: name, label: name }));
-	}, [rows]);
+			for (const value of row.pocs) if (!known.has(value)) stray.add(value);
+		return [
+			...options,
+			...[...stray].sort().map((name) => ({ value: name, label: name })),
+		];
+	}, [rows, roster.users]);
 
 	const remove = trpc.contacts.remove.useMutation({
 		onSuccess: async () => {
@@ -136,14 +150,17 @@ function Contacts() {
 	const filtered = useMemo(() => {
 		const needle = (q ?? "").trim().toLowerCase();
 		return rows.filter((row) => {
-			if (status && normalizeStatus(row.status) !== status) return false;
+			if (statuses.length && !statuses.includes(normalizeStatus(row.status)))
+				return false;
+			if (pocs.length && !row.pocs.some((p) => pocs.includes(p))) return false;
 			if (
-				poc &&
-				!row.pocs.some((name) => name.toLowerCase() === poc.toLowerCase())
+				tagNames.length &&
+				!row.tags.some((t) =>
+					tagNames.some((w) => w.toLowerCase() === t.toLowerCase()),
+				)
 			)
 				return false;
-			if (tag && !row.tags.some((t) => t.toLowerCase() === tag.toLowerCase()))
-				return false;
+			if (orgs.length && !orgs.includes(row.organizationId ?? "")) return false;
 			if (!needle) return true;
 			return [
 				row.name,
@@ -156,7 +173,7 @@ function Contacts() {
 				.filter(Boolean)
 				.some((field) => String(field).toLowerCase().includes(needle));
 		});
-	}, [rows, q, status, poc, tag]);
+	}, [rows, q, statuses, pocs, tagNames, orgs]);
 
 	function setQ(value: string) {
 		navigate({
@@ -165,28 +182,12 @@ function Contacts() {
 		});
 	}
 
-	function setStatus(value: string | null) {
-		navigate({
-			search: (prev) => ({
-				...prev,
-				status: (value as Status | null) ?? undefined,
-			}),
-			replace: true,
-		});
-	}
-
-	function setPoc(value: string | null) {
-		navigate({
-			search: (prev) => ({ ...prev, poc: value ?? undefined }),
-			replace: true,
-		});
-	}
-
-	function setTag(value: string | null) {
-		navigate({
-			search: (prev) => ({ ...prev, tag: value ?? undefined }),
-			replace: true,
-		});
+	function setFilter(key: "status" | "poc" | "tag" | "org") {
+		return (values: string[]) =>
+			navigate({
+				search: (prev) => ({ ...prev, [key]: csv.format(values) }),
+				replace: true,
+			});
 	}
 
 	function copy(text: string, what: string) {
@@ -216,8 +217,8 @@ function Contacts() {
 								{
 									key: "status",
 									label: "Status",
-									value: status ?? null,
-									onChange: setStatus,
+									value: statuses,
+									onChange: setFilter("status"),
 									options: CONTACT_STATUSES.map((s) => ({
 										value: s,
 										label: STATUS_LABEL[s],
@@ -227,16 +228,17 @@ function Contacts() {
 									key: "poc",
 									label: "POC",
 									icon: UserRound,
-									value: poc ?? null,
-									onChange: setPoc,
+									value: pocs,
+									onChange: setFilter("poc"),
 									options: pocOptions,
 								},
+								organizationFilter(rows, orgs, setFilter("org")),
 								{
 									key: "tag",
 									label: "Tag",
 									icon: Tag,
-									value: tag ?? null,
-									onChange: setTag,
+									value: tagNames,
+									onChange: setFilter("tag"),
 									options: (tags.data ?? []).map((t) => ({
 										value: t.name,
 										label: t.name,
@@ -385,8 +387,8 @@ function Contacts() {
 									<TableCell>
 										<StatusText status={row.status} />
 									</TableCell>
-									<TableCell className="hidden truncate text-[12.5px] text-muted-foreground lg:table-cell">
-										{row.pocs.length ? row.pocs.join(", ") : "—"}
+									<TableCell className="hidden lg:table-cell">
+										<PocList values={row.pocs} />
 									</TableCell>
 									<TableCell className="hidden xl:table-cell">
 										{row.tags.length ? (
@@ -417,7 +419,11 @@ function Contacts() {
 
 				{!list.isLoading && filtered.length === 0 && (
 					<Empty>
-						{q || status || poc || tag
+						{q ||
+						statuses.length ||
+						pocs.length ||
+						tagNames.length ||
+						orgs.length
 							? "Nothing matches that."
 							: "Nobody yet."}
 					</Empty>

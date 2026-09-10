@@ -1,3 +1,4 @@
+import { PocPicker } from "@/components/admin/pocs";
 import {
 	Empty,
 	H2,
@@ -71,13 +72,6 @@ const day = (value: Date | string) =>
 /** Today as the value a date input wants. */
 const today = () => new Date().toISOString().slice(0, 10);
 
-/** "a, b" in a field to ["a", "b"] on the wire. */
-const list = (text: string) =>
-	text
-		.split(",")
-		.map((v) => v.trim())
-		.filter(Boolean);
-
 type Draft = {
 	name: string;
 	email: string;
@@ -85,7 +79,7 @@ type Draft = {
 	phone: string;
 	status: string;
 	tags: string[];
-	pocs: string;
+	pocs: string[];
 	notes: string;
 	organizationId: string | null;
 };
@@ -128,7 +122,7 @@ function draftFrom(row: {
 		phone: row.phone ?? "",
 		status: row.status,
 		tags: row.tags,
-		pocs: row.pocs.join(", "),
+		pocs: row.pocs,
 		notes: row.notes ?? "",
 		organizationId: row.organizationId,
 	};
@@ -249,7 +243,7 @@ export function ContactDrawer({
 			phone: draft.phone || null,
 			status: normalizeStatus(draft.status),
 			tags: draft.tags,
-			pocs: list(draft.pocs),
+			pocs: draft.pocs,
 			notes: draft.notes || null,
 			organizationId: draft.organizationId,
 		});
@@ -348,10 +342,9 @@ export function ContactDrawer({
 										label: STATUS_LABEL[status],
 									}))}
 								/>
-								<FloatingInput
-									label="POCs"
+								<PocPicker
 									value={draft.pocs}
-									onChange={(e) => setDraft({ ...draft, pocs: e.target.value })}
+									onChange={(pocs) => setDraft({ ...draft, pocs })}
 								/>
 								<TagPicker
 									value={draft.tags}

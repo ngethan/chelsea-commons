@@ -1,4 +1,4 @@
-import { contact } from "@/db/schema";
+import { contact, user } from "@/db/schema";
 import { parseRecipients } from "@/lib/recipients";
 import { CONTACT_STATUSES, STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import { search } from "@/server/search";
@@ -17,6 +17,13 @@ import type { Caller, SignedIn } from "./caller";
  */
 
 export type ToolContext = { ctx: SignedIn; caller: Caller };
+
+/** POCs are user ids; the model reads names. Old values pass through. */
+async function pocNames(ctx: SignedIn) {
+	const rows = await ctx.db.select({ id: user.id, name: user.name }).from(user);
+	const names = new Map(rows.map((r) => [r.id, r.name]));
+	return (value: string) => names.get(value) ?? value;
+}
 
 export type ReadTool<Schema extends z.ZodObject = z.ZodObject> = {
 	name: string;
@@ -67,6 +74,7 @@ export const listContacts = define({
 		const tag = input.tag?.trim().toLowerCase();
 		const poc = input.poc?.trim().toLowerCase();
 		const org = input.organization?.trim().toLowerCase();
+		const pocName = await pocNames(ctx);
 
 		const matched = rows.filter((row) => {
 			if (input.status && normalizeStatus(row.status) !== input.status)
@@ -79,7 +87,7 @@ export const listContacts = define({
 				return false;
 			if (tag && !row.tags.some((t) => t.toLowerCase().includes(tag)))
 				return false;
-			if (poc && !row.pocs.some((p) => p.toLowerCase().includes(poc)))
+			if (poc && !row.pocs.some((p) => pocName(p).toLowerCase().includes(poc)))
 				return false;
 			if (
 				needle &&
@@ -89,7 +97,7 @@ export const listContacts = define({
 					row.title,
 					row.organizationName,
 					...row.tags,
-					...row.pocs,
+					...row.pocs.map(pocName),
 				]
 					.filter(Boolean)
 					.some((field) => String(field).toLowerCase().includes(needle))
@@ -118,7 +126,7 @@ export const listContacts = define({
 					name: row.name,
 					email: row.email,
 					title: row.title,
-					pocs: row.pocs,
+					pocs: row.pocs.map(pocName),
 					lastTouch: row.lastTouch ? row.lastTouch.slice(0, 10) : null,
 					status: row.status,
 					organization: row.organizationName,
@@ -141,7 +149,7 @@ export const getContact = define({
 		id: z.uuid().optional(),
 		email: z.string().optional(),
 	}),
-	async run(input, { caller }) {
+	async run(input, { ctx, caller }) {
 		let id = input.id;
 		if (!id && input.email) {
 			const needle = input.email.trim().toLowerCase();
@@ -161,12 +169,13 @@ export const getContact = define({
 			};
 		}
 
-		const [{ contact, organization }, links, timeline, logged] =
+		const [{ contact, organization }, links, timeline, logged, pocName] =
 			await Promise.all([
 				caller.contacts.byId({ id }),
 				caller.links.byContact({ contactId: id }),
 				caller.contacts.timeline({ id }),
 				caller.interactions.byContact({ contactId: id }),
+				pocNames(ctx),
 			]);
 
 		return {
@@ -180,7 +189,7 @@ export const getContact = define({
 				phone: contact.phone,
 				status: contact.status,
 				tags: contact.tags,
-				pocs: contact.pocs,
+				pocs: contact.pocs.map(pocName),
 				notes: contact.notes,
 				interactions: logged.map((i) => ({
 					id: i.id,

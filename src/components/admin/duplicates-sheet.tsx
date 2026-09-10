@@ -1,3 +1,4 @@
+import { usePocs } from "@/components/admin/pocs";
 import { Empty, Mono, StatusText } from "@/components/admin/primitives";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,7 @@ const day = (value: Date | string) =>
 export function DuplicatesSheet({ onClose }: { onClose: () => void }) {
 	const utils = trpc.useUtils();
 	const groups = trpc.contacts.duplicates.useQuery();
+	const { label: pocLabel } = usePocs();
 	const [busy, setBusy] = useState<string | null>(null);
 
 	const refresh = () =>
@@ -135,7 +137,7 @@ export function DuplicatesSheet({ onClose }: { onClose: () => void }) {
 															<span>{c.tags.join(", ")}</span>
 														)}
 														{c.pocs.length > 0 && (
-															<span>POC {c.pocs.join(", ")}</span>
+															<span>POC {c.pocs.map(pocLabel).join(", ")}</span>
 														)}
 														<span>added {day(c.createdAt)}</span>
 													</div>
