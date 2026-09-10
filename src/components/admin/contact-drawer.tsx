@@ -37,6 +37,7 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Table,
 	TableBody,
@@ -88,6 +89,26 @@ type Draft = {
 	organizationId: string | null;
 };
 
+/** The form: what the record looked like when taken, and what it is now. */
+type Form = { seed: Draft; draft: Draft };
+
+const same = (a: Draft, b: Draft) => JSON.stringify(a) === JSON.stringify(b);
+
+/** A few grey lines where a section's rows will be. */
+function Lines({ rows = 2 }: { rows?: number }) {
+	return (
+		<div className="flex flex-col gap-3 border border-border px-4 py-4">
+			{Array.from({ length: rows }, (_, i) => (
+				<Skeleton
+					key={i}
+					className="h-3.5"
+					style={{ width: `${45 + ((i * 23) % 40)}%` }}
+				/>
+			))}
+		</div>
+	);
+}
+
 function draftFrom(row: {
 	name: string | null;
 	email: string | null;
@@ -131,25 +152,43 @@ export function ContactDrawer({
 	const logged = trpc.interactions.byContact.useQuery({ contactId: id });
 	const organizations = trpc.organizations.list.useQuery();
 
-	// `seed` is what the record looked like when the draft was taken, so
-	// dirtiness is a comparison rather than a flag somebody forgets to set.
-	const [seed, setSeed] = useState<Draft | null>(null);
-	const [draft, setDraft] = useState<Draft | null>(null);
+	// The list you opened this from already knows almost everything about
+	// the row, so the form is drawn from that copy at once and the full
+	// record (which adds notes and alternate addresses) catches up. `seed` is
+	// what the record looked like when the draft was taken, so dirtiness is a
+	// comparison rather than a flag somebody forgets to set.
+	const cached = utils.contacts.list.getData()?.find((r) => r.id === id);
+	const [form, setForm] = useState<Form | null>(() => {
+		if (!cached) return null;
+		const provisional = draftFrom({ ...cached, notes: null });
+		return { seed: provisional, draft: provisional };
+	});
 
-	// Seeded once per record. Re-seeding on every fetch would overwrite what
-	// somebody is halfway through typing when a background refetch lands.
+	// When the full record lands: replace the form if nothing has been typed;
+	// otherwise keep the typing and only fill in what the list could not
+	// know. A background refetch must never overwrite a half-written field.
 	useEffect(() => {
 		const row = detail.data?.contact;
 		if (!row) return;
-		const next = draftFrom(row);
-		setSeed(next);
-		setDraft(next);
+		const full = draftFrom(row);
+		setForm((prev) => {
+			if (!prev || same(prev.seed, prev.draft)) {
+				return { seed: full, draft: full };
+			}
+			const seed = { ...prev.seed, notes: full.notes };
+			const draft =
+				prev.draft.notes === prev.seed.notes
+					? { ...prev.draft, notes: full.notes }
+					: prev.draft;
+			return { seed, draft };
+		});
 	}, [detail.data?.contact]);
 
-	const dirty =
-		draft !== null &&
-		seed !== null &&
-		JSON.stringify(draft) !== JSON.stringify(seed);
+	const draft = form?.draft ?? null;
+	const setDraft = (next: Draft) =>
+		setForm((prev) => (prev ? { ...prev, draft: next } : prev));
+
+	const dirty = form !== null && !same(form.seed, form.draft);
 	const guard = useUnsavedGuard(dirty, onClose);
 
 	const invalidate = () =>
@@ -215,8 +254,11 @@ export function ContactDrawer({
 		});
 	}
 
-	const row = detail.data?.contact;
-	const org = detail.data?.organization;
+	// The header reads from whichever copy is here first.
+	const row = detail.data?.contact ?? cached ?? null;
+	const orgName = detail.data
+		? detail.data.organization?.name
+		: cached?.organizationName;
 	const sent = links.data ?? [];
 	const history = timeline.data ?? [];
 	const entries = logged.data ?? [];
@@ -236,11 +278,11 @@ export function ContactDrawer({
 										<Mono className="text-[13px]">{row.email}</Mono>
 									</>
 								)}
-								{(row.title || org) && (
+								{(row.title || orgName) && (
 									<>
 										<span className="text-muted-foreground/50">·</span>
 										<span>
-											{[row.title, org?.name].filter(Boolean).join(", ")}
+											{[row.title, orgName].filter(Boolean).join(", ")}
 										</span>
 									</>
 								)}
@@ -329,7 +371,10 @@ export function ContactDrawer({
 
 					<section>
 						<H2 right={<LogInteraction contactId={id} />}>Interactions</H2>
-						{entries.length === 0 && <Empty>Nothing logged yet.</Empty>}
+						{logged.isLoading && <Lines />}
+						{!logged.isLoading && entries.length === 0 && (
+							<Empty>Nothing logged yet.</Empty>
+						)}
 						{entries.length > 0 && (
 							<div className="border border-border">
 								<Table>
@@ -385,7 +430,10 @@ export function ContactDrawer({
 						>
 							Links
 						</H2>
-						{sent.length === 0 && <Empty>No links yet.</Empty>}
+						{links.isLoading && <Lines />}
+						{!links.isLoading && sent.length === 0 && (
+							<Empty>No links yet.</Empty>
+						)}
 						{sent.length > 0 && (
 							<div className="border border-border">
 								<Table>
@@ -465,7 +513,10 @@ export function ContactDrawer({
 
 					<section>
 						<H2>History</H2>
-						{history.length === 0 && <Empty>Nothing yet.</Empty>}
+						{timeline.isLoading && <Lines rows={3} />}
+						{!timeline.isLoading && history.length === 0 && (
+							<Empty>Nothing yet.</Empty>
+						)}
 						<Timeline>
 							{history.map((entry, index, all) => (
 								<TimelineItem

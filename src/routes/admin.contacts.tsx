@@ -143,6 +143,15 @@ function Contacts() {
 		toast.success(`${what} copied.`);
 	}
 
+	// A pointer resting on a row is usually about to click it. The drawer's
+	// four queries are fetched then, so it opens full rather than filling in.
+	function warm(id: string) {
+		void utils.contacts.byId.prefetch({ id });
+		void utils.interactions.byContact.prefetch({ contactId: id });
+		void utils.links.byContact.prefetch({ contactId: id });
+		void utils.contacts.timeline.prefetch({ id });
+	}
+
 	return (
 		<Page>
 			<PageHead
@@ -251,6 +260,7 @@ function Contacts() {
 								<TableRow
 									className="cursor-pointer"
 									onClick={() => contact.open(row.id)}
+									onPointerEnter={() => warm(row.id)}
 								>
 									<TableCell>
 										<div className="truncate font-medium">
