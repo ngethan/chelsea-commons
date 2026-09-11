@@ -448,6 +448,13 @@ main.admin-main a:not(.no-underline):not(.link-static):hover {
 	scrollbar-color: oklch(1 0 0 / 0.16) transparent;
 }
 
+/* Selected text in the admin takes the accent. The public site keeps its
+   inverted cream-on-ink selection; `.dark` is only ever on admin routes. */
+.dark ::selection {
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+}
+
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);

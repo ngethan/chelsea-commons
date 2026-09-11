@@ -52,7 +52,7 @@ export function AdminShell({
 	children,
 	defaultOpen = true,
 }: {
-	user: { name: string; email: string; image: string | null };
+	user: { id: string; name: string; email: string; image: string | null };
 	children: React.ReactNode;
 	/** Starting state of the rail. The trigger and cmd+B drive it after that. */
 	defaultOpen?: boolean;

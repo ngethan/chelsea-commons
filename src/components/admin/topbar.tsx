@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonAvatar } from "@/components/admin/person-avatar";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -15,17 +15,11 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, Search, Settings } from "lucide-react";
 
 type Viewer = {
+	id: string;
 	name: string;
 	email: string;
 	image: string | null;
 };
-
-/** Two letters from whatever Google gave us, for when it gave us no picture. */
-function initials(viewer: Viewer) {
-	const source = viewer.name?.trim() || viewer.email;
-	const parts = source.split(/[\s@._-]+/).filter(Boolean);
-	return (parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "");
-}
 
 /**
  * The bar across the top of the content: search on the left, the account
@@ -73,12 +67,7 @@ export function Topbar({
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="icon" size="icon-sm" aria-label="Account">
-							<Avatar className="size-7">
-								{user.image && <AvatarImage src={user.image} alt="" />}
-								<AvatarFallback className="text-[11px] uppercase">
-									{initials(user)}
-								</AvatarFallback>
-							</Avatar>
+							<PersonAvatar person={user} />
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end" className="w-[220px]">

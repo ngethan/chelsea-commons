@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PersonAvatar } from "@/components/admin/person-avatar";
 import { Button } from "@/components/ui/button";
 import {
 	Command,
@@ -33,12 +33,6 @@ export type Poc = {
 	image: string | null;
 };
 
-/** Two letters, for when there is no picture. */
-function initials(name: string) {
-	const parts = name.split(/[\s@._-]+/).filter(Boolean);
-	return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
-}
-
 /** The roster, and a way to turn a stored value into something to show. */
 export function usePocs() {
 	const users = trpc.access.users.useQuery(undefined, { staleTime: 300_000 });
@@ -61,14 +55,7 @@ export function PocAvatar({
 	poc: Poc;
 	className?: string;
 }) {
-	return (
-		<Avatar className={cn("size-5", className)}>
-			{poc.image && <AvatarImage src={poc.image} alt="" />}
-			<AvatarFallback className="text-[9px]">
-				{initials(poc.name)}
-			</AvatarFallback>
-		</Avatar>
-	);
+	return <PersonAvatar person={poc} size="xs" className={className} />;
 }
 
 /** One POC as a pill: avatar and name, or the bare name for an old value. */

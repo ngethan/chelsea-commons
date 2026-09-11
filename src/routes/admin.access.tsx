@@ -1,3 +1,4 @@
+import { PersonAvatar } from "@/components/admin/person-avatar";
 import {
 	Empty,
 	ListTable,
@@ -90,19 +91,26 @@ function Access() {
 								className={row.revokedAt ? "opacity-55" : ""}
 							>
 								<TableCell>
-									<div className="truncate font-medium">
-										{row.name ?? row.email}
-										{row.isYou && (
-											<span className="ml-1.5 font-normal text-[12px] text-muted-foreground">
-												you
-											</span>
-										)}
+									<div className="flex items-center gap-3">
+										<PersonAvatar
+											person={{ ...row, id: row.userId ?? row.id }}
+										/>
+										<div className="min-w-0">
+											<div className="truncate font-medium">
+												{row.name ?? row.email}
+												{row.isYou && (
+													<span className="ml-1.5 font-normal text-[12px] text-muted-foreground">
+														you
+													</span>
+												)}
+											</div>
+											{row.name && (
+												<Mono className="mt-0.5 block truncate text-[12px]">
+													{row.email}
+												</Mono>
+											)}
+										</div>
 									</div>
-									{row.name && (
-										<Mono className="mt-0.5 block truncate text-[12px]">
-											{row.email}
-										</Mono>
-									)}
 								</TableCell>
 								<TableCell>
 									<Tinted

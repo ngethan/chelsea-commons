@@ -13,6 +13,7 @@ import {
 	organizationFilter,
 } from "@/components/admin/filter-bar";
 import { IssueUpdate } from "@/components/admin/issue-update";
+import { PersonAvatar } from "@/components/admin/person-avatar";
 import { PocList, usePocs } from "@/components/admin/pocs";
 import {
 	Empty,
@@ -370,20 +371,27 @@ function Contacts() {
 										/>
 									</TableCell>
 									<TableCell>
-										<div className="truncate font-medium">
-											{row.name || row.email || "Unnamed"}
-										</div>
-										{(row.title || (row.name && row.email)) && (
-											<div className="mt-0.5 flex items-center gap-1.5 truncate text-[12px] text-muted-foreground">
-												{row.title && <span>{row.title}</span>}
-												{row.title && row.name && row.email && (
-													<span className="text-muted-foreground/50">·</span>
-												)}
-												{row.name && row.email && (
-													<Mono className="text-[12px]">{row.email}</Mono>
+										<div className="flex items-center gap-3">
+											<PersonAvatar person={row} />
+											<div className="min-w-0">
+												<div className="truncate font-medium">
+													{row.name || row.email || "Unnamed"}
+												</div>
+												{(row.title || (row.name && row.email)) && (
+													<div className="mt-0.5 flex items-center gap-1.5 truncate text-[12px] text-muted-foreground">
+														{row.title && <span>{row.title}</span>}
+														{row.title && row.name && row.email && (
+															<span className="text-muted-foreground/50">
+																·
+															</span>
+														)}
+														{row.name && row.email && (
+															<Mono className="text-[12px]">{row.email}</Mono>
+														)}
+													</div>
 												)}
 											</div>
-										)}
+										</div>
 									</TableCell>
 									<TableCell className="hidden truncate text-muted-foreground md:table-cell">
 										{row.organizationName ?? "—"}

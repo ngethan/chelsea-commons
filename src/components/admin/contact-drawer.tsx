@@ -5,6 +5,7 @@ import {
 	same,
 	toInput,
 } from "@/components/admin/contact-fields";
+import { PersonAvatar } from "@/components/admin/person-avatar";
 import {
 	Empty,
 	H2,
@@ -213,31 +214,34 @@ export function ContactDrawer({
 	return (
 		<Sheet open onOpenChange={(open) => !open && guard.requestClose()}>
 			<SheetContent>
-				<SheetHeader>
-					<SheetTitle>{row?.name || row?.email || "Contact"}</SheetTitle>
-					<SheetDescription className="flex flex-wrap items-center gap-2">
-						{row ? (
-							<>
-								<StatusText status={row.status} />
-								{row.email && (
-									<>
-										<span className="text-muted-foreground/50">·</span>
-										<Mono className="text-[13px]">{row.email}</Mono>
-									</>
-								)}
-								{(row.title || orgName) && (
-									<>
-										<span className="text-muted-foreground/50">·</span>
-										<span>
-											{[row.title, orgName].filter(Boolean).join(", ")}
-										</span>
-									</>
-								)}
-							</>
-						) : (
-							"Loading"
-						)}
-					</SheetDescription>
+				<SheetHeader className="flex-row items-center gap-4">
+					{row && <PersonAvatar person={row} size="lg" />}
+					<div className="flex min-w-0 flex-col gap-2">
+						<SheetTitle>{row?.name || row?.email || "Contact"}</SheetTitle>
+						<SheetDescription className="flex flex-wrap items-center gap-2">
+							{row ? (
+								<>
+									<StatusText status={row.status} />
+									{row.email && (
+										<>
+											<span className="text-muted-foreground/50">·</span>
+											<Mono className="text-[13px]">{row.email}</Mono>
+										</>
+									)}
+									{(row.title || orgName) && (
+										<>
+											<span className="text-muted-foreground/50">·</span>
+											<span>
+												{[row.title, orgName].filter(Boolean).join(", ")}
+											</span>
+										</>
+									)}
+								</>
+							) : (
+								"Loading"
+							)}
+						</SheetDescription>
+					</div>
 				</SheetHeader>
 
 				<SheetBody className="flex flex-col gap-10">
