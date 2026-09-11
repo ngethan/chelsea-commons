@@ -34,8 +34,8 @@ export function TagPill({
 	return (
 		<span
 			className={cn(
-				"inline-flex h-6 shrink-0 items-center gap-0.5 rounded-full bg-secondary pl-2.5 text-[12px] text-foreground",
-				onRemove ? "pr-0.5" : "pr-2.5",
+				"inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-secondary pl-3 text-[12.5px] text-foreground",
+				onRemove ? "pr-1" : "pr-3",
 				className,
 			)}
 		>
@@ -132,7 +132,7 @@ export function TagPicker({
 						}
 					}}
 					className={cn(
-						"relative flex min-h-14 w-full min-w-0 cursor-pointer flex-wrap items-center gap-1.5 rounded-none border border-input bg-card px-3.5 pt-5 pb-2 text-left outline-none transition-colors focus-visible:border-input-focus data-[open=true]:border-input-focus",
+						"relative flex min-h-14 w-full min-w-0 cursor-pointer flex-wrap items-center gap-2 rounded-none border border-input bg-card px-3.5 pt-6 pb-2.5 text-left outline-none transition-colors focus-visible:border-input-focus data-[open=true]:border-input-focus",
 						className,
 					)}
 				>

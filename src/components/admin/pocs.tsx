@@ -84,9 +84,9 @@ export function PocPill({
 	return (
 		<span
 			className={cn(
-				"inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full bg-secondary text-[12px]",
-				poc ? "pl-0.5" : "pl-2.5",
-				onRemove ? "pr-0.5" : "pr-2.5",
+				"inline-flex h-7 shrink-0 items-center gap-2 rounded-full bg-secondary text-[12.5px]",
+				poc ? "pl-1" : "pl-3",
+				onRemove ? "pr-1" : "pr-3",
 				!poc && "text-muted-foreground",
 			)}
 			title={poc ? poc.email : "Not on the roster yet"}
@@ -185,7 +185,7 @@ export function PocPicker({
 						}
 					}}
 					className={cn(
-						"relative flex min-h-14 w-full min-w-0 cursor-pointer flex-wrap items-center gap-1.5 rounded-none border border-input bg-card px-3.5 pt-5 pb-2 text-left outline-none transition-colors focus-visible:border-input-focus data-[open=true]:border-input-focus",
+						"relative flex min-h-14 w-full min-w-0 cursor-pointer flex-wrap items-center gap-2 rounded-none border border-input bg-card px-3.5 pt-6 pb-2.5 text-left outline-none transition-colors focus-visible:border-input-focus data-[open=true]:border-input-focus",
 						className,
 					)}
 				>
@@ -213,17 +213,14 @@ export function PocPicker({
 									value={`${u.name} ${u.email}`}
 									onSelect={() => toggle(u.id)}
 								>
-									<Check
-										className={cn(
-											"size-3.5",
-											has(u.id) ? "opacity-100" : "opacity-0",
-										)}
-									/>
+									{/* Picture and name, and a tick on the right for the ones
+									    chosen. No blank tick slot in front of a face, and no
+									    address: the face is the identity here. */}
 									<PocAvatar poc={u} />
 									<span className="truncate">{u.name}</span>
-									<span className="ml-auto truncate pl-3 font-mono text-[11px] text-muted-foreground">
-										{u.email}
-									</span>
+									{has(u.id) && (
+										<Check className="ml-auto size-3.5 shrink-0 text-foreground" />
+									)}
 								</CommandItem>
 							))}
 						</CommandGroup>
