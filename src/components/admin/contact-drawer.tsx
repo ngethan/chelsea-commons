@@ -213,7 +213,7 @@ export function ContactDrawer({
 
 	return (
 		<Sheet open onOpenChange={(open) => !open && guard.requestClose()}>
-			<SheetContent>
+			<SheetContent onOpenAutoFocus={(e) => e.preventDefault()}>
 				<SheetHeader className="flex-row items-center gap-4">
 					{row && <PersonAvatar person={row} size="lg" />}
 					<div className="flex min-w-0 flex-col gap-2">

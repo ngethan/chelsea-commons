@@ -34,8 +34,8 @@ export function TagPill({
 	return (
 		<span
 			className={cn(
-				"inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-secondary pl-3 text-[12.5px] text-foreground",
-				onRemove ? "pr-1" : "pr-3",
+				"inline-flex h-6 shrink-0 items-center gap-0.5 rounded-full bg-secondary pl-2.5 text-[12px] text-foreground",
+				onRemove ? "pr-0.5" : "pr-2.5",
 				className,
 			)}
 		>
@@ -58,12 +58,16 @@ export function TagPill({
 	);
 }
 
+/** How many pills the field shows before folding the rest into "+N". */
+const SHOWN = 3;
+
 /**
- * The tags field. Looks like every other floating-label field, holds pills,
- * and opens a list of every tag that exists with a check on the ones this
- * person has. Typing narrows the list; typing something that is not a tag
- * offers to make it, so a new tag is created where it is first needed and
- * never in a settings screen first.
+ * The tags field. Looks like every other floating-label field, holds pills
+ * on one line (the first few, then "+N"), and opens a list of every tag
+ * that exists with a check on the ones this person has. Typing narrows the
+ * list; typing something that is not a tag offers to make it, so a new tag
+ * is created where it is first needed and never in a settings screen
+ * first. The field is a fixed height, so the grid never shifts.
  */
 export function TagPicker({
 	label = "Tags",
@@ -132,13 +136,18 @@ export function TagPicker({
 						}
 					}}
 					className={cn(
-						"relative flex min-h-14 w-full min-w-0 cursor-pointer flex-wrap items-center gap-2 rounded-none border border-input bg-card px-3.5 pt-6 pb-2.5 text-left outline-none transition-colors focus-visible:border-input-focus data-[open=true]:border-input-focus",
+						"relative flex h-14 w-full min-w-0 cursor-pointer items-center gap-1.5 overflow-hidden rounded-none border border-input bg-card px-3.5 pt-5 pb-1.5 text-left outline-none transition-colors focus-visible:border-input-focus data-[open=true]:border-input-focus",
 						className,
 					)}
 				>
-					{value.map((name) => (
+					{value.slice(0, SHOWN).map((name) => (
 						<TagPill key={name} name={name} onRemove={() => remove(name)} />
 					))}
+					{value.length > SHOWN && (
+						<span className="inline-flex h-6 shrink-0 items-center rounded-full bg-secondary px-2.5 text-[12px] text-muted-foreground tabular-nums">
+							+{value.length - SHOWN}
+						</span>
+					)}
 					<span className={cn("fl-label", floated && "fl-up")}>{label}</span>
 				</div>
 			</PopoverTrigger>

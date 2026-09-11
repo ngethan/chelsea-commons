@@ -259,7 +259,7 @@ function OrganizationDrawer({
 
 	return (
 		<Sheet open onOpenChange={(open) => !open && guard.requestClose()}>
-			<SheetContent>
+			<SheetContent onOpenAutoFocus={(e) => e.preventDefault()}>
 				<SheetHeader>
 					<SheetTitle>
 						{detail.data?.organization.name ?? "Organization"}

@@ -130,9 +130,50 @@ export function PocList({ values }: { values: string[] }) {
 	);
 }
 
+/** How many faces the field shows before folding the rest into "+N". */
+const FACES = 4;
+
 /**
- * The POCs field: a floating-label field of pills over a list of everybody
- * who can sign in, several at a time.
+ * The people chosen, drawn to fit one line: small faces side by side, then
+ * the names as one truncated line. A value that is not on the roster has
+ * no face and shows as a muted name.
+ */
+export function PocStack({ values }: { values: string[] }) {
+	const { resolve } = usePocs();
+	const people = values.map((v) => ({ value: v, poc: resolve(v) }));
+	const faces = people.filter((p) => p.poc).slice(0, FACES);
+	const more = people.filter((p) => p.poc).length - faces.length;
+	return (
+		<div className="flex min-w-0 items-center gap-2.5">
+			{faces.length > 0 && (
+				<div className="flex shrink-0 items-center gap-1">
+					{faces.map(({ value, poc }) =>
+						poc ? <PocAvatar key={value} poc={poc} className="size-5" /> : null,
+					)}
+					{more > 0 && (
+						<span className="flex size-5 items-center justify-center rounded-full bg-avatar text-[9px] text-muted-foreground tabular-nums">
+							+{more}
+						</span>
+					)}
+				</div>
+			)}
+			<span className="truncate text-[14px]">
+				{people.map(({ value, poc }, i) => (
+					<span key={value} className={poc ? "" : "text-muted-foreground"}>
+						{i > 0 && <span className="text-muted-foreground">, </span>}
+						{poc?.name ?? value}
+					</span>
+				))}
+			</span>
+		</div>
+	);
+}
+
+/**
+ * The POCs field: a floating-label field over a list of everybody who can
+ * sign in, several at a time. The field is a fixed height and shows the
+ * chosen people as faces and a line of names; choosing and unchoosing both
+ * happen in the list, so the field never grows and the grid never shifts.
  */
 export function PocPicker({
 	label = "POCs",
@@ -172,17 +213,11 @@ export function PocPicker({
 						}
 					}}
 					className={cn(
-						"relative flex min-h-14 w-full min-w-0 cursor-pointer flex-wrap items-center gap-2 rounded-none border border-input bg-card px-3.5 pt-6 pb-2.5 text-left outline-none transition-colors focus-visible:border-input-focus data-[open=true]:border-input-focus",
+						"relative flex h-14 w-full min-w-0 cursor-pointer items-center rounded-none border border-input bg-card px-3.5 pt-5 pb-1.5 text-left outline-none transition-colors focus-visible:border-input-focus data-[open=true]:border-input-focus",
 						className,
 					)}
 				>
-					{value.map((v) => (
-						<PocPill
-							key={v}
-							value={v}
-							onRemove={() => onChange(value.filter((x) => x !== v))}
-						/>
-					))}
+					<PocStack values={value} />
 					<span className={cn("fl-label", floated && "fl-up")}>{label}</span>
 				</div>
 			</PopoverTrigger>
