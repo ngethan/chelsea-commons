@@ -14,9 +14,15 @@ import { toast as sonner } from "sonner";
  */
 const LIFETIME = { error: 7000, default: 5000 } as const;
 
+/** One underlined word at the toast's trailing edge: "View", "Undo". */
+type Options = { action?: { label: string; onClick: () => void } };
+
 export const toast = {
-	success: (message: string) =>
-		sonner.success(message, { duration: LIFETIME.default }),
+	success: (message: string, options: Options = {}) =>
+		sonner.success(message, {
+			duration: options.action ? 8000 : LIFETIME.default,
+			action: options.action,
+		}),
 	error: (message: string) =>
 		sonner.error(message, { duration: LIFETIME.error }),
 	info: (message: string) =>

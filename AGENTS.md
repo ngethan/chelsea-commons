@@ -70,8 +70,14 @@ Google, and Google only admits an address that already has a live row in
   mutations pass tags through `registerTags`, which creates missing ones
   and canonicalizes spelling, so the assistant and bulk paste stay honest.
 - **Duplicates are found on read, resolved by hand.** `contacts.duplicates`
-  pairs rows by normalized name, phone, or a shared alternate address, minus
-  pairs somebody dismissed (`duplicate_dismissal`). `contacts.merge` folds
+  pairs rows by normalized name, phone, a shared alternate address, or a
+  trigram-similar name (`pg_trgm`, migration 0006; 0.7 alone, 0.5 at the
+  same organization), minus pairs somebody dismissed (`duplicate_dismissal`).
+  The embeddings were measured and rejected for this: colleagues with alike
+  notes sit closer than one person entered twice. `contacts.twins` is the
+  same check for one row, run while a name is typed in the Add sheet and
+  for the record a drawer shows. Both return who, never why: the UI shows
+  faces and names, no reasons or confidence. `contacts.merge` folds
   one row into another (kept row wins, lists union, the dropped address
   becomes an alternate, interactions and links move) and soft-deletes the
   rest. The Contacts toolbar shows a count when there is anything to look at.

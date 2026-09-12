@@ -400,38 +400,42 @@ function NewOrganization({ onClose }: { onClose: () => void }) {
 				<SheetHeader>
 					<SheetTitle>Add an organization</SheetTitle>
 				</SheetHeader>
-				<SheetBody className="flex flex-col gap-4">
-					<FloatingInput
-						label="Name"
-						value={name}
-						onChange={(e) => setName(e.target.value)}
-						autoFocus
-					/>
-					<FloatingInput
-						label="Domain"
-						value={domain}
-						onChange={(e) => setDomain(e.target.value)}
-					/>
-					<FloatingTextarea
-						label="Notes"
-						value={notes}
-						onChange={(e) => setNotes(e.target.value)}
-					/>
-				</SheetBody>
-				<SheetFooter>
-					<Button
-						disabled={create.isPending || !name.trim()}
-						onClick={() =>
+				<form
+					className="flex min-h-0 flex-1 flex-col"
+					onSubmit={(e) => {
+						e.preventDefault();
+						if (name.trim() && !create.isPending)
 							create.mutate({
 								name,
 								domain: domain || null,
 								notes: notes || null,
-							})
-						}
-					>
-						{create.isPending ? "Adding" : "Add"}
-					</Button>
-				</SheetFooter>
+							});
+					}}
+				>
+					<SheetBody className="flex flex-col gap-4">
+						<FloatingInput
+							label="Name"
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+							autoFocus
+						/>
+						<FloatingInput
+							label="Domain"
+							value={domain}
+							onChange={(e) => setDomain(e.target.value)}
+						/>
+						<FloatingTextarea
+							label="Notes"
+							value={notes}
+							onChange={(e) => setNotes(e.target.value)}
+						/>
+					</SheetBody>
+					<SheetFooter>
+						<Button type="submit" disabled={create.isPending || !name.trim()}>
+							{create.isPending ? "Adding" : "Add"}
+						</Button>
+					</SheetFooter>
+				</form>
 				{guard.dialog}
 			</SheetContent>
 		</Sheet>

@@ -1,5 +1,5 @@
-import { usePocs } from "@/components/admin/pocs";
-import { Empty, Mono, StatusText } from "@/components/admin/primitives";
+import { PersonAvatar } from "@/components/admin/person-avatar";
+import { Empty, Mono } from "@/components/admin/primitives";
 import { Button } from "@/components/ui/button";
 import {
 	Sheet,
@@ -27,10 +27,16 @@ const day = (value: Date | string) =>
  * asked. Nothing here is automatic, and merging is a soft delete of the
  * rows folded in, so it can be undone by hand like any other delete.
  */
-export function DuplicatesSheet({ onClose }: { onClose: () => void }) {
+export function DuplicatesSheet({
+	onClose,
+	onView,
+}: {
+	onClose: () => void;
+	/** Open one of the people, so they can be looked at before deciding. */
+	onView: (id: string) => void;
+}) {
 	const utils = trpc.useUtils();
 	const groups = trpc.contacts.duplicates.useQuery();
-	const { label: pocLabel } = usePocs();
 	const [busy, setBusy] = useState<string | null>(null);
 
 	const refresh = () =>
@@ -98,51 +104,32 @@ export function DuplicatesSheet({ onClose }: { onClose: () => void }) {
 						const key = ids.join(":");
 						return (
 							<section key={key} className="border border-border">
-								<div className="flex items-center gap-3 border-b border-border px-4 py-2.5 text-[12.5px] text-muted-foreground">
-									<span className="font-medium uppercase tracking-[0.08em] text-[11px]">
-										{group.reasons.join(", ")}
-									</span>
-									<Button
-										variant="text"
-										size="xs"
-										className="ml-auto"
-										disabled={busy !== null}
-										onClick={() => notSame(ids)}
-									>
-										Not the same person
-									</Button>
-								</div>
 								<Table>
 									<TableBody>
 										{group.contacts.map((c) => (
 											<TableRow key={c.id} className="hover:bg-transparent">
-												<TableCell className="align-top">
-													<div className="text-[14px] font-medium">
+												<TableCell className="w-[56px] pr-0 align-middle">
+													<PersonAvatar person={c} />
+												</TableCell>
+												<TableCell className="align-middle">
+													<button
+														type="button"
+														onClick={() => onView(c.id)}
+														className="cursor-pointer text-left text-[14px] font-medium hover:underline"
+													>
 														{c.name || c.email || "Unnamed"}
-													</div>
-													<div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12.5px] text-muted-foreground">
+													</button>
+													<div className="mt-0.5 flex items-center gap-2 text-[12.5px] text-muted-foreground">
 														{c.email && <Mono>{c.email}</Mono>}
-														{c.phone && <Mono>{c.phone}</Mono>}
-														{c.alternateEmails.length > 0 && (
-															<Mono>+{c.alternateEmails.length} alt</Mono>
+														{c.email && (
+															<span className="text-muted-foreground/50">
+																·
+															</span>
 														)}
-													</div>
-													<div className="mt-1 flex flex-wrap items-center gap-x-2 text-[12.5px] text-muted-foreground">
-														<StatusText status={c.status} />
-														{c.title && <span>{c.title}</span>}
-														{c.organizationName && (
-															<span>{c.organizationName}</span>
-														)}
-														{c.tags.length > 0 && (
-															<span>{c.tags.join(", ")}</span>
-														)}
-														{c.pocs.length > 0 && (
-															<span>POC {c.pocs.map(pocLabel).join(", ")}</span>
-														)}
-														<span>added {day(c.createdAt)}</span>
+														<span>{day(c.createdAt)}</span>
 													</div>
 												</TableCell>
-												<TableCell className="w-[110px] align-top text-right">
+												<TableCell className="w-[110px] align-middle text-right">
 													<Button
 														variant="outline"
 														size="sm"
@@ -156,6 +143,16 @@ export function DuplicatesSheet({ onClose }: { onClose: () => void }) {
 										))}
 									</TableBody>
 								</Table>
+								<div className="flex justify-end border-t border-border px-3 py-2">
+									<Button
+										variant="text"
+										size="xs"
+										disabled={busy !== null}
+										onClick={() => notSame(ids)}
+									>
+										Not the same person
+									</Button>
+								</div>
 							</section>
 						);
 					})}

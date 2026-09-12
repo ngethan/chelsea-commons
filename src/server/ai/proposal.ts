@@ -6,7 +6,7 @@ import {
 	isDestructive,
 	proposalInputSchema,
 } from "@/lib/ai-operations";
-import { eq, isNull } from "drizzle-orm";
+import { eq, isNull, sql } from "drizzle-orm";
 import type { ToolContext } from "./read-tools";
 
 /**
@@ -207,15 +207,36 @@ async function enrich(
 			} else {
 				// No address to match on, so a name is the only guard against a
 				// second row for one person. A warning, not a refusal: two people
-				// can share a name, and the person applying can tell.
+				// can share a name, and the person applying can tell. Nearly the
+				// same name counts too, so a misspelling does not slip past.
 				const name = (operation.name ?? "").trim().toLowerCase();
-				const twin = (await lookups.contacts()).find(
+				const exact = (await lookups.contacts()).find(
 					(r) => r.name?.trim().toLowerCase() === name,
 				);
-				if (twin)
+				if (exact) {
 					warnings.push(
-						`Somebody named ${twin.name} is already on the list (${twin.email ?? "no email"}); this adds a second`,
+						`Somebody named ${exact.name} is already on the list (${exact.email ?? "no email"}); this adds a second`,
 					);
+				} else if (name.length >= 3) {
+					const near = await tc.ctx.db
+						.select({
+							name: contact.name,
+							email: contact.email,
+							similarity: sql<number>`similarity(lower(${contact.name}), ${name})`,
+						})
+						.from(contact)
+						.where(
+							sql`${contact.deletedAt} is null and lower(${contact.name}) % ${name} and similarity(lower(${contact.name}), ${name}) >= 0.7`,
+						)
+						.limit(5);
+					const twin = [...near].sort(
+						(x, y) => Number(y.similarity) - Number(x.similarity),
+					)[0];
+					if (twin)
+						warnings.push(
+							`${twin.name} (${twin.email ?? "no email"}) is already on the list and the names are nearly the same; this adds a second`,
+						);
+				}
 			}
 			const org = await resolveOrganization(operation.organization, ec);
 			if (typeof org === "string") return org;

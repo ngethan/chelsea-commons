@@ -28,6 +28,7 @@ import {
 } from "@/components/admin/primitives";
 import { RowMenu } from "@/components/admin/row-menu";
 import { TagChooser, TagPill } from "@/components/admin/tag-picker";
+import { TwinsNotice } from "@/components/admin/twins-notice";
 import { useUnsavedGuard } from "@/components/admin/unsaved-guard";
 import { useDrawerParam } from "@/components/admin/use-drawer-param";
 import { ConfirmDialog } from "@/components/ui/alert-dialog";
@@ -59,11 +60,11 @@ import {
 	Link as LinkIcon,
 	Tag,
 	Trash2,
+	TriangleAlert,
 	UserRound,
-	Users,
 	X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
 const searchSchema = z.object({
@@ -99,6 +100,13 @@ function Contacts() {
 	const rows = list.data ?? [];
 	const duplicates = trpc.contacts.duplicates.useQuery();
 	const tags = trpc.tags.list.useQuery();
+
+	// Whatever changed the list (a save, a merge, the assistant applying a
+	// card) may have made or resolved a duplicate, so the count follows
+	// the list rather than each caller remembering to refresh it.
+	useEffect(() => {
+		if (list.dataUpdatedAt) void utils.contacts.duplicates.invalidate();
+	}, [list.dataUpdatedAt, utils]);
 
 	const addTag = trpc.contacts.addTag.useMutation({
 		onSuccess: async (result) => {
@@ -146,7 +154,10 @@ function Contacts() {
 
 	const remove = trpc.contacts.remove.useMutation({
 		onSuccess: async () => {
-			await utils.contacts.list.invalidate();
+			await Promise.all([
+				utils.contacts.list.invalidate(),
+				utils.contacts.duplicates.invalidate(),
+			]);
 			toast.success("Deleted.");
 		},
 		onError: (err) => toast.error(err.message),
@@ -255,10 +266,10 @@ function Contacts() {
 							<Button
 								variant="outline"
 								size="sm"
-								className="ml-auto"
+								className="ml-auto border-warning/40 text-warning hover:bg-warning/10 hover:text-warning"
 								onClick={() => setResolving(true)}
 							>
-								<Users />
+								<TriangleAlert className="text-warning" />
 								{duplicates.data?.length} possible{" "}
 								{duplicates.data?.length === 1 ? "duplicate" : "duplicates"}
 							</Button>
@@ -371,7 +382,7 @@ function Contacts() {
 										/>
 									</TableCell>
 									<TableCell>
-										<div className="flex items-center gap-3">
+										<div className="flex items-center gap-2">
 											<PersonAvatar person={row} />
 											<div className="min-w-0">
 												<div className="truncate font-medium">
@@ -499,7 +510,15 @@ function Contacts() {
 				}}
 			/>
 
-			{resolving && <DuplicatesSheet onClose={() => setResolving(false)} />}
+			{resolving && (
+				<DuplicatesSheet
+					onClose={() => setResolving(false)}
+					onView={(id) => {
+						setResolving(false);
+						contact.open(id);
+					}}
+				/>
+			)}
 			{contact.value && (
 				<ContactDrawer id={contact.value} onClose={contact.close} />
 			)}
@@ -517,39 +536,57 @@ function NewContact({ onClose }: { onClose: () => void }) {
 	const guard = useUnsavedGuard(dirty, onClose);
 	const ready = Boolean(draft.name.trim() || draft.email.trim());
 
+	const open = (id: string) =>
+		navigate({
+			search: (prev) => ({ ...prev, sheet: undefined, contact: id }),
+			replace: true,
+		});
+
 	const create = trpc.contacts.create.useMutation({
 		onSuccess: async (row) => {
 			await Promise.all([
 				utils.contacts.list.invalidate(),
+				utils.contacts.duplicates.invalidate(),
 				utils.tags.list.invalidate(),
 			]);
-			toast.success("Added.");
-			// Land in their drawer: the log and links are usually next.
-			navigate({
-				search: (prev) => ({ ...prev, sheet: undefined, contact: row.id }),
-				replace: true,
+			// Back to the list, with the door to the record in the toast: the
+			// next thing is usually another person, not this one's drawer.
+			toast.success(`Added ${row.name || row.email || "them"}.`, {
+				action: { label: "View", onClick: () => open(row.id) },
 			});
+			onClose();
 		},
 		onError: (err) => toast.error(err.message),
 	});
 
+	function submit() {
+		if (ready && !create.isPending) create.mutate(toInput(draft));
+	}
+
 	return (
 		<Sheet open onOpenChange={(open) => !open && guard.requestClose()}>
 			<SheetContent aria-describedby={undefined}>
-				<SheetHeader>
-					<SheetTitle>Add somebody</SheetTitle>
-				</SheetHeader>
-				<SheetBody>
-					<ContactFields draft={draft} onChange={setDraft} autoFocus />
-				</SheetBody>
-				<SheetFooter>
-					<Button
-						disabled={create.isPending || !ready}
-						onClick={() => create.mutate(toInput(draft))}
-					>
-						{create.isPending ? "Adding" : "Add"}
-					</Button>
-				</SheetFooter>
+				{/* A form, so Enter in any field is the same as pressing Add. */}
+				<form
+					className="flex min-h-0 flex-1 flex-col"
+					onSubmit={(e) => {
+						e.preventDefault();
+						submit();
+					}}
+				>
+					<SheetHeader>
+						<SheetTitle>Add somebody</SheetTitle>
+					</SheetHeader>
+					<SheetBody className="flex flex-col gap-4">
+						<ContactFields draft={draft} onChange={setDraft} autoFocus />
+						<TwinsNotice name={draft.name} email={draft.email} onView={open} />
+					</SheetBody>
+					<SheetFooter>
+						<Button type="submit" disabled={create.isPending || !ready}>
+							{create.isPending ? "Adding" : "Add"}
+						</Button>
+					</SheetFooter>
+				</form>
 				{guard.dialog}
 			</SheetContent>
 		</Sheet>

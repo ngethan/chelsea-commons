@@ -60,6 +60,8 @@ screen without reading this file.
 - No explanatory text. No page subtitles that explain the page, no sheet
   descriptions that explain the form, no keyboard hints, no "add one to get
   started". Empty states are two words. Titles and controls only.
+- No reasons either. A duplicate is listed, not argued ("same name",
+  "likely"); a warning shows who, not why. The person reading can tell.
 - Confirm dialogs keep their consequence sentence: that is a warning, not
   documentation.
 - Toasts report outcomes in a few words. Errors get the server's message.

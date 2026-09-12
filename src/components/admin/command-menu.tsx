@@ -1,3 +1,4 @@
+import { PersonAvatar } from "@/components/admin/person-avatar";
 import { FilterTabs, StatusBadge } from "@/components/admin/primitives";
 import {
 	CommandDialog,
@@ -126,7 +127,14 @@ function HitRow({ hit, onSelect }: { hit: SearchHit; onSelect: () => void }) {
 	const Icon = KIND_ICON[hit.kind];
 	return (
 		<CommandItem value={`${hit.kind}:${hit.id}`} onSelect={onSelect}>
-			<Icon />
+			{hit.kind === "contact" ? (
+				<PersonAvatar
+					person={{ id: hit.id, name: hit.title, email: hit.subtitle }}
+					size="xs"
+				/>
+			) : (
+				<Icon />
+			)}
 			<div className="flex min-w-0 flex-1 items-baseline gap-2">
 				<span className="truncate">{hit.title}</span>
 				{hit.subtitle && (
@@ -265,7 +273,7 @@ export function CommandMenu({
 								value={`recent:${row.id}`}
 								onSelect={() => go("/admin/contacts", { contact: row.id })}
 							>
-								<User />
+								<PersonAvatar person={row} size="xs" />
 								<div className="flex min-w-0 flex-1 items-baseline gap-2">
 									<span className="truncate">
 										{row.name || row.email || "Unnamed"}

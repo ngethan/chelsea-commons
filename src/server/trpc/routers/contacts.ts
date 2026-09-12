@@ -118,6 +118,14 @@ async function resolvePocs(db: Db, values: string[]): Promise<string[]> {
 	];
 }
 
+/**
+ * Trigram similarity, 0 to 1. Calibrated on the real list: 0.7 catches a
+ * dropped or swapped letter ("Goldstien"); 0.5 alone pairs "Sean Spector"
+ * with "Dan Spector", so below 0.7 the organization has to match too.
+ */
+const FUZZY_HIGH = 0.7;
+const FUZZY_LOW = 0.5;
+
 function pairKey(a: string, b: string) {
 	return a < b ? `${a}:${b}` : `${b}:${a}`;
 }
@@ -529,12 +537,81 @@ export const contactsRouter = createTRPCRouter({
 		}),
 
 	/**
+	 * Rows that may be the same person as the one being typed or read: what
+	 * the Add sheet asks while a name is typed, and the drawer asks for the
+	 * record it shows. One trigram probe and one address lookup, so it is
+	 * cheap enough to run on every pause in typing.
+	 */
+	twins: protectedProcedure
+		.input(
+			z.object({
+				name: z.string().trim().max(200).optional(),
+				email: z.string().trim().max(200).optional(),
+				exceptId: z.uuid().optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const name = (input.name ?? "").toLowerCase();
+			const email = (input.email ?? "").toLowerCase();
+			if (name.length < 3 && !email.includes("@")) return [];
+
+			const rows = await ctx.db
+				.select({
+					id: contact.id,
+					name: contact.name,
+					email: contact.email,
+					organizationName: organization.name,
+					sameEmail: email.includes("@")
+						? sql<boolean>`(lower(${contact.email}) = ${email} or ${email} = any(${contact.alternateEmails}))`
+						: sql<boolean>`false`,
+					similarity:
+						name.length >= 3
+							? sql<number>`similarity(lower(${contact.name}), ${name})`
+							: sql<number>`0`,
+				})
+				.from(contact)
+				.leftJoin(organization, eq(organization.id, contact.organizationId))
+				.where(
+					and(
+						isNull(contact.deletedAt),
+						input.exceptId
+							? sql`${contact.id} <> ${input.exceptId}`
+							: undefined,
+						or(
+							email.includes("@")
+								? sql`(lower(${contact.email}) = ${email} or ${email} = any(${contact.alternateEmails}))`
+								: sql`false`,
+							name.length >= 3
+								? sql`(lower(${contact.name}) % ${name} and similarity(lower(${contact.name}), ${name}) >= ${FUZZY_LOW})`
+								: sql`false`,
+						),
+					),
+				)
+				.orderBy(sql`2 desc, 1 desc`)
+				.limit(5);
+
+			// Who, not why: the person reading can tell two Alexes apart by
+			// looking, so the rows carry no reasons or confidence.
+			return rows.map((row) => ({
+				id: row.id,
+				name: row.name,
+				email: row.email,
+				organizationName: row.organizationName,
+			}));
+		}),
+
+	/**
 	 * People who may be the same person, worked out on read rather than
-	 * stored: the list is small and the heuristics will change. Two rows are
-	 * candidates when their names match (case, punctuation and spacing
-	 * aside), their phone numbers match, or one's address is the other's
-	 * alternate. Pairs somebody has already looked at and dismissed are left
-	 * out. Candidates are clustered so three spellings of one person are one
+	 * stored: the list is small and the heuristics will change.
+	 *
+	 * Two people are a pair when the names match (case, punctuation and
+	 * spacing aside), the phone numbers match, one's address is the other's
+	 * alternate, the names are nearly the same by trigram (Goldstien /
+	 * Goldstein), or fairly alike at the same organization. Not
+	 * the embeddings: two colleagues with similar notes sit closer in that
+	 * space than one person entered twice with different notes, which was
+	 * measured before deciding. Pairs somebody has dismissed are left out,
+	 * and candidates are clustered so three spellings of one person are one
 	 * group, not three pairs.
 	 */
 	duplicates: protectedProcedure.query(async ({ ctx }) => {
@@ -567,14 +644,13 @@ export const contactsRouter = createTRPCRouter({
 			).map((d) => pairKey(d.a, d.b)),
 		);
 
-		const reasons = new Map<string, Set<string>>();
-		const flag = (a: string, b: string, why: string) => {
+		// Pairs that look like one person. A pair is a pair; nobody is told
+		// why, so nothing here keeps a reason.
+		const pairs = new Set<string>();
+		const flag = (a: string, b: string) => {
 			if (a === b) return;
 			const key = pairKey(a, b);
-			if (dismissed.has(key)) return;
-			const set = reasons.get(key) ?? new Set<string>();
-			set.add(why);
-			reasons.set(key, set);
+			if (!dismissed.has(key)) pairs.add(key);
 		};
 
 		const byName = new Map<string, string[]>();
@@ -589,14 +665,37 @@ export const contactsRouter = createTRPCRouter({
 			if (row.email) byEmail.set(row.email.toLowerCase(), row.id);
 		}
 		for (const ids of byName.values())
-			for (const a of ids) for (const b of ids) flag(a, b, "same name");
+			for (const a of ids) for (const b of ids) flag(a, b);
 		for (const ids of byPhone.values())
-			for (const a of ids) for (const b of ids) flag(a, b, "same phone");
+			for (const a of ids) for (const b of ids) flag(a, b);
 		for (const row of rows)
 			for (const alt of row.alternateEmails) {
 				const owner = byEmail.get(alt.toLowerCase());
-				if (owner) flag(row.id, owner, "an address they share");
+				if (owner) flag(row.id, owner);
 			}
+
+		// Fuzzy names, from the trigram index. Exact matches were caught
+		// above; this is for spellings that drift.
+		const alike = await ctx.db
+			.select({
+				a: sql<string>`a.id`,
+				b: sql<string>`b.id`,
+				similarity: sql<number>`similarity(lower(a.name), lower(b.name))`,
+				sameOrganization: sql<boolean>`a.organization_id is not null and a.organization_id = b.organization_id`,
+			})
+			.from(sql`${contact} as a`)
+			.innerJoin(sql`${contact} as b`, sql`a.id < b.id`)
+			.where(
+				sql`a.deleted_at is null and b.deleted_at is null
+					and a.name is not null and b.name is not null
+					and lower(a.name) % lower(b.name)
+					and similarity(lower(a.name), lower(b.name)) >= ${FUZZY_LOW}
+					and similarity(lower(a.name), lower(b.name)) < 0.99`,
+			);
+		for (const pair of alike) {
+			const sim = Number(pair.similarity);
+			if (sim >= FUZZY_HIGH || pair.sameOrganization) flag(pair.a, pair.b);
+		}
 
 		// Union-find, so a chain of pairs becomes one group.
 		const parent = new Map<string, string>();
@@ -607,29 +706,30 @@ export const contactsRouter = createTRPCRouter({
 			parent.set(x, root);
 			return root;
 		};
-		for (const key of reasons.keys()) {
+		for (const key of pairs) {
 			const [a, b] = key.split(":");
 			parent.set(find(a), find(b));
 		}
-		const groups = new Map<string, { ids: Set<string>; why: Set<string> }>();
-		for (const [key, why] of reasons) {
+		const groups = new Map<string, Set<string>>();
+		for (const key of pairs) {
 			const [a, b] = key.split(":");
 			const root = find(a);
-			const group = groups.get(root) ?? { ids: new Set(), why: new Set() };
-			group.ids.add(a);
-			group.ids.add(b);
-			for (const w of why) group.why.add(w);
+			const group = groups.get(root) ?? new Set<string>();
+			group.add(a);
+			group.add(b);
 			groups.set(root, group);
 		}
 
 		const byId = new Map(rows.map((r) => [r.id, r]));
-		return [...groups.values()].map((group) => ({
-			reasons: [...group.why],
-			contacts: [...group.ids]
-				.map((id) => byId.get(id))
-				.filter((r): r is NonNullable<typeof r> => Boolean(r))
-				.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
-		}));
+		return [...groups.values()].map((group) => {
+			const ids = [...group];
+			return {
+				contacts: ids
+					.map((id) => byId.get(id))
+					.filter((r): r is NonNullable<typeof r> => Boolean(r))
+					.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+			};
+		});
 	}),
 
 	/**

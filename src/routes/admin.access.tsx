@@ -91,7 +91,7 @@ function Access() {
 								className={row.revokedAt ? "opacity-55" : ""}
 							>
 								<TableCell>
-									<div className="flex items-center gap-3">
+									<div className="flex items-center gap-2">
 										<PersonAvatar
 											person={{ ...row, id: row.userId ?? row.id }}
 										/>
@@ -196,23 +196,28 @@ function InviteSomebody({ onClose }: { onClose: () => void }) {
 				<SheetHeader>
 					<SheetTitle>Let somebody in</SheetTitle>
 				</SheetHeader>
-				<SheetBody>
-					<FloatingInput
-						label="Google address"
-						type="email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						autoFocus
-					/>
-				</SheetBody>
-				<SheetFooter>
-					<Button
-						disabled={invite.isPending || !email.trim()}
-						onClick={() => invite.mutate({ email })}
-					>
-						{invite.isPending ? "Adding" : "Add"}
-					</Button>
-				</SheetFooter>
+				<form
+					className="flex min-h-0 flex-1 flex-col"
+					onSubmit={(e) => {
+						e.preventDefault();
+						if (email.trim() && !invite.isPending) invite.mutate({ email });
+					}}
+				>
+					<SheetBody>
+						<FloatingInput
+							label="Google address"
+							type="email"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							autoFocus
+						/>
+					</SheetBody>
+					<SheetFooter>
+						<Button type="submit" disabled={invite.isPending || !email.trim()}>
+							{invite.isPending ? "Adding" : "Add"}
+						</Button>
+					</SheetFooter>
+				</form>
 				{guard.dialog}
 			</SheetContent>
 		</Sheet>

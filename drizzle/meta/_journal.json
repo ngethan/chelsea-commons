@@ -43,6 +43,13 @@
       "when": 1789066519922,
       "tag": "0005_tags",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789228608269,
+      "tag": "0006_fuzzy_names",
+      "breakpoints": true
     }
   ]
 }

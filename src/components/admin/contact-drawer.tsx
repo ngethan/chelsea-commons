@@ -14,6 +14,7 @@ import {
 	Tinted,
 } from "@/components/admin/primitives";
 import { Timeline, TimelineItem } from "@/components/admin/timeline";
+import { TwinsNotice } from "@/components/admin/twins-notice";
 import { useUnsavedGuard } from "@/components/admin/unsaved-guard";
 import { ConfirmButton } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -54,6 +55,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/lib/toast";
 import { trpc } from "@/trpc/client";
+import { useNavigate } from "@tanstack/react-router";
 import { Copy, Link2Off, Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -106,6 +108,7 @@ export function ContactDrawer({
 	onClose: () => void;
 }) {
 	const utils = trpc.useUtils();
+	const navigate = useNavigate();
 	const detail = trpc.contacts.byId.useQuery({ id });
 	const timeline = trpc.contacts.timeline.useQuery({ id });
 	const links = trpc.links.byContact.useQuery({ contactId: id });
@@ -214,7 +217,7 @@ export function ContactDrawer({
 	return (
 		<Sheet open onOpenChange={(open) => !open && guard.requestClose()}>
 			<SheetContent onOpenAutoFocus={(e) => e.preventDefault()}>
-				<SheetHeader className="flex-row items-center gap-4">
+				<SheetHeader className="flex-row items-center gap-3">
 					{row && <PersonAvatar person={row} size="lg" />}
 					<div className="flex min-w-0 flex-col gap-2">
 						<SheetTitle>{row?.name || row?.email || "Contact"}</SheetTitle>
@@ -246,9 +249,24 @@ export function ContactDrawer({
 
 				<SheetBody className="flex flex-col gap-10">
 					{draft && (
-						<section>
-							<H2>Details</H2>
+						<section className="flex flex-col gap-4">
+							<H2 className="mb-0">Details</H2>
 							<ContactFields draft={draft} onChange={setDraft} />
+							{/* The saved record, not the draft: a twin of what is on
+							    file, not of what is being typed. */}
+							{row && (
+								<TwinsNotice
+									name={row.name ?? ""}
+									email={row.email ?? ""}
+									exceptId={id}
+									onView={(twinId) =>
+										navigate({
+											to: "/admin/contacts",
+											search: { contact: twinId },
+										})
+									}
+								/>
+							)}
 						</section>
 					)}
 
