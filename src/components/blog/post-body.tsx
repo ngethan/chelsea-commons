@@ -22,6 +22,14 @@ import type React from "react";
  * redesigned: the reading page is not what changed.
  */
 
+/**
+ * The marker a bullet gets at each depth, cycling: filled, hollow, square,
+ * and round again. Nesting past the third level is rare enough that what
+ * matters is only that the marker changes, not that it keeps introducing new
+ * shapes nobody has a name for.
+ */
+const BULLETS = ["list-disc", "list-[circle]", "list-[square]"];
+
 const HEADING = [
 	"mt-10 mb-4 scroll-mt-24 font-serif text-3xl text-foreground leading-snug",
 	"mt-14 mb-5 scroll-mt-24 border-border border-t pt-8 font-serif text-2xl text-foreground leading-snug md:text-[1.75rem]",
@@ -123,15 +131,27 @@ function PhotoGrid({ photos }: { photos: unknown }) {
 	);
 }
 
-function children(node: PostNode): React.ReactNode {
+/**
+ * How deep in a list this node sits. A list at the top of the document is a
+ * block and gets a block's margin; a list inside a list item is part of that
+ * item and must not. Carried down the walk rather than left to a CSS rule
+ * undoing another CSS rule, because which of two equally specific classes
+ * wins is decided by stylesheet order, not by the DOM.
+ */
+function children(node: PostNode, depth = 0): React.ReactNode {
 	// A document node has no id; its position in its parent is its identity,
 	// and the tree is re-rendered whole rather than reconciled in place.
 	return (node.content ?? []).map((child, index) => (
-		<Node key={`${child.type}-${index}`} node={child} />
+		<Node key={`${child.type}-${index}`} node={child} depth={depth} />
 	));
 }
 
-function Node({ node }: { node: PostNode }): React.ReactNode {
+function Node({
+	node,
+	depth = 0,
+}: { node: PostNode; depth?: number }): React.ReactNode {
+	/** A nested list closes up against the line it belongs to. */
+	const listMargin = depth > 0 ? "mt-1.5" : "my-5";
 	switch (node.type) {
 		case "text":
 			return withMarks(node, node.text ?? "");
@@ -165,16 +185,33 @@ function Node({ node }: { node: PostNode }): React.ReactNode {
 
 		case "bulletList":
 			return (
-				<ul className="my-5 list-disc space-y-2 pl-5">{children(node)}</ul>
+				<ul
+					className={`${listMargin} ${BULLETS[depth % BULLETS.length]} space-y-1.5 pl-5`}
+				>
+					{children(node, depth + 1)}
+				</ul>
 			);
 
 		case "orderedList":
 			return (
-				<ol className="my-5 list-decimal space-y-2 pl-5">{children(node)}</ol>
+				<ol className={`${listMargin} list-decimal space-y-1.5 pl-5`}>
+					{children(node, depth + 1)}
+				</ol>
 			);
 
 		case "listItem":
-			return <li className="leading-[1.75]">{children(node)}</li>;
+			// Two things a list item has to undo, both of them a class that is
+			// right at the top level and wrong inside one.
+			//
+			// Its content is a paragraph, and a paragraph carries `my-5`: left
+			// alone that is 20px above and below every bullet on top of the
+			// list's own spacing, which reads as a column of unrelated
+			// sentences rather than a list.
+			//
+			// A nested list is handled by `depth` above, not from here.
+			return (
+				<li className="leading-[1.75] [&>p]:my-0">{children(node, depth)}</li>
+			);
 
 		case "blockquote":
 			return (

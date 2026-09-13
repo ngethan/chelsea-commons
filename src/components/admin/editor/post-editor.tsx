@@ -52,8 +52,22 @@ export function PostEditor({
 					"[&_h2]:mt-14 [&_h2]:mb-5 [&_h2]:border-border [&_h2]:border-t [&_h2]:pt-8 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:text-foreground [&_h2]:leading-snug",
 					"[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:text-xl",
 					"[&_h4]:mt-6 [&_h4]:mb-2 [&_h4]:font-semibold [&_h4]:text-foreground [&_h4]:text-lg",
-					"[&_ul]:my-5 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5",
-					"[&_ol]:my-5 [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-5",
+					"[&_ul]:my-5 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5",
+					// Filled, hollow, square, and round again, the way Notion
+					// cycles them. Descendant selectors rather than a depth
+					// counter, because CSS is all the editor has; kept in step
+					// with BULLETS in post-body.tsx.
+					"[&_ul_ul]:list-[circle] [&_ul_ul_ul]:list-[square]",
+					"[&_ul_ul_ul_ul]:list-disc [&_ul_ul_ul_ul_ul]:list-[circle]",
+					"[&_ul_ul_ul_ul_ul_ul]:list-[square]",
+					"[&_ol]:my-5 [&_ol]:list-decimal [&_ol]:space-y-1.5 [&_ol]:pl-5",
+					// What a list item has to undo: the paragraph's `my-5`, which
+					// would put 20px above and below every bullet, and a nested
+					// list's `my-5`, which would push an indented run away from
+					// the line it belongs to. Kept in step with `listItem` in
+					// post-body.tsx.
+					"[&_li>p]:my-0 [&_li]:leading-[1.75]",
+					"[&_li>ul]:mt-1.5 [&_li>ul]:mb-0 [&_li>ol]:mt-1.5 [&_li>ol]:mb-0",
 					"[&_blockquote]:my-8 [&_blockquote]:border-border [&_blockquote]:border-l-2 [&_blockquote]:pl-6 [&_blockquote]:font-serif [&_blockquote]:text-2xl [&_blockquote]:text-foreground [&_blockquote]:leading-snug",
 					"[&_hr]:my-8 [&_hr]:border-foreground/20",
 					"[&_a]:text-foreground [&_a]:underline",
