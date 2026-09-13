@@ -6,6 +6,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { GripVertical } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { Photos } from "./photos";
+import { SelectionMenu } from "./selection-menu";
 import { SlashMenu } from "./slash-menu";
 
 /**
@@ -93,6 +94,8 @@ export function PostEditor({
 					<GripVertical className="h-4 w-4" />
 				</div>
 			</DragHandle>
+
+			<SelectionMenu editor={editor} />
 
 			<SlashMenu editor={editor} />
 
