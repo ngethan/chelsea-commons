@@ -1,3 +1,8 @@
+import {
+	ColumnHead,
+	FillHead,
+	useColumnWidths,
+} from "@/components/admin/column-sizing";
 import { FilterBar } from "@/components/admin/filter-bar";
 import {
 	Empty,
@@ -12,10 +17,12 @@ import {
 	TableFoot,
 } from "@/components/admin/primitives";
 import { RowMenu } from "@/components/admin/row-menu";
+import { sortRows, useSort } from "@/components/admin/sorting";
 import { useUnsavedGuard } from "@/components/admin/unsaved-guard";
 import { useDrawerParam } from "@/components/admin/use-drawer-param";
 import { ConfirmButton, ConfirmDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
 	FloatingInput,
 	FloatingTextarea,
@@ -40,7 +47,7 @@ import {
 import { toast } from "@/lib/toast";
 import { trpc } from "@/trpc/client";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Building2, Copy, Link as LinkIcon, Trash2 } from "lucide-react";
+import { Building2, Copy, Link as LinkIcon, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
@@ -49,6 +56,8 @@ export const Route = createFileRoute("/admin/organizations")({
 		org: z.string().optional(),
 		sheet: z.enum(["new"]).optional(),
 		q: z.string().optional(),
+		/** `<column>:<asc|desc>`; see `sorting.ts`. */
+		sort: z.string().optional(),
 	}),
 	component: Organizations,
 });
@@ -58,10 +67,25 @@ function Organizations() {
 	const navigate = Route.useNavigate();
 	const org = useDrawerParam("org");
 	const sheet = useDrawerParam("sheet");
+	const cols = useColumnWidths("organizations", { domain: 260, people: 110 });
+	const sorting = useSort();
 	const utils = trpc.useUtils();
 	const list = trpc.organizations.list.useQuery();
 	const rows = list.data ?? [];
 	const [removing, setRemoving] = useState<string | null>(null);
+	const [removingMany, setRemovingMany] = useState(false);
+
+	// Rows ticked for a bulk action. Ids, not rows, so a selection survives
+	// a refetch; it is cleared once the action has run.
+	const [selected, setSelected] = useState<Set<string>>(new Set());
+	function toggleSelected(id: string) {
+		setSelected((prev) => {
+			const next = new Set(prev);
+			if (next.has(id)) next.delete(id);
+			else next.add(id);
+			return next;
+		});
+	}
 
 	const needle = (q ?? "").trim().toLowerCase();
 	const filtered = needle
@@ -71,6 +95,23 @@ function Organizations() {
 					.some((field) => String(field).toLowerCase().includes(needle)),
 			)
 		: rows;
+	const sorted = sortRows(filtered, sorting.sort, {
+		people: (row) => row.contacts,
+	});
+
+	const removeMany = trpc.organizations.removeMany.useMutation({
+		onSuccess: async (result) => {
+			await Promise.all([
+				utils.organizations.list.invalidate(),
+				utils.contacts.list.invalidate(),
+			]);
+			setSelected(new Set());
+			toast.success(
+				`Deleted ${result.deleted}. The people are still on the list.`,
+			);
+		},
+		onError: (err) => toast.error(err.message),
+	});
 
 	const remove = trpc.organizations.remove.useMutation({
 		onSuccess: async () => {
@@ -110,14 +151,48 @@ function Organizations() {
 				<ListTable>
 					<TableHeader>
 						<TableRow>
-							<TableHead>Name</TableHead>
-							<TableHead className="w-[260px]">Domain</TableHead>
-							<TableHead className="w-[110px] text-right">People</TableHead>
+							<TableHead data-tick>
+								<Checkbox
+									aria-label="Select everything shown"
+									checked={
+										filtered.length > 0 &&
+										filtered.every((row) => selected.has(row.id))
+									}
+									onCheckedChange={(checked) =>
+										setSelected((prev) => {
+											const next = new Set(prev);
+											for (const row of filtered) {
+												if (checked) next.add(row.id);
+												else next.delete(row.id);
+											}
+											return next;
+										})
+									}
+								/>
+							</TableHead>
+							<FillHead cols={cols}>Name</FillHead>
+							<ColumnHead cols={cols} id="domain">
+								Domain
+							</ColumnHead>
+							<ColumnHead
+								cols={cols}
+								id="people"
+								last
+								sort={sorting.on("people")}
+								className="text-right"
+							>
+								People
+							</ColumnHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{list.isLoading && <RowsSkeleton rows={6} cols={3} />}
-						{filtered.map((row) => (
+						{list.isLoading && (
+							<RowsSkeleton
+								rows={6}
+								cells={["tick", "text", "mono", "number"]}
+							/>
+						)}
+						{sorted.map((row) => (
 							<RowMenu
 								key={row.id}
 								actions={[
@@ -151,8 +226,25 @@ function Organizations() {
 							>
 								<TableRow
 									className="cursor-pointer"
+									data-state={selected.has(row.id) ? "selected" : undefined}
 									onClick={() => org.open(row.id)}
 								>
+									{/* The tick is its own target: a click here selects and
+									    does not open. */}
+									<TableCell
+										data-tick
+										onClick={(e) => {
+											e.stopPropagation();
+											toggleSelected(row.id);
+										}}
+									>
+										<Checkbox
+											checked={selected.has(row.id)}
+											onCheckedChange={() => toggleSelected(row.id)}
+											onClick={(e) => e.stopPropagation()}
+											aria-label={`Select ${row.name}`}
+										/>
+									</TableCell>
 									<TableCell className="truncate font-medium">
 										{row.name}
 									</TableCell>
@@ -175,10 +267,51 @@ function Organizations() {
 				)}
 			</PageScroll>
 
-			<TableFoot
-				shown={filtered.length}
-				total={rows.length}
-				noun="organizations"
+			{selected.size > 0 ? (
+				<div className="flex h-12 shrink-0 items-center gap-3 border-t border-border bg-panel px-4 md:px-8">
+					<div className="-ml-1.5 flex items-center gap-1.5">
+						<Button
+							variant="icon"
+							size="icon-2xs"
+							aria-label="Clear selection"
+							onClick={() => setSelected(new Set())}
+						>
+							<X />
+						</Button>
+						<span className="text-[13px] leading-none tabular-nums">
+							{selected.size} selected
+						</span>
+					</div>
+					<div className="ml-auto flex items-center gap-2">
+						<Button
+							size="sm"
+							variant="outline"
+							disabled={removeMany.isPending}
+							onClick={() => setRemovingMany(true)}
+						>
+							<Trash2 />
+							Delete
+						</Button>
+					</div>
+				</div>
+			) : (
+				<TableFoot
+					shown={filtered.length}
+					total={rows.length}
+					noun="organizations"
+				/>
+			)}
+
+			<ConfirmDialog
+				open={removingMany}
+				onOpenChange={setRemovingMany}
+				title={`Delete ${selected.size} ${selected.size === 1 ? "organization" : "organizations"}?`}
+				description="Everybody filed at them stays on the list, they just stop being filed anywhere."
+				action="Delete"
+				onConfirm={() => {
+					if (selected.size) removeMany.mutate({ ids: [...selected] });
+					setRemovingMany(false);
+				}}
 			/>
 
 			<ConfirmDialog

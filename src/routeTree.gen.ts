@@ -26,16 +26,20 @@ import { Route as WritingIndexRouteImport } from './routes/writing.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as WritingSlugRouteImport } from './routes/writing.$slug'
 import { Route as URefRouteImport } from './routes/u.$ref'
-import { Route as AdminUpdatesRouteImport } from './routes/admin.updates'
-import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as ApiUploadRouteImport } from './routes/api.upload'
+import { Route as AdminWritingRouteImport } from './routes/admin.writing'
 import { Route as AdminOrganizationsRouteImport } from './routes/admin.organizations'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
-import { Route as AdminAccessRouteImport } from './routes/admin.access'
+import { Route as AdminSettingsIndexRouteImport } from './routes/admin.settings.index'
 import { Route as ApiTrpcSplatRouteImport } from './routes/api.trpc.$'
 import { Route as ApiCronSyncEventsRouteImport } from './routes/api.cron.sync-events'
 import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as ApiAiChatRouteImport } from './routes/api.ai.chat'
-import { Route as AdminUpdatesIdRouteImport } from './routes/admin.updates.$id'
+import { Route as AdminWritingIdRouteImport } from './routes/admin.writing.$id'
+import { Route as AdminSettingsUsersRouteImport } from './routes/admin.settings.users'
+import { Route as AdminWritingIdIndexRouteImport } from './routes/admin.writing.$id.index'
+import { Route as AdminWritingIdPreviewRouteImport } from './routes/admin_.writing.$id.preview'
+import { Route as AdminWritingIdRecipientsRouteImport } from './routes/admin.writing.$id.recipients'
 
 const WritingRoute = WritingRouteImport.update({
   id: '/writing',
@@ -122,14 +126,14 @@ const URefRoute = URefRouteImport.update({
   path: '/u/$ref',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUpdatesRoute = AdminUpdatesRouteImport.update({
-  id: '/updates',
-  path: '/updates',
-  getParentRoute: () => AdminRoute,
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminSettingsRoute = AdminSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+const AdminWritingRoute = AdminWritingRouteImport.update({
+  id: '/writing',
+  path: '/writing',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminOrganizationsRoute = AdminOrganizationsRouteImport.update({
@@ -142,9 +146,9 @@ const AdminContactsRoute = AdminContactsRouteImport.update({
   path: '/contacts',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAccessRoute = AdminAccessRouteImport.update({
-  id: '/access',
-  path: '/access',
+const AdminSettingsIndexRoute = AdminSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
   getParentRoute: () => AdminRoute,
 } as any)
 const ApiTrpcSplatRoute = ApiTrpcSplatRouteImport.update({
@@ -167,11 +171,32 @@ const ApiAiChatRoute = ApiAiChatRouteImport.update({
   path: '/api/ai/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminUpdatesIdRoute = AdminUpdatesIdRouteImport.update({
+const AdminWritingIdRoute = AdminWritingIdRouteImport.update({
   id: '/$id',
   path: '/$id',
-  getParentRoute: () => AdminUpdatesRoute,
+  getParentRoute: () => AdminWritingRoute,
 } as any)
+const AdminSettingsUsersRoute = AdminSettingsUsersRouteImport.update({
+  id: '/settings/users',
+  path: '/settings/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminWritingIdIndexRoute = AdminWritingIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminWritingIdRoute,
+} as any)
+const AdminWritingIdPreviewRoute = AdminWritingIdPreviewRouteImport.update({
+  id: '/admin_/writing/$id/preview',
+  path: '/admin/writing/$id/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWritingIdRecipientsRoute =
+  AdminWritingIdRecipientsRouteImport.update({
+    id: '/recipients',
+    path: '/recipients',
+    getParentRoute: () => AdminWritingIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -187,20 +212,24 @@ export interface FileRoutesByFullPath {
   '/test': typeof TestRoute
   '/v2': typeof V2Route
   '/writing': typeof WritingRouteWithChildren
-  '/admin/access': typeof AdminAccessRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/organizations': typeof AdminOrganizationsRoute
-  '/admin/settings': typeof AdminSettingsRoute
-  '/admin/updates': typeof AdminUpdatesRouteWithChildren
+  '/admin/writing': typeof AdminWritingRouteWithChildren
+  '/api/upload': typeof ApiUploadRoute
   '/u/$ref': typeof URefRoute
   '/writing/$slug': typeof WritingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/writing/': typeof WritingIndexRoute
-  '/admin/updates/$id': typeof AdminUpdatesIdRoute
+  '/admin/settings/users': typeof AdminSettingsUsersRoute
+  '/admin/writing/$id': typeof AdminWritingIdRouteWithChildren
   '/api/ai/chat': typeof ApiAiChatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cron/sync-events': typeof ApiCronSyncEventsRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/admin/settings': typeof AdminSettingsIndexRoute
+  '/admin/writing/$id/recipients': typeof AdminWritingIdRecipientsRoute
+  '/admin/writing/$id/preview': typeof AdminWritingIdPreviewRoute
+  '/admin/writing/$id/': typeof AdminWritingIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -214,20 +243,23 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/test': typeof TestRoute
   '/v2': typeof V2Route
-  '/admin/access': typeof AdminAccessRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/organizations': typeof AdminOrganizationsRoute
-  '/admin/settings': typeof AdminSettingsRoute
-  '/admin/updates': typeof AdminUpdatesRouteWithChildren
+  '/admin/writing': typeof AdminWritingRouteWithChildren
+  '/api/upload': typeof ApiUploadRoute
   '/u/$ref': typeof URefRoute
   '/writing/$slug': typeof WritingSlugRoute
   '/admin': typeof AdminIndexRoute
   '/writing': typeof WritingIndexRoute
-  '/admin/updates/$id': typeof AdminUpdatesIdRoute
+  '/admin/settings/users': typeof AdminSettingsUsersRoute
   '/api/ai/chat': typeof ApiAiChatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cron/sync-events': typeof ApiCronSyncEventsRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/admin/settings': typeof AdminSettingsIndexRoute
+  '/admin/writing/$id/recipients': typeof AdminWritingIdRecipientsRoute
+  '/admin/writing/$id/preview': typeof AdminWritingIdPreviewRoute
+  '/admin/writing/$id': typeof AdminWritingIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -244,20 +276,24 @@ export interface FileRoutesById {
   '/test': typeof TestRoute
   '/v2': typeof V2Route
   '/writing': typeof WritingRouteWithChildren
-  '/admin/access': typeof AdminAccessRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/organizations': typeof AdminOrganizationsRoute
-  '/admin/settings': typeof AdminSettingsRoute
-  '/admin/updates': typeof AdminUpdatesRouteWithChildren
+  '/admin/writing': typeof AdminWritingRouteWithChildren
+  '/api/upload': typeof ApiUploadRoute
   '/u/$ref': typeof URefRoute
   '/writing/$slug': typeof WritingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/writing/': typeof WritingIndexRoute
-  '/admin/updates/$id': typeof AdminUpdatesIdRoute
+  '/admin/settings/users': typeof AdminSettingsUsersRoute
+  '/admin/writing/$id': typeof AdminWritingIdRouteWithChildren
   '/api/ai/chat': typeof ApiAiChatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cron/sync-events': typeof ApiCronSyncEventsRoute
   '/api/trpc/$': typeof ApiTrpcSplatRoute
+  '/admin/settings/': typeof AdminSettingsIndexRoute
+  '/admin/writing/$id/recipients': typeof AdminWritingIdRecipientsRoute
+  '/admin_/writing/$id/preview': typeof AdminWritingIdPreviewRoute
+  '/admin/writing/$id/': typeof AdminWritingIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -275,20 +311,24 @@ export interface FileRouteTypes {
     | '/test'
     | '/v2'
     | '/writing'
-    | '/admin/access'
     | '/admin/contacts'
     | '/admin/organizations'
-    | '/admin/settings'
-    | '/admin/updates'
+    | '/admin/writing'
+    | '/api/upload'
     | '/u/$ref'
     | '/writing/$slug'
     | '/admin/'
     | '/writing/'
-    | '/admin/updates/$id'
+    | '/admin/settings/users'
+    | '/admin/writing/$id'
     | '/api/ai/chat'
     | '/api/auth/$'
     | '/api/cron/sync-events'
     | '/api/trpc/$'
+    | '/admin/settings'
+    | '/admin/writing/$id/recipients'
+    | '/admin/writing/$id/preview'
+    | '/admin/writing/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -302,20 +342,23 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/test'
     | '/v2'
-    | '/admin/access'
     | '/admin/contacts'
     | '/admin/organizations'
-    | '/admin/settings'
-    | '/admin/updates'
+    | '/admin/writing'
+    | '/api/upload'
     | '/u/$ref'
     | '/writing/$slug'
     | '/admin'
     | '/writing'
-    | '/admin/updates/$id'
+    | '/admin/settings/users'
     | '/api/ai/chat'
     | '/api/auth/$'
     | '/api/cron/sync-events'
     | '/api/trpc/$'
+    | '/admin/settings'
+    | '/admin/writing/$id/recipients'
+    | '/admin/writing/$id/preview'
+    | '/admin/writing/$id'
   id:
     | '__root__'
     | '/'
@@ -331,20 +374,24 @@ export interface FileRouteTypes {
     | '/test'
     | '/v2'
     | '/writing'
-    | '/admin/access'
     | '/admin/contacts'
     | '/admin/organizations'
-    | '/admin/settings'
-    | '/admin/updates'
+    | '/admin/writing'
+    | '/api/upload'
     | '/u/$ref'
     | '/writing/$slug'
     | '/admin/'
     | '/writing/'
-    | '/admin/updates/$id'
+    | '/admin/settings/users'
+    | '/admin/writing/$id'
     | '/api/ai/chat'
     | '/api/auth/$'
     | '/api/cron/sync-events'
     | '/api/trpc/$'
+    | '/admin/settings/'
+    | '/admin/writing/$id/recipients'
+    | '/admin_/writing/$id/preview'
+    | '/admin/writing/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -361,11 +408,13 @@ export interface RootRouteChildren {
   TestRoute: typeof TestRoute
   V2Route: typeof V2Route
   WritingRoute: typeof WritingRouteWithChildren
+  ApiUploadRoute: typeof ApiUploadRoute
   URefRoute: typeof URefRoute
   ApiAiChatRoute: typeof ApiAiChatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCronSyncEventsRoute: typeof ApiCronSyncEventsRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
+  AdminWritingIdPreviewRoute: typeof AdminWritingIdPreviewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -489,18 +538,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof URefRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/updates': {
-      id: '/admin/updates'
-      path: '/updates'
-      fullPath: '/admin/updates'
-      preLoaderRoute: typeof AdminUpdatesRouteImport
-      parentRoute: typeof AdminRoute
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/settings': {
-      id: '/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AdminSettingsRouteImport
+    '/admin/writing': {
+      id: '/admin/writing'
+      path: '/writing'
+      fullPath: '/admin/writing'
+      preLoaderRoute: typeof AdminWritingRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/organizations': {
@@ -517,11 +566,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContactsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/access': {
-      id: '/admin/access'
-      path: '/access'
-      fullPath: '/admin/access'
-      preLoaderRoute: typeof AdminAccessRouteImport
+    '/admin/settings/': {
+      id: '/admin/settings/'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
     '/api/trpc/$': {
@@ -552,44 +601,86 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/updates/$id': {
-      id: '/admin/updates/$id'
+    '/admin/writing/$id': {
+      id: '/admin/writing/$id'
       path: '/$id'
-      fullPath: '/admin/updates/$id'
-      preLoaderRoute: typeof AdminUpdatesIdRouteImport
-      parentRoute: typeof AdminUpdatesRoute
+      fullPath: '/admin/writing/$id'
+      preLoaderRoute: typeof AdminWritingIdRouteImport
+      parentRoute: typeof AdminWritingRoute
+    }
+    '/admin/settings/users': {
+      id: '/admin/settings/users'
+      path: '/settings/users'
+      fullPath: '/admin/settings/users'
+      preLoaderRoute: typeof AdminSettingsUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/writing/$id/': {
+      id: '/admin/writing/$id/'
+      path: '/'
+      fullPath: '/admin/writing/$id/'
+      preLoaderRoute: typeof AdminWritingIdIndexRouteImport
+      parentRoute: typeof AdminWritingIdRoute
+    }
+    '/admin_/writing/$id/preview': {
+      id: '/admin_/writing/$id/preview'
+      path: '/admin/writing/$id/preview'
+      fullPath: '/admin/writing/$id/preview'
+      preLoaderRoute: typeof AdminWritingIdPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/writing/$id/recipients': {
+      id: '/admin/writing/$id/recipients'
+      path: '/recipients'
+      fullPath: '/admin/writing/$id/recipients'
+      preLoaderRoute: typeof AdminWritingIdRecipientsRouteImport
+      parentRoute: typeof AdminWritingIdRoute
     }
   }
 }
 
-interface AdminUpdatesRouteChildren {
-  AdminUpdatesIdRoute: typeof AdminUpdatesIdRoute
+interface AdminWritingIdRouteChildren {
+  AdminWritingIdRecipientsRoute: typeof AdminWritingIdRecipientsRoute
+  AdminWritingIdIndexRoute: typeof AdminWritingIdIndexRoute
 }
 
-const AdminUpdatesRouteChildren: AdminUpdatesRouteChildren = {
-  AdminUpdatesIdRoute: AdminUpdatesIdRoute,
+const AdminWritingIdRouteChildren: AdminWritingIdRouteChildren = {
+  AdminWritingIdRecipientsRoute: AdminWritingIdRecipientsRoute,
+  AdminWritingIdIndexRoute: AdminWritingIdIndexRoute,
 }
 
-const AdminUpdatesRouteWithChildren = AdminUpdatesRoute._addFileChildren(
-  AdminUpdatesRouteChildren,
+const AdminWritingIdRouteWithChildren = AdminWritingIdRoute._addFileChildren(
+  AdminWritingIdRouteChildren,
+)
+
+interface AdminWritingRouteChildren {
+  AdminWritingIdRoute: typeof AdminWritingIdRouteWithChildren
+}
+
+const AdminWritingRouteChildren: AdminWritingRouteChildren = {
+  AdminWritingIdRoute: AdminWritingIdRouteWithChildren,
+}
+
+const AdminWritingRouteWithChildren = AdminWritingRoute._addFileChildren(
+  AdminWritingRouteChildren,
 )
 
 interface AdminRouteChildren {
-  AdminAccessRoute: typeof AdminAccessRoute
   AdminContactsRoute: typeof AdminContactsRoute
   AdminOrganizationsRoute: typeof AdminOrganizationsRoute
-  AdminSettingsRoute: typeof AdminSettingsRoute
-  AdminUpdatesRoute: typeof AdminUpdatesRouteWithChildren
+  AdminWritingRoute: typeof AdminWritingRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminSettingsUsersRoute: typeof AdminSettingsUsersRoute
+  AdminSettingsIndexRoute: typeof AdminSettingsIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
-  AdminAccessRoute: AdminAccessRoute,
   AdminContactsRoute: AdminContactsRoute,
   AdminOrganizationsRoute: AdminOrganizationsRoute,
-  AdminSettingsRoute: AdminSettingsRoute,
-  AdminUpdatesRoute: AdminUpdatesRouteWithChildren,
+  AdminWritingRoute: AdminWritingRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
+  AdminSettingsUsersRoute: AdminSettingsUsersRoute,
+  AdminSettingsIndexRoute: AdminSettingsIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -621,11 +712,13 @@ const rootRouteChildren: RootRouteChildren = {
   TestRoute: TestRoute,
   V2Route: V2Route,
   WritingRoute: WritingRouteWithChildren,
+  ApiUploadRoute: ApiUploadRoute,
   URefRoute: URefRoute,
   ApiAiChatRoute: ApiAiChatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCronSyncEventsRoute: ApiCronSyncEventsRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
+  AdminWritingIdPreviewRoute: AdminWritingIdPreviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

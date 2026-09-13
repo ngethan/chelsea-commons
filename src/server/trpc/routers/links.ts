@@ -1,4 +1,4 @@
-import { contact, link, linkEvent, update } from "@/db/schema";
+import { contact, link, linkEvent, post } from "@/db/schema";
 import { isAutomatedClick } from "@/lib/bots";
 import { newRef } from "@/lib/tracking";
 import { TRPCError } from "@trpc/server";
@@ -9,10 +9,10 @@ import { createTRPCRouter, protectedProcedure } from "../init";
 
 export const linksRouter = createTRPCRouter({
 	/**
-	 * One link per person per update, minted for everybody named who does not
+	 * One link per person per post, minted for everybody named who does not
 	 * have one yet.
 	 *
-	 * Idempotent by construction: `one_link_per_contact_per_update` means a
+	 * Idempotent by construction: `one_link_per_contact_per_post` means a
 	 * second call for the same pair returns the ref that already exists rather
 	 * than a new one. Two refs for one reader would split their history in
 	 * half, and both halves look like ordinary numbers, so nothing would ever
@@ -21,19 +21,19 @@ export const linksRouter = createTRPCRouter({
 	createForContacts: protectedProcedure
 		.input(
 			z.object({
-				updateId: z.uuid(),
+				postId: z.uuid(),
 				contactIds: z.array(z.uuid()).min(1, "Pick at least one person."),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			const [target] = await ctx.db
 				.select()
-				.from(update)
-				.where(eq(update.id, input.updateId))
+				.from(post)
+				.where(eq(post.id, input.postId))
 				.limit(1);
 
 			if (!target) {
-				throw new TRPCError({ code: "NOT_FOUND", message: "No such update." });
+				throw new TRPCError({ code: "NOT_FOUND", message: "No such post." });
 			}
 
 			const live = await ctx.db
@@ -48,7 +48,7 @@ export const linksRouter = createTRPCRouter({
 				.from(link)
 				.where(
 					and(
-						eq(link.updateId, input.updateId),
+						eq(link.postId, input.postId),
 						inArray(link.contactId, input.contactIds),
 					),
 				);
@@ -61,7 +61,7 @@ export const linksRouter = createTRPCRouter({
 					fresh.map((row) => ({
 						ref: newRef(),
 						contactId: row.id,
-						updateId: input.updateId,
+						postId: input.postId,
 						createdBy: ctx.user.id,
 					})),
 				);
@@ -72,7 +72,7 @@ export const linksRouter = createTRPCRouter({
 						entityType: "contact" as const,
 						entityId: row.id,
 						verb: "linked",
-						newValue: target.title,
+						newValue: target.name,
 					})),
 				);
 			}
@@ -90,11 +90,11 @@ export const linksRouter = createTRPCRouter({
 					ref: link.ref,
 					revokedAt: link.revokedAt,
 					createdAt: link.createdAt,
-					updateId: update.id,
-					updateTitle: update.title,
+					postId: post.id,
+					postName: post.name,
 				})
 				.from(link)
-				.innerJoin(update, eq(update.id, link.updateId))
+				.innerJoin(post, eq(post.id, link.postId))
 				.where(eq(link.contactId, input.contactId))
 				.orderBy(desc(link.createdAt));
 

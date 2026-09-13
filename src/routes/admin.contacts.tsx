@@ -1,3 +1,8 @@
+import {
+	ColumnHead,
+	FillHead,
+	useColumnWidths,
+} from "@/components/admin/column-sizing";
 import { ContactDrawer } from "@/components/admin/contact-drawer";
 import {
 	ContactFields,
@@ -12,7 +17,7 @@ import {
 	csv,
 	organizationFilter,
 } from "@/components/admin/filter-bar";
-import { IssueUpdate } from "@/components/admin/issue-update";
+import { IssueLink } from "@/components/admin/issue-link";
 import { PersonAvatar } from "@/components/admin/person-avatar";
 import { PocList, usePocs } from "@/components/admin/pocs";
 import {
@@ -27,6 +32,7 @@ import {
 	TableFoot,
 } from "@/components/admin/primitives";
 import { RowMenu } from "@/components/admin/row-menu";
+import { sortRows, useSort } from "@/components/admin/sorting";
 import { TagChooser, TagPill } from "@/components/admin/tag-picker";
 import { TwinsNotice } from "@/components/admin/twins-notice";
 import { useUnsavedGuard } from "@/components/admin/unsaved-guard";
@@ -76,6 +82,8 @@ const searchSchema = z.object({
 	poc: z.string().optional(),
 	tag: z.string().optional(),
 	org: z.string().optional(),
+	/** `<column>:<asc|desc>`; see `sorting.ts`. */
+	sort: z.string().optional(),
 });
 
 export const Route = createFileRoute("/admin/contacts")({
@@ -94,6 +102,14 @@ function Contacts() {
 	const utils = trpc.useUtils();
 	const contact = useDrawerParam("contact");
 	const sheet = useDrawerParam("sheet");
+	const sorting = useSort();
+	const cols = useColumnWidths("contacts", {
+		organization: 220,
+		status: 160,
+		pocs: 160,
+		tags: 240,
+		lastTouch: 130,
+	});
 	const [removing, setRemoving] = useState<string | null>(null);
 
 	const list = trpc.contacts.list.useQuery();
@@ -137,20 +153,14 @@ function Contacts() {
 		});
 	}
 
-	// Everybody on the roster, plus any name an import wrote before that
-	// person had an account, so old values can still be filtered on.
+	// Everybody with an account, and nobody else. A name an import wrote
+	// before that person had an account still shows on the row as text, but
+	// it is not a person to filter by; reassign it in the drawer.
 	const roster = usePocs();
-	const pocOptions = useMemo(() => {
-		const options = roster.users.map((u) => ({ value: u.id, label: u.name }));
-		const known = new Set(options.map((o) => o.value));
-		const stray = new Set<string>();
-		for (const row of rows)
-			for (const value of row.pocs) if (!known.has(value)) stray.add(value);
-		return [
-			...options,
-			...[...stray].sort().map((name) => ({ value: name, label: name })),
-		];
-	}, [rows, roster.users]);
+	const pocOptions = useMemo(
+		() => roster.users.map((u) => ({ value: u.id, label: u.name })),
+		[roster.users],
+	);
 
 	const remove = trpc.contacts.remove.useMutation({
 		onSuccess: async () => {
@@ -190,6 +200,12 @@ function Contacts() {
 				.some((field) => String(field).toLowerCase().includes(needle));
 		});
 	}, [rows, q, statuses, pocs, tagNames, orgs]);
+
+	const sorted = useMemo(
+		() =>
+			sortRows(filtered, sorting.sort, { lastTouch: (row) => row.lastTouch }),
+		[filtered, sorting.sort],
+	);
 
 	function setQ(value: string) {
 		navigate({
@@ -309,25 +325,58 @@ function Contacts() {
 									}
 								/>
 							</TableHead>
-							<TableHead>Person</TableHead>
-							<TableHead className="hidden w-[220px] md:table-cell">
+							<FillHead cols={cols}>Person</FillHead>
+							<ColumnHead
+								cols={cols}
+								id="organization"
+								className="hidden md:table-cell"
+							>
 								Organization
-							</TableHead>
-							<TableHead className="w-[160px]">Status</TableHead>
-							<TableHead className="hidden w-[160px] lg:table-cell">
+							</ColumnHead>
+							<ColumnHead cols={cols} id="status">
+								Status
+							</ColumnHead>
+							<ColumnHead
+								cols={cols}
+								id="pocs"
+								className="hidden lg:table-cell"
+							>
 								POCs
-							</TableHead>
-							<TableHead className="hidden w-[240px] xl:table-cell">
+							</ColumnHead>
+							<ColumnHead
+								cols={cols}
+								id="tags"
+								className="hidden xl:table-cell"
+							>
 								Tags
-							</TableHead>
-							<TableHead className="hidden w-[130px] text-right md:table-cell">
+							</ColumnHead>
+							<ColumnHead
+								cols={cols}
+								id="lastTouch"
+								last
+								sort={sorting.on("lastTouch")}
+								className="hidden text-right md:table-cell"
+							>
 								Last touch
-							</TableHead>
+							</ColumnHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{list.isLoading && <RowsSkeleton rows={8} cols={7} />}
-						{filtered.map((row) => (
+						{list.isLoading && (
+							<RowsSkeleton
+								rows={8}
+								cells={[
+									"tick",
+									"person",
+									{ kind: "text", className: "hidden md:table-cell" },
+									"text",
+									{ kind: "faces", className: "hidden lg:table-cell" },
+									{ kind: "pills", className: "hidden xl:table-cell" },
+									{ kind: "date", className: "hidden md:table-cell" },
+								]}
+							/>
+						)}
+						{sorted.map((row) => (
 							<RowMenu
 								key={row.id}
 								actions={[
@@ -382,8 +431,8 @@ function Contacts() {
 										/>
 									</TableCell>
 									<TableCell>
-										<div className="flex items-center gap-2">
-											<PersonAvatar person={row} />
+										<div className="flex items-center gap-2.5">
+											<PersonAvatar person={row} size="md" />
 											<div className="min-w-0">
 												<div className="truncate font-medium">
 													{row.name || row.email || "Unnamed"}
@@ -479,15 +528,15 @@ function Contacts() {
 								Add tag
 							</Button>
 						</TagChooser>
-						<IssueUpdate
+						<IssueLink
 							contactIds={[...selected]}
 							onDone={() => setSelected(new Set())}
 						>
 							<Button size="sm">
 								<FileText />
-								Issue update
+								Issue link
 							</Button>
-						</IssueUpdate>
+						</IssueLink>
 					</div>
 				</div>
 			) : (

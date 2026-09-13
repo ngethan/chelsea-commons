@@ -11,6 +11,7 @@ import {
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { type Role, canManageUsers } from "@/lib/roles";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOut, Search, Settings } from "lucide-react";
 
@@ -19,6 +20,7 @@ type Viewer = {
 	name: string;
 	email: string;
 	image: string | null;
+	role: Role;
 };
 
 /**
@@ -80,12 +82,14 @@ export function Topbar({
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem asChild>
-							<Link to="/admin/settings" className="no-underline">
-								<Settings />
-								Settings
-							</Link>
-						</DropdownMenuItem>
+						{canManageUsers(user.role) && (
+							<DropdownMenuItem asChild>
+								<Link to="/admin/settings" className="no-underline">
+									<Settings />
+									Settings
+								</Link>
+							</DropdownMenuItem>
+						)}
 						<DropdownMenuItem onSelect={signOut}>
 							<LogOut />
 							Sign out

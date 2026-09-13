@@ -7,7 +7,7 @@ import {
 	link,
 	linkEvent,
 	organization,
-	update,
+	post,
 	user,
 } from "@/db/schema";
 import { isAutomatedClick } from "@/lib/bots";
@@ -240,12 +240,12 @@ export const contactsRouter = createTRPCRouter({
 				.select({
 					at: linkEvent.createdAt,
 					userAgent: linkEvent.userAgent,
-					updateTitle: update.title,
-					updateSlug: update.slug,
+					postName: post.name,
+					postSlug: post.slug,
 				})
 				.from(linkEvent)
 				.innerJoin(link, eq(link.ref, linkEvent.ref))
-				.innerJoin(update, eq(update.id, link.updateId))
+				.innerJoin(post, eq(post.id, link.postId))
 				.where(eq(link.contactId, input.id))
 				.orderBy(desc(linkEvent.createdAt))
 				.limit(200);
@@ -259,7 +259,7 @@ export const contactsRouter = createTRPCRouter({
 					oldValue: e.oldValue,
 					newValue: e.newValue,
 					actorName: e.actorName,
-					updateTitle: null as string | null,
+					postName: null as string | null,
 					automated: false,
 				})),
 				...clicks.map((c) => ({
@@ -268,9 +268,9 @@ export const contactsRouter = createTRPCRouter({
 					verb: "opened",
 					field: null as string | null,
 					oldValue: null as string | null,
-					newValue: c.updateSlug,
+					newValue: c.postSlug,
 					actorName: null as string | null,
-					updateTitle: c.updateTitle,
+					postName: c.postName,
 					automated: isAutomatedClick(c.userAgent),
 				})),
 				...logged.map((l) => ({
@@ -281,7 +281,7 @@ export const contactsRouter = createTRPCRouter({
 					oldValue: null as string | null,
 					newValue: l.summary,
 					actorName: null as string | null,
-					updateTitle: null as string | null,
+					postName: null as string | null,
 					automated: false,
 				})),
 			];
@@ -737,8 +737,8 @@ export const contactsRouter = createTRPCRouter({
 	 * the dropped row fills what the kept one lacks; lists (tags, POCs,
 	 * alternate addresses) are unioned, with the dropped address becoming an
 	 * alternate so a paste still recognises it; notes are joined. The
-	 * dropped row's interactions and links move across, except a link to an
-	 * update the kept row already has one for, which stays with the dropped
+	 * dropped row's interactions and links move across, except a link to a
+	 * post the kept row already has one for, which stays with the dropped
 	 * row so neither reader's history is lost. Then the dropped row is
 	 * soft-deleted, which is undoable by hand like any other delete.
 	 */
@@ -822,20 +822,20 @@ export const contactsRouter = createTRPCRouter({
 				.set({ contactId: keep.id })
 				.where(eq(interaction.contactId, drop.id));
 
-			const keptUpdates = new Set(
+			const keptPosts = new Set(
 				(
 					await ctx.db
-						.select({ updateId: link.updateId })
+						.select({ postId: link.postId })
 						.from(link)
 						.where(eq(link.contactId, keep.id))
-				).map((l) => l.updateId),
+				).map((l) => l.postId),
 			);
 			const movable = (
 				await ctx.db
-					.select({ id: link.id, updateId: link.updateId })
+					.select({ id: link.id, postId: link.postId })
 					.from(link)
 					.where(eq(link.contactId, drop.id))
-			).filter((l) => !keptUpdates.has(l.updateId));
+			).filter((l) => !keptPosts.has(l.postId));
 			if (movable.length) {
 				await ctx.db
 					.update(link)

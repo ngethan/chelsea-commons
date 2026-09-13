@@ -1,17 +1,18 @@
 import {
+	ColumnHead,
+	FillHead,
+	useColumnWidths,
+} from "@/components/admin/column-sizing";
+import {
 	Empty,
 	ListTable,
 	Mono,
-	Page,
-	PageHead,
 	PageScroll,
 	RowsSkeleton,
 	TableFoot,
 	Tinted,
 } from "@/components/admin/primitives";
-import { RecipientsPicker } from "@/components/admin/recipients-picker";
 import { RowMenu } from "@/components/admin/row-menu";
-import { useDrawerParam } from "@/components/admin/use-drawer-param";
 import { ConfirmButton, ConfirmDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,16 +27,14 @@ import { trpc } from "@/trpc/client";
 import { createFileRoute } from "@tanstack/react-router";
 import { Copy, Link2Off, Mail, UserRound } from "lucide-react";
 import { useState } from "react";
-import { z } from "zod";
 
 /**
- * `pick`, not `sheet`: every route in the branch validates the URL, and
- * the parent `/admin/updates` owns `sheet` with its own allowed values. A
- * key the parent has never heard of passes through it untouched.
+ * The table, and nothing around it. Copy all, Add people and the picker they
+ * open live on the parent, which owns the tab row they sit in and already has
+ * the query they read.
  */
-export const Route = createFileRoute("/admin/updates/$id")({
-	validateSearch: z.object({ pick: z.enum(["people"]).optional() }),
-	component: UpdateDetail,
+export const Route = createFileRoute("/admin/writing/$id/recipients")({
+	component: Recipients,
 });
 
 const when = (value: Date | string | null) =>
@@ -49,46 +48,41 @@ const when = (value: Date | string | null) =>
 		: "—";
 
 /**
- * A draft in whatever mail client is set up: the update's title as the
- * subject and the person's own link as the body. Nothing is sent from here;
- * this is the one-click version of copying a link into a new message.
+ * A draft in whatever mail client is set up: the post's title as the subject
+ * and the person's own link as the body. Nothing is sent from here; this is
+ * the one-click version of copying a link into a new message.
  */
 function draftFor(email: string, title: string, ref: string) {
 	const link = `${window.location.origin}/u/${ref}`;
 	return `mailto:${email}?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${link}\n`)}`;
 }
 
-function UpdateDetail() {
+function Recipients() {
 	const { id } = Route.useParams();
-	const pick = useDrawerParam("pick");
+	const cols = useColumnWidths("recipients", {
+		link: 140,
+		opens: 90,
+		firstOpen: 160,
+	});
 	const utils = trpc.useUtils();
-	const detail = trpc.updates.byId.useQuery({ id });
+	const detail = trpc.posts.byId.useQuery({ id });
 	const [revoking, setRevoking] = useState<string | null>(null);
 
 	const revoke = trpc.links.revoke.useMutation({
 		onSuccess: async () => {
-			await utils.updates.byId.invalidate({ id });
+			await utils.posts.byId.invalidate({ id });
 			toast.success("Revoked.");
 		},
 		onError: (err) => toast.error(err.message),
 	});
 
-	const title = detail.data?.update.title ?? "Update";
-	const recipients = detail.data?.recipients ?? [];
-	const opened = recipients.filter((row) => row.clicks > 0).length;
+	const title = detail.data?.post.name ?? "";
+	const rows = detail.data?.recipients ?? [];
+	const opened = rows.filter((row) => row.clicks > 0).length;
 
 	function copyLink(ref: string) {
 		navigator.clipboard.writeText(`${window.location.origin}/u/${ref}`);
 		toast.success("Copied.");
-	}
-
-	function copyAll() {
-		const origin = window.location.origin;
-		const lines = recipients
-			.filter((row) => !row.revokedAt)
-			.map((row) => `${row.contactEmail ?? ""}\t${origin}/u/${row.ref}`);
-		navigator.clipboard.writeText(lines.join("\n"));
-		toast.success(`${lines.length} copied, one per line.`);
 	}
 
 	function openDraft(email: string, ref: string) {
@@ -96,46 +90,42 @@ function UpdateDetail() {
 	}
 
 	return (
-		<Page>
-			<PageHead
-				title={title}
-				meta={
-					detail.data ? (
-						<Mono className="text-[12.5px]">
-							/writing/{detail.data.update.slug}
-						</Mono>
-					) : undefined
-				}
-				actions={
-					<>
-						<Button
-							variant="outline"
-							onClick={copyAll}
-							disabled={recipients.length === 0}
-						>
-							Copy all
-						</Button>
-						<Button onClick={() => pick.open("people")}>Add recipients</Button>
-					</>
-				}
-			/>
-
+		<>
 			<PageScroll>
 				<ListTable>
 					<TableHeader>
 						<TableRow>
-							<TableHead>Person</TableHead>
-							<TableHead className="w-[140px]">Link</TableHead>
-							<TableHead className="w-[90px] text-right">Opens</TableHead>
-							<TableHead className="hidden w-[160px] text-right md:table-cell">
+							<FillHead cols={cols}>Person</FillHead>
+							<ColumnHead cols={cols} id="link">
+								Link
+							</ColumnHead>
+							<ColumnHead cols={cols} id="opens" className="text-right">
+								Opens
+							</ColumnHead>
+							<ColumnHead
+								cols={cols}
+								id="firstOpen"
+								className="hidden text-right md:table-cell"
+							>
 								First open
-							</TableHead>
+							</ColumnHead>
 							<TableHead className="w-[130px]" />
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{detail.isLoading && <RowsSkeleton rows={6} cols={5} />}
-						{recipients.map((row) => {
+						{detail.isLoading && (
+							<RowsSkeleton
+								rows={6}
+								cells={[
+									"lines",
+									"mono",
+									"number",
+									{ kind: "date", className: "hidden md:table-cell" },
+									"none",
+								]}
+							/>
+						)}
+						{rows.map((row) => {
 							const live = !row.revokedAt;
 							return (
 								<RowMenu
@@ -247,16 +237,10 @@ function UpdateDetail() {
 					</TableBody>
 				</ListTable>
 
-				{!detail.isLoading && recipients.length === 0 && (
-					<Empty>Nobody yet.</Empty>
-				)}
+				{!detail.isLoading && rows.length === 0 && <Empty>Nobody yet.</Empty>}
 			</PageScroll>
 
-			<TableFoot
-				shown={recipients.length}
-				total={recipients.length}
-				noun="recipients"
-			>
+			<TableFoot shown={rows.length} total={rows.length} noun="recipients">
 				<span>{opened} opened</span>
 			</TableFoot>
 
@@ -271,17 +255,6 @@ function UpdateDetail() {
 					setRevoking(null);
 				}}
 			/>
-
-			{pick.value === "people" && (
-				<RecipientsPicker
-					updateId={id}
-					updateTitle={title}
-					linkedContactIds={recipients
-						.filter((row) => !row.revokedAt)
-						.map((row) => row.contactId)}
-					onClose={pick.close}
-				/>
-			)}
-		</Page>
+		</>
 	);
 }

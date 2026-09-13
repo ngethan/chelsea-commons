@@ -144,24 +144,31 @@ export async function applyOperations(
 				await caller.organizations.remove({ id: operation.id });
 				return { ok: true, message: "Removed", id: operation.id };
 
-			case "create_update": {
-				const row = await caller.updates.create({ slug: operation.slug });
-				return { ok: true, message: `Created ${row.title}`, id: row.id };
+			case "mark_as_letter": {
+				const row = await caller.posts.update({
+					id: operation.id,
+					kind: "letter",
+				});
+				return { ok: true, message: `${row.name} is a letter`, id: row.id };
 			}
 
-			case "remove_update":
-				await caller.updates.remove({ id: operation.id });
-				return { ok: true, message: "Deleted", id: operation.id };
+			case "unmark_as_letter": {
+				const row = await caller.posts.update({
+					id: operation.id,
+					kind: "post",
+				});
+				return { ok: true, message: `${row.name} is a post`, id: row.id };
+			}
 
 			case "create_links": {
 				const out = await caller.links.createForContacts({
-					updateId: operation.updateId,
+					postId: operation.postId,
 					contactIds: operation.contactIds,
 				});
 				return {
 					ok: true,
 					message: `${out.created} new ${out.created === 1 ? "link" : "links"}${out.existing ? `, ${out.existing} already had one` : ""}`,
-					id: operation.updateId,
+					id: operation.postId,
 				};
 			}
 
@@ -173,7 +180,10 @@ export async function applyOperations(
 			}
 
 			case "invite": {
-				const row = await caller.access.invite({ email: operation.email });
+				const row = await caller.access.invite({
+					email: operation.email,
+					role: operation.role,
+				});
 				return { ok: true, message: `Invited ${row.email}`, id: row.id };
 			}
 

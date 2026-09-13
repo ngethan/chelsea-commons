@@ -542,6 +542,15 @@ body:has([data-slot="alert-dialog-overlay"]) [data-slot="sheet-overlay"] {
 	opacity: 0 !important;
 }
 
+/* A column grip is held (`ColumnHead`). The cursor and the no-select are on
+   the root rather than the grip so a fast drag that outruns the 8px strip
+   does not flicker between arrow and resize, or start selecting the table. */
+html[data-resizing],
+html[data-resizing] * {
+	cursor: col-resize !important;
+	user-select: none !important;
+}
+
 /* --- Floating labels --------------------------------------------------------
  * Berth's field: the label sits inside the box where placeholder text would,
  * and shrinks to the top once the field is focused or has content. It moves

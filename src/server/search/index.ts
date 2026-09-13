@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { contact, interaction, organization, update, user } from "@/db/schema";
-import { getPost } from "@/lib/posts";
+import { contact, interaction, organization, post, user } from "@/db/schema";
+import { docText } from "@/lib/post-doc";
 import { STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import {
 	and,
@@ -19,7 +19,7 @@ import type { AnyPgColumn } from "drizzle-orm/pg-core";
 import { EmbeddingsUnavailable, embed, embeddingsConfigured } from "./embed";
 
 /**
- * Search over people, organizations and updates.
+ * Search over people, organizations and writing.
  *
  * Two halves, and the seam between them is the point:
  *
@@ -39,7 +39,7 @@ import { EmbeddingsUnavailable, embed, embeddingsConfigured } from "./embed";
  * match.
  */
 
-export type SearchKind = "contact" | "organization" | "update";
+export type SearchKind = "contact" | "organization" | "post";
 
 export type SearchHit = {
 	kind: SearchKind;
@@ -120,20 +120,21 @@ function documentForOrganization(row: {
 		.join("\n");
 }
 
-function documentForUpdate(row: { title: string; slug: string }) {
-	// The markdown is in git, not in the row, and the first stretch of it is
-	// what makes "the one about the summer house" findable.
-	const post = getPost(row.slug);
-	const body = post?.content
-		.replace(/^#+\s.*$/gm, "")
-		.replace(/\s+/g, " ")
-		.trim()
-		.slice(0, 1500);
+function documentForPost(row: {
+	name: string;
+	slug: string;
+	description: string | null;
+	doc: unknown;
+}) {
+	// The body is in the row now rather than in git, and the first stretch of
+	// it is what makes "the one about the summer house" findable.
+	const body = docText(row.doc).replace(/\s+/g, " ").trim().slice(0, 2000);
+
 	return [
-		line("Update", row.title),
+		line("Title", row.name),
 		line("Slug", row.slug),
-		line("Summary", post?.description),
-		line("Text", body),
+		line("Description", row.description),
+		line("Body", body),
 	]
 		.filter(Boolean)
 		.join("\n");
@@ -153,7 +154,7 @@ type Pending = { id: string; document: string };
  * and a `VALUES` join with a vector column is not worth its own bug.
  */
 async function apply(
-	table: typeof contact | typeof organization | typeof update,
+	table: typeof contact | typeof organization | typeof post,
 	pending: Pending[],
 ) {
 	let indexed = 0;
@@ -305,34 +306,36 @@ export async function indexOrganizations({ ids, force }: IndexOptions = {}) {
 	};
 }
 
-export async function indexUpdates({ ids, force }: IndexOptions = {}) {
+export async function indexPosts({ ids, force }: IndexOptions = {}) {
 	const rows = await db()
 		.select({
-			id: update.id,
-			title: update.title,
-			slug: update.slug,
-			embeddingText: update.embeddingText,
+			id: post.id,
+			name: post.name,
+			slug: post.slug,
+			description: post.description,
+			doc: post.doc,
+			embeddingText: post.embeddingText,
 		})
-		.from(update)
-		.where(ids ? inArray(update.id, ids) : undefined);
+		.from(post)
+		.where(ids ? inArray(post.id, ids) : undefined);
 
 	const pending = rows
-		.map((row) => ({ id: row.id, document: documentForUpdate(row) }))
+		.map((row) => ({ id: row.id, document: documentForPost(row) }))
 		.filter((p, i) => force || p.document !== rows[i].embeddingText);
 
 	return {
-		indexed: await apply(update, pending),
+		indexed: await apply(post, pending),
 		skipped: rows.length - pending.length,
 	};
 }
 
 export async function indexAll(options: { force?: boolean } = {}) {
-	const [contacts, organizations, updates] = [
+	const [contacts, organizations, posts] = [
 		await indexContacts(options),
 		await indexOrganizations(options),
-		await indexUpdates(options),
+		await indexPosts(options),
 	];
-	return { contacts, organizations, updates };
+	return { contacts, organizations, posts };
 }
 
 /**
@@ -351,7 +354,7 @@ export async function reindexQuietly(run: () => Promise<unknown>) {
 
 /** What the Settings page shows: how much of each table the index covers. */
 export async function indexStatus() {
-	const [[contacts], [organizations], [updates]] = await Promise.all([
+	const [[contacts], [organizations], [posts]] = await Promise.all([
 		db()
 			.select({
 				total: count(),
@@ -366,15 +369,15 @@ export async function indexStatus() {
 			})
 			.from(organization),
 		db()
-			.select({ total: count(), embedded: count(update.embedding) })
-			.from(update),
+			.select({ total: count(), embedded: count(post.embedding) })
+			.from(post),
 	]);
 
 	return {
 		configured: embeddingsConfigured(),
 		contacts,
 		organizations,
-		updates,
+		posts,
 	};
 }
 
@@ -443,10 +446,10 @@ async function textSearch(q: string, limit: number) {
 			.orderBy(asc(organization.name))
 			.limit(limit),
 		db()
-			.select({ id: update.id, title: update.title, slug: update.slug })
-			.from(update)
-			.where(or(ilike(update.title, needle), ilike(update.slug, needle)))
-			.orderBy(desc(update.createdAt))
+			.select({ id: post.id, title: post.name, slug: post.slug })
+			.from(post)
+			.where(or(ilike(post.name, needle), ilike(post.slug, needle)))
+			.orderBy(desc(post.updatedAt))
 			.limit(limit),
 	]);
 
@@ -470,7 +473,7 @@ async function textSearch(q: string, limit: number) {
 			similarity: null,
 		})),
 		...sent.map((r) => ({
-			kind: "update" as const,
+			kind: "post" as const,
 			id: r.id,
 			title: r.title,
 			subtitle: r.slug,
@@ -511,14 +514,14 @@ async function semanticSearch(vec: number[], limit: number) {
 			.limit(limit),
 		db()
 			.select({
-				id: update.id,
-				title: update.title,
-				slug: update.slug,
-				similarity: similarityTo(update.embedding, vec),
+				id: post.id,
+				title: post.name,
+				slug: post.slug,
+				similarity: similarityTo(post.embedding, vec),
 			})
-			.from(update)
-			.where(isNotNull(update.embedding))
-			.orderBy(sql`${update.embedding} <=> ${vectorParam(vec)}`)
+			.from(post)
+			.where(isNotNull(post.embedding))
+			.orderBy(sql`${post.embedding} <=> ${vectorParam(vec)}`)
 			.limit(limit),
 	]);
 
@@ -542,7 +545,7 @@ async function semanticSearch(vec: number[], limit: number) {
 			similarity: Number(r.similarity),
 		})),
 		...sent.map((r) => ({
-			kind: "update" as const,
+			kind: "post" as const,
 			id: r.id,
 			title: r.title,
 			subtitle: r.slug,

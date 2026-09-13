@@ -4,5 +4,16 @@
       "path": "/api/cron/sync-events",
       "schedule": "23 9 * * *"
     }
-  ]
+  ],
+  "images": {
+    "sizes": [640, 828, 1080, 1200, 1920],
+    "formats": ["image/avif", "image/webp"],
+    "minimumCacheTTL": 31536000,
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "**.public.blob.vercel-storage.com"
+      }
+    ]
+  }
 }

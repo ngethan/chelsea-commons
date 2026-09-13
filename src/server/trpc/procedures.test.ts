@@ -3,9 +3,9 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 /**
- * The app's whole authorization model is "everything is `protectedProcedure`",
- * so the failure mode is somebody adding an endpoint and reaching for the
- * wrong one. That is a one-word mistake in a file nobody reads twice, and it
+ * The app's whole authorization model is "everything is `protectedProcedure`,
+ * `adminProcedure` or `ownerProcedure`", so the failure mode is somebody adding an endpoint
+ * and reaching for the wrong one. That is a one-word mistake in a file nobody reads twice, and it
  * exposes a list of investors to the internet.
  *
  * This reads the source rather than the router object because the router's
@@ -50,7 +50,12 @@ describe("tRPC procedures", () => {
 	it("uses only procedures this app defines", () => {
 		for (const procedure of procedures()) {
 			expect(
-				["publicProcedure", "protectedProcedure"],
+				[
+					"publicProcedure",
+					"protectedProcedure",
+					"adminProcedure",
+					"ownerProcedure",
+				],
 				`${procedure.file}:${procedure.name}`,
 			).toContain(procedure.kind);
 		}

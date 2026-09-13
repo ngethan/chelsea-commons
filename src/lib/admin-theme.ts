@@ -6,8 +6,13 @@
  * `/sign-in` counts as the admin: it is the door to it, it shares its
  * controls, and a cream page between a dark sign-out and a dark sign-in reads
  * as a flash of the wrong site.
+ *
+ * The post preview does not, despite its address. It is the reading page, and
+ * the reading page is cream: a preview in the admin's palette would be a
+ * preview of something nobody is ever shown.
  */
 export function isAdminPath(pathname: string): boolean {
+	if (/^\/admin\/writing\/[^/]+\/preview$/.test(pathname)) return false;
 	return pathname.startsWith("/admin") || pathname.startsWith("/sign-in");
 }
 

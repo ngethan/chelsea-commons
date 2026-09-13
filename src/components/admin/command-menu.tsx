@@ -10,21 +10,22 @@ import {
 	CommandList,
 } from "@/components/ui/command";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { canManageUsers } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import type { SearchHit, SearchKind } from "@/server/search";
 import { trpc } from "@/trpc/client";
 import { keepPreviousData } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import {
 	Building2,
 	ClipboardPaste,
 	CreativeCommons,
 	FileText,
-	KeyRound,
 	Plus,
 	Settings,
 	Sparkles,
 	User,
+	UserPlus,
 	Users,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -49,9 +50,8 @@ type Tab = "all" | SearchKind;
 const NAV = [
 	{ label: "Contacts", to: "/admin/contacts", icon: Users },
 	{ label: "Organizations", to: "/admin/organizations", icon: Building2 },
-	{ label: "Updates", to: "/admin/updates", icon: FileText },
-	{ label: "Access", to: "/admin/access", icon: KeyRound },
-	{ label: "Settings", to: "/admin/settings", icon: Settings },
+	{ label: "Writing", to: "/admin/writing", icon: FileText },
+	{ label: "Settings", to: "/admin/settings", icon: Settings, manage: true },
 ] as const;
 
 const ACTIONS = [
@@ -68,29 +68,30 @@ const ACTIONS = [
 		icon: ClipboardPaste,
 	},
 	{
-		label: "New update",
-		to: "/admin/updates",
+		label: "New post",
+		to: "/admin/writing",
 		search: { sheet: "new" },
 		icon: FileText,
 	},
 	{
-		label: "Let somebody in",
-		to: "/admin/access",
+		label: "Invite somebody",
+		to: "/admin/settings/users",
 		search: { sheet: "invite" },
-		icon: KeyRound,
+		icon: UserPlus,
+		manage: true,
 	},
 ] as const;
 
 const KIND_LABEL: Record<SearchKind, string> = {
 	contact: "People",
 	organization: "Organizations",
-	update: "Updates",
+	post: "Writing",
 };
 
 const KIND_ICON = {
 	contact: User,
 	organization: Building2,
-	update: FileText,
+	post: FileText,
 } as const;
 
 function matches(label: string, q: string) {
@@ -190,19 +191,25 @@ export function CommandMenu({
 		const c: Record<SearchKind, number> = {
 			contact: 0,
 			organization: 0,
-			update: 0,
+			post: 0,
 		};
 		for (const hit of hits) c[hit.kind] += 1;
 		return c;
 	}, [hits]);
 
 	const shown = tab === "all" ? hits : hits.filter((h) => h.kind === tab);
-	const grouped = (["contact", "organization", "update"] as const)
+	const grouped = (["contact", "organization", "post"] as const)
 		.map((kind) => ({ kind, hits: shown.filter((h) => h.kind === kind) }))
 		.filter((g) => g.hits.length > 0);
 
-	const nav = NAV.filter((item) => matches(item.label, q));
-	const actions = ACTIONS.filter((item) => matches(item.label, q));
+	const { user } = useRouteContext({ from: "/admin" });
+	const manage = canManageUsers(user?.role);
+	const nav = NAV.filter(
+		(item) => (manage || !("manage" in item)) && matches(item.label, q),
+	);
+	const actions = ACTIONS.filter(
+		(item) => (manage || !("manage" in item)) && matches(item.label, q),
+	);
 
 	const pending =
 		open &&
@@ -220,7 +227,7 @@ export function CommandMenu({
 		if (hit.kind === "organization")
 			return go("/admin/organizations", { org: hit.id });
 		onOpenChange(false);
-		navigate({ to: "/admin/updates/$id", params: { id: hit.id } });
+		navigate({ to: "/admin/writing/$id", params: { id: hit.id } });
 	}
 
 	return (
@@ -234,7 +241,7 @@ export function CommandMenu({
 				value={search}
 				onValueChange={setSearch}
 				loading={pending}
-				placeholder="Search people, organizations, updates"
+				placeholder="Search people, organizations, writing"
 			/>
 
 			{hits.length > 0 && (
@@ -244,7 +251,7 @@ export function CommandMenu({
 						onChange={setTab}
 						options={[
 							{ value: "all" as Tab, label: "All", count: hits.length },
-							...(["contact", "organization", "update"] as const)
+							...(["contact", "organization", "post"] as const)
 								.filter((kind) => counts[kind] > 0)
 								.map((kind) => ({
 									value: kind as Tab,

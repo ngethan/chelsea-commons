@@ -99,6 +99,7 @@ function AdminLayout() {
 				name: user.name,
 				email: user.email,
 				image: user.image ?? null,
+				role: user.role,
 			}}
 		>
 			<Outlet />

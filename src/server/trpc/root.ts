@@ -6,9 +6,9 @@ import { contactsRouter } from "./routers/contacts";
 import { interactionsRouter } from "./routers/interactions";
 import { linksRouter } from "./routers/links";
 import { organizationsRouter } from "./routers/organizations";
+import { postsRouter } from "./routers/posts";
 import { searchRouter } from "./routers/search";
 import { tagsRouter } from "./routers/tags";
-import { updatesRouter } from "./routers/updates";
 
 /**
  * Every endpoint this server exposes. Keeping them in one file is the point:
@@ -20,7 +20,7 @@ const core = {
 	access: accessRouter,
 	contacts: contactsRouter,
 	organizations: organizationsRouter,
-	updates: updatesRouter,
+	posts: postsRouter,
 	links: linksRouter,
 	interactions: interactionsRouter,
 	tags: tagsRouter,

@@ -352,7 +352,7 @@ function Row({
 }: {
 	children: React.ReactNode;
 	onClick: () => void;
-	/** Shows a check column; `true` fills it. */
+	/** Shows a check at the trailing edge; `true` fills it. */
 	checked?: boolean;
 }) {
 	return (
@@ -362,12 +362,17 @@ function Row({
 			onClick={onClick}
 			className="flex w-full cursor-pointer items-center gap-2.5 rounded-none px-2.5 py-2 text-left text-[13px] text-foreground outline-none transition-colors hover:bg-hover-accent focus-visible:bg-hover-accent"
 		>
+			{children}
+			{/* At the trailing edge, so the label starts where every other
+			    row's does and an unchecked row is not indented for nothing. */}
 			{checked !== undefined && (
 				<Check
-					className={cn("size-3.5", checked ? "opacity-100" : "opacity-0")}
+					className={cn(
+						"ml-auto size-3.5 shrink-0",
+						checked ? "opacity-100" : "opacity-0",
+					)}
 				/>
 			)}
-			{children}
 		</button>
 	);
 }

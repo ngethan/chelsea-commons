@@ -1,3 +1,4 @@
+import { ROLES } from "@/lib/roles";
 import { CONTACT_STATUSES } from "@/lib/status";
 import { z } from "zod";
 
@@ -102,15 +103,20 @@ export const operationSchema = z.discriminatedUnion("op", [
 		...organizationFields.shape,
 	}),
 	z.object({ op: z.literal("remove_organization"), id: uuid }),
-	z.object({ op: z.literal("create_update"), slug: shortText.min(1) }),
-	z.object({ op: z.literal("remove_update"), id: uuid }),
+	/**
+	 * A letter is a post with tracked links, so the assistant marks one rather
+	 * than creating anything. Writing a post is not an operation: the document
+	 * is the editor's and the assistant has no business proposing one.
+	 */
+	z.object({ op: z.literal("mark_as_letter"), id: uuid }),
+	z.object({ op: z.literal("unmark_as_letter"), id: uuid }),
 	z.object({
 		op: z.literal("create_links"),
-		updateId: uuid,
+		postId: uuid,
 		contactIds: z.array(uuid).min(1).max(500),
 	}),
 	z.object({ op: z.literal("revoke_link"), id: uuid }),
-	z.object({ op: z.literal("invite"), email }),
+	z.object({ op: z.literal("invite"), email, role: z.enum(ROLES).optional() }),
 	z.object({ op: z.literal("revoke_access"), id: uuid }),
 	z.object({ op: z.literal("restore_access"), id: uuid }),
 ]);
@@ -182,7 +188,7 @@ export type ApplyResult = {
 export const DESTRUCTIVE_KINDS: ReadonlySet<OperationKind> = new Set([
 	"remove_contact",
 	"remove_organization",
-	"remove_update",
+	"unmark_as_letter",
 	"revoke_link",
 	"revoke_access",
 ]);
@@ -200,8 +206,8 @@ export const OPERATION_LABEL: Record<OperationKind, string> = {
 	create_organization: "Add organization",
 	update_organization: "Update organization",
 	remove_organization: "Remove organization",
-	create_update: "Create update",
-	remove_update: "Delete update",
+	mark_as_letter: "Mark as letter",
+	unmark_as_letter: "Unmark as letter",
 	create_links: "Mint links",
 	revoke_link: "Revoke link",
 	invite: "Invite",
@@ -217,7 +223,7 @@ export function fieldChanges(
 	operation: Operation,
 	before: BeforeSnapshot | null,
 ): Array<{ field: string; from: string | null; to: string | null }> {
-	const skip = new Set(["op", "id", "updateId", "contactIds", "contactId"]);
+	const skip = new Set(["op", "id", "postId", "contactIds", "contactId"]);
 	const changes: Array<{
 		field: string;
 		from: string | null;

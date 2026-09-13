@@ -33,14 +33,38 @@ easy to break by accident.
 ## The admin
 
 `/admin` is the private side: a contact list, the organizations people belong
-to, the investor updates that have gone out, and who can sign in. It is behind
-Google, and Google only admits an address that already has a live row in
-`invited_user`, which is the whole of "signups are disabled".
+to, the investor updates that have gone out, and the settings, where the
+roster of who can sign in lives. Sign-in is Google or email and password, and
+either only admits an address that already has a live row in `invited_user`,
+which is the whole of "signups are by invitation". Somebody on the roster
+makes their own account at `/sign-in?mode=create`; Settings › Users copies
+that link, because the app sends no mail (so no verification and no password
+reset either).
+
+- **Roles are on the invite, not the user.** `invited_user.role` is one of
+  `ROLES` in `src/lib/roles.ts`: owner, admin, member, viewer. It is read
+  from the roster on every request (`createTRPCContext`), so a change takes
+  effect on the next click, never the next sign-in. Enforcement is three
+  procedures and nothing else: `protectedProcedure` refuses a viewer's
+  mutations by the procedure's type, `adminProcedure` (invite) admits owners
+  and admins, and `ownerProcedure` (role, revoke, restore) admits owners. An
+  admin may only invite members and viewers; `assignableRoles` is the one
+  list of who may hand out what. A member is "everything that does not
+  check". Nobody can revoke or re-role their own row, which is what keeps at
+  least one owner in the house. Migration 0007 made everybody already on the
+  roster an admin and 0008 made the first owner.
+- **Settings is the roster, for now.** `/admin/settings` redirects to
+  `/admin/settings/users`, and the rail only offers Settings to owners and
+  admins. The tag registry and the search index have procedures
+  (`tags.rename`, `tags.remove`, `search.reindex`) but no screen at the
+  moment; the General section that held them was taken out and is in the
+  history if it is wanted back.
 
 - **Server calls are tRPC.** Routers live in `src/server/trpc/routers`, and
   `src/server/trpc/root.ts` is the one place every endpoint is visible.
-  Everything is `protectedProcedure` unless `procedures.test.ts` carries a
-  written argument for why it is not, and that test fails the build otherwise.
+  Everything is `protectedProcedure` or `adminProcedure` unless
+  `procedures.test.ts` carries a written argument for why it is not, and that
+  test fails the build otherwise.
 - **The database is Drizzle.** Schema in `src/db/schema.ts`, migrations
   generated with `pnpm db:generate` and applied by hand with `pnpm db:migrate`.
   Never during a build: Vercel builds on every push, so a build-time migration
@@ -49,7 +73,8 @@ Google, and Google only admits an address that already has a live row in
   `/writing/<slug>`. Unknown, revoked and malformed refs all answer 404, so a
   dead link cannot be told apart from one that never existed. There is no open
   tracking and nothing is emailed from here: you copy a link and write the
-  message yourself.
+  message yourself. That is also why there is no `sent_at`: a post went out
+  when its first link did, and the list folds that on read.
 - **Which clicks count** is decided on read, in `src/lib/bots.ts`, never on
   write. Every hit is stored with its user agent, including the obvious
   scanners, so the heuristic can be improved later without having thrown away
@@ -66,7 +91,8 @@ Google, and Google only admits an address that already has a live row in
 - **Tags are names on the contact, backed by a registry.** `contact.tags`
   stays an array of names (every list, filter and embedding reads it);
   `tag` is the registry the picker lists, so a tag can exist before anybody
-  has it and be renamed or deleted everywhere from Settings. The contact
+  has it and be renamed or deleted everywhere (`tags.rename`, `tags.remove`;
+  no screen for them at the moment). The contact
   mutations pass tags through `registerTags`, which creates missing ones
   and canonicalizes spelling, so the assistant and bulk paste stay honest.
 - **Duplicates are found on read, resolved by hand.** `contacts.duplicates`
@@ -84,7 +110,7 @@ Google, and Google only admits an address that already has a live row in
 - **Search is hybrid.** cmd-K calls `search.query`, which runs a literal
   `ILIKE` first and then pgvector, in `src/server/search`. Every mutation
   re-embeds its own row through `reindexQuietly`, which never fails the save;
-  Settings has a rebuild button for the rest. `embedding_text` holds the
+  `search.reindex` rebuilds the rest (no screen for it at the moment). `embedding_text` holds the
   exact text a row was embedded from, so a stale row is visible and a
   re-run is cheap. The model is pinned in `src/server/search/embed.ts`;
   changing it means re-embedding everything.
@@ -113,14 +139,40 @@ Google, and Google only admits an address that already has a live row in
 Environment: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`,
 `GOOGLE_CLIENT_SECRET`, `OPENAI_API_KEY` (embeddings; without it search is
 text only and the admin says so), `ANTHROPIC_API_KEY` (Ask AI; without it the
-page says it is off). `BETTER_AUTH_URL` is optional and only needed where
+page says it is off), `BLOB_READ_WRITE_TOKEN` (photo uploads; without it the
+editor says uploads are off). `BETTER_AUTH_URL` is optional and only needed where
 Vercel's own URL is wrong.
 
 ## Content
 
-Posts are markdown files in `content/blog`, rendered at `/writing/<filename>`.
-The frontmatter decides whether a post is listed. `visibility: public` lists it
-at `/writing`; anything else, including a typo, stays private and noindex. See
-`content/blog/README.txt` for the full frontmatter contract and
-`src/lib/markdown-blocks.ts` for the custom fenced blocks the renderer adds on
-top of ordinary markdown.
+Posts are rows in `post`, written in the admin at `/admin/writing` and read at
+`/writing/<slug>`. There is no `content/blog` any more and no frontmatter.
+
+- **The body is a ProseMirror document**, not markdown. `doc` is the tree the
+  editor saved; `src/components/blog/post-body.tsx` walks it and returns React.
+  Not `generateHTML` into `dangerouslySetInnerHTML`: headings carry generated
+  anchor ids, links decide their own `target` and `rel`, and photos are a
+  component, so an HTML string would mean writing all of that twice.
+- **Three fields, three questions**, in `src/lib/post-state.ts`. `status` is
+  whether it is live at its URL at all (a draft is a 404 for everybody but a
+  signed-in admin, which is what makes the preview work). `visibility` is
+  whether it is listed at `/writing`. `kind` is whether it is a letter, and it
+  flips: a letter sent in March is a blog post in May if you decide so. All
+  three default to the closed answer.
+- **A letter is a post with links.** There is no separate `update` table; a
+  letter is `kind = 'letter'` and `link.post_id` points at it with
+  `on delete restrict`, so a post somebody has been sent cannot be deleted out
+  from under its clicks.
+- **The slug follows the title while a post is a draft and freezes on
+  publish.** The address is in somebody's inbox. The title stays renameable
+  forever.
+- **`photos` is the only custom node.** Images go to Vercel Blob through
+  `/api/upload`; the grid's shape lives in `src/lib/photos.ts` so the editor's
+  node view and the public renderer lay it out the same way.
+- **The preview is the real page.** `/admin/writing/<id>/preview` is routed
+  from `admin_.writing.$id.preview.tsx`: the trailing underscore keeps it out
+  of the admin layout, so it renders `PostPage`, grain and all, with a Draft
+  bar across the top.
+- **Public reads are server functions, not tRPC** (`src/lib/posts-server.ts`),
+  so `procedures.test.ts` keeps its "every router procedure is protected"
+  invariant without an exception written down for the blog.

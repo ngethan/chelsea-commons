@@ -4,7 +4,7 @@ import { activity } from "@/db/schema";
 export type EntityType =
 	| "contact"
 	| "organization"
-	| "update"
+	| "post"
 	| "link"
 	| "invite"
 	| "tag";

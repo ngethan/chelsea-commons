@@ -187,16 +187,16 @@ export function TagPicker({
 									value={`tag:${t.id}`}
 									onSelect={() => toggle(t.name)}
 								>
+									<span className="min-w-0 flex-1 truncate">{t.name}</span>
+									<span className="pl-3 text-[11.5px] text-muted-foreground tabular-nums">
+										{t.count}
+									</span>
 									<Check
 										className={cn(
-											"size-3.5",
+											"size-3.5 shrink-0",
 											has(t.name) ? "opacity-100" : "opacity-0",
 										)}
 									/>
-									<span className="truncate">{t.name}</span>
-									<span className="ml-auto pl-3 text-[11.5px] text-muted-foreground tabular-nums">
-										{t.count}
-									</span>
 								</CommandItem>
 							))}
 						</CommandGroup>

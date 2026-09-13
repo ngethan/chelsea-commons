@@ -27,19 +27,19 @@ import { Check, UserRound } from "lucide-react";
 import { useMemo, useState } from "react";
 
 /**
- * Who gets this update. The same search-or-filter as the Contacts page, so
+ * Who gets this post. The same search-or-filter as the Contacts page, so
  * "everyone committed" or "everyone Will knows" is two clicks rather than a
  * scroll through a checklist; people who already hold a link are shown as
  * sent rather than offered again; and the button says how many it will do.
  */
 export function RecipientsPicker({
-	updateId,
-	updateTitle,
+	postId,
+	postName,
 	linkedContactIds,
 	onClose,
 }: {
-	updateId: string;
-	updateTitle: string;
+	postId: string;
+	postName: string;
 	linkedContactIds: string[];
 	onClose: () => void;
 }) {
@@ -84,8 +84,8 @@ export function RecipientsPicker({
 	const create = trpc.links.createForContacts.useMutation({
 		onSuccess: async (result) => {
 			await Promise.all([
-				utils.updates.byId.invalidate({ id: updateId }),
-				utils.updates.list.invalidate(),
+				utils.posts.byId.invalidate({ id: postId }),
+				utils.posts.list.invalidate(),
 				utils.contacts.list.invalidate(),
 			]);
 			toast.success(
@@ -125,7 +125,7 @@ export function RecipientsPicker({
 			<SheetContent>
 				<SheetHeader>
 					<SheetTitle>Add recipients</SheetTitle>
-					<SheetDescription>{updateTitle}</SheetDescription>
+					<SheetDescription>{postName}</SheetDescription>
 				</SheetHeader>
 
 				<SheetBody className="p-0">
@@ -165,7 +165,7 @@ export function RecipientsPicker({
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[64px] px-0 [&>*]:mx-auto">
+								<TableHead className="w-10 px-0 [&>*]:mx-auto">
 									<Checkbox
 										aria-label="Select everybody shown"
 										checked={allShownPicked}
@@ -192,7 +192,7 @@ export function RecipientsPicker({
 										data-state={picked.has(row.id) ? "selected" : undefined}
 										onClick={() => !sent && toggle(row.id)}
 									>
-										<TableCell className="w-[64px] px-0 [&>*]:mx-auto">
+										<TableCell className="w-10 px-0 [&>*]:mx-auto">
 											{sent ? (
 												<Check className="size-4 text-muted-foreground" />
 											) : (
@@ -239,7 +239,7 @@ export function RecipientsPicker({
 					)}
 					<Button
 						disabled={picked.size === 0 || create.isPending}
-						onClick={() => create.mutate({ updateId, contactIds: [...picked] })}
+						onClick={() => create.mutate({ postId, contactIds: [...picked] })}
 					>
 						{create.isPending
 							? "Adding"

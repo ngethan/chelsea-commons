@@ -24,7 +24,9 @@ screen without reading this file.
 
 - Square in the page: buttons, inputs, selects and their lists, comboboxes,
   the search-or-filter box and its panel, tables, kbd, in-page cards,
-  sheets, alert dialogs, toasts.
+  sheets, alert dialogs, toasts. The one exception is the checkbox, which
+  has a 3px radius, no fill, and a heavier, brighter edge than a field: a
+  16px outline needs all three to read as a box on a row.
 - **Badges, chips and tabs are pills** (`rounded-full`), the way Ramp's are:
   they are labels that sit on a row, not controls that sit in the page. A
   filter chip is two-tone: icon and label on the pill, the value in a darker
@@ -45,6 +47,25 @@ screen without reading this file.
   under both with 40px above a 32px title.
 - Every list page is: `PageHead` (title, optional meta, actions, optional
   toolbar), `PageScroll` holding a `ListTable`, then `TableFoot`.
+- While a list loads, `RowsSkeleton` is handed the row's cells by kind
+  (tick, person, text, mono, number, date, faces, pills), each with the
+  real cell's responsive classes. It draws the shape at the height the
+  real thing will take, so the table does not jump when the rows land.
+- Skeletons take the shape of what they stand in for, not the page's
+  squareness. A line of text or a heading is a rounded bar (`Skeleton`'s
+  default), a face is a circle, a pill is a pill, a checkbox is a 16px box
+  with the checkbox's own radius and edge. Only a skeleton for something
+  square in the page (a field, a button) is square.
+- A page under another page (a post under Writing) passes `crumbs` to
+  `PageHead`: small muted links above the title with a chevron between,
+  ending in the page being read as plain text (its slug or name). Drawers
+  are not pages and get no crumbs.
+- Password fields are `FloatingPassword`: one eye at the trailing edge, and
+  a form with two of them (new and confirm) runs both from one eye.
+- Settings is one page with sections, and every section renders
+  `SettingsHead`: the one title, the section's own control (Invite) as its
+  action, and pills in the toolbar once there is more than one section to
+  choose between. With one section (Users, today) there are no pills.
 - **Counts live in `TableFoot` and nowhere else.** Not in titles, not in
   tabs, not in section headings.
 - The toolbar is `FilterBar`: a real text field that narrows the list as you
@@ -53,7 +74,29 @@ screen without reading this file.
 - Tables are full-bleed with ruled columns and a sticky header. The outer
   cells carry the page gutter (32px) so the first column aligns with the
   title. Rows open on click and offer more on right-click (`RowMenu`).
+- A selection column (`data-tick`) is 48px (40 on a phone) with the 16px
+  box centred, the same on every table. It is a control, not text, so it
+  does not start on the gutter line the title does.
+- Sized columns are `ColumnHead` with widths from `useColumnWidths`; the
+  first column is `FillHead`, has no width, and takes the rest. Every rule
+  between two columns has a grip: dragging it moves that rule, and the two
+  columns either side trade width. Nothing else moves and the table stays
+  the page's width. Double-click a grip to put both columns back. Widths
+  are per table, per browser, and never on the server.
+- A cell that does not fit is cut with an ellipsis, never wrapped
+  (`ListTable` sets this on every cell). A narrow column costs width, not
+  row height.
+- A date or number column sorts on click: its `ColumnHead` takes
+  `sort={sorting.on(key)}` from `useSort`, and the rows go through
+  `sortRows`. First click is most first (newest, largest), the second is
+  the other way, the third is the list's own order. An arrow marks the
+  column in force. The choice is in the URL as `sort`, beside the filters.
+  Text columns do not sort; the search field is for finding a name.
 - The active rail row is brighter text. Nothing else lights up.
+- A face is as tall as the text beside it. `PersonAvatar` is `xs` or `sm`
+  next to one line, `md` next to a table row's name with a line under it,
+  `xl` next to a drawer head's title with its description. Never a small
+  face pinned beside a two-line block.
 
 ## Copy
 
@@ -94,10 +137,13 @@ screen without reading this file.
   `sm` or `xs`.
 - Menus and the palette are the only surfaces with a radius. Palette rows
   are `rounded-md` like rail rows; rows inside a field's popover are square.
+- A check in a menu or picker sits at the trailing edge, after the label
+  and any count. Nothing is indented to leave room for it: every row's
+  label starts at the same edge whether or not it is chosen.
 
 ## Search
 
 - ⌘K is hybrid: literal `ILIKE` first, then pgvector, from
   `src/server/search`. Results carry a similarity and the palette shows it.
 - Every mutation re-embeds its own row through `reindexQuietly`, which never
-  fails the save. Settings has a rebuild button for the rest.
+  fails the save. `search.reindex` rebuilds the rest.

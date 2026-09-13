@@ -65,25 +65,6 @@ function BlogIndex() {
 									<p className="text-muted-foreground leading-relaxed">
 										{post.description}
 									</p>
-
-									{/* Boolean(): with tags: [] and no readTime this is the
-									    number 0, which React renders as literal text. */}
-									{Boolean(post.readTime || post.tags?.length) && (
-										<div className="flex flex-wrap items-center gap-2 pt-1 text-muted-foreground text-xs">
-											{post.readTime && <span>{post.readTime}</span>}
-											{post.readTime && post.tags?.length ? (
-												<span>·</span>
-											) : null}
-											{post.tags?.map((tag) => (
-												<span
-													key={tag}
-													className="rounded bg-foreground/5 px-2 py-0.5 text-muted-foreground"
-												>
-													{tag}
-												</span>
-											))}
-										</div>
-									)}
 								</article>
 							</Link>
 						))}

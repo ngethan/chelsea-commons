@@ -50,6 +50,27 @@
       "when": 1789228608269,
       "tag": "0006_fuzzy_names",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789300000000,
+      "tag": "0007_roles",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1789300100000,
+      "tag": "0008_owner",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1789300200000,
+      "tag": "0009_posts",
+      "breakpoints": true
     }
   ]
 }

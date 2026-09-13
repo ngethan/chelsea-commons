@@ -204,8 +204,8 @@ export const getContact = define({
 				deleted: contact.deletedAt !== null,
 				links: links.map((l) => ({
 					id: l.id,
-					update: l.updateTitle,
-					updateId: l.updateId,
+					post: l.postName,
+					postId: l.postId,
 					clicks: l.clicks,
 					revoked: l.revokedAt !== null,
 					sentOn: day(l.createdAt),
@@ -214,7 +214,7 @@ export const getContact = define({
 					on: day(e.at),
 					what:
 						e.kind === "click"
-							? `opened "${e.updateTitle}"${e.automated ? " (automated)" : ""}`
+							? `opened "${e.postName}"${e.automated ? " (automated)" : ""}`
 							: e.field
 								? `${e.field}: ${e.oldValue ?? "nothing"} → ${e.newValue ?? "nothing"}`
 								: e.verb,
@@ -298,20 +298,24 @@ export const getOrganization = define({
 	},
 });
 
-export const listUpdates = define({
-	name: "list_updates",
+export const listPosts = define({
+	name: "list_posts",
 	description:
-		"Every investor update that has gone out, newest first, with how many people got a link and how many of them opened it (automated scanners excluded).",
+		"Everything written, newest edit first: blog posts and letters, draft and published. A letter also reports how many people got a link and how many of them opened it (automated scanners excluded).",
 	schema: z.object({}),
 	async run(_input, { caller }) {
-		const rows = await caller.updates.list();
+		const rows = await caller.posts.list();
 		return {
-			summary: plural(rows.length, "update"),
+			summary: plural(rows.length, "post"),
 			content: rows.map((r) => ({
 				id: r.id,
 				slug: r.slug,
-				title: r.title,
-				sentOn: day(r.createdAt),
+				title: r.name,
+				kind: r.kind,
+				status: r.status,
+				visibility: r.visibility,
+				publishedOn: day(r.publishedAt),
+				sentOn: day(r.sentAt),
 				recipients: r.recipients,
 				opened: r.opened,
 			})),
@@ -319,40 +323,22 @@ export const listUpdates = define({
 	},
 });
 
-export const listPosts = define({
-	name: "list_posts",
+export const getPost = define({
+	name: "get_post",
 	description:
-		"The markdown posts in content/blog that an update can be made from, with whether each has already been turned into one. Needed before create_update.",
-	schema: z.object({}),
-	async run(_input, { caller }) {
-		const rows = await caller.updates.availablePosts();
-		return {
-			summary: plural(rows.length, "post"),
-			content: rows.map((r) => ({
-				slug: r.slug,
-				title: r.name,
-				date: r.date,
-				visibility: r.visibility,
-				alreadyAnUpdate: r.used,
-			})),
-		};
-	},
-});
-
-export const getUpdate = define({
-	name: "get_update",
-	description:
-		"One update with every recipient: who was sent a link, whether it is revoked, how many times they opened it and when they first did.",
+		"One post with every recipient: who was sent a link, whether it is revoked, how many times they opened it and when they first did.",
 	schema: z.object({ id: z.uuid() }),
 	async run(input, { caller }) {
-		const { update, recipients } = await caller.updates.byId({ id: input.id });
+		const { post, recipients } = await caller.posts.byId({ id: input.id });
 		return {
-			summary: update.title,
+			summary: post.name,
 			content: {
-				id: update.id,
-				slug: update.slug,
-				title: update.title,
-				sentOn: day(update.createdAt),
+				id: post.id,
+				slug: post.slug,
+				title: post.name,
+				kind: post.kind,
+				status: post.status,
+				publishedOn: day(post.publishedAt),
 				recipients: recipients.map((r) => ({
 					linkId: r.id,
 					contactId: r.contactId,
@@ -370,7 +356,7 @@ export const getUpdate = define({
 export const listAccess = define({
 	name: "list_access",
 	description:
-		"Who can sign in to this admin: every invited address, whether it is revoked, and whether that person has ever signed in.",
+		"Who can sign in to this admin: every invited address, its role (owner, admin, member or viewer), whether it is revoked, and whether that person has ever signed in.",
 	schema: z.object({}),
 	async run(_input, { caller }) {
 		const rows = await caller.access.list();
@@ -380,6 +366,7 @@ export const listAccess = define({
 				id: r.id,
 				email: r.email,
 				name: r.name,
+				role: r.role,
 				invitedOn: day(r.createdAt),
 				revoked: r.revokedAt !== null,
 				hasSignedIn: r.signedInAt !== null,
@@ -392,13 +379,13 @@ export const listAccess = define({
 export const getStats = define({
 	name: "get_stats",
 	description:
-		"The numbers at a glance: contacts by status, the biggest organizations, the most-used tags, how many people were added recently, and open rates per update. Start here for any 'how are we doing' question.",
+		"The numbers at a glance: contacts by status, the biggest organizations, the most-used tags, how many people were added recently, and open rates per letter. Start here for any 'how are we doing' question.",
 	schema: z.object({}),
 	async run(_input, { caller }) {
-		const [contacts, organizations, updates] = await Promise.all([
+		const [contacts, organizations, posts] = await Promise.all([
 			caller.contacts.list(),
 			caller.organizations.list(),
-			caller.updates.list(),
+			caller.posts.list(),
 		]);
 
 		const byStatus = Object.fromEntries(
@@ -440,16 +427,18 @@ export const getStats = define({
 					.sort((a, b) => b[1] - a[1])
 					.slice(0, 25)
 					.map(([tag, count]) => ({ tag, count })),
-				updates: updates.map((u) => ({
-					id: u.id,
-					title: u.title,
-					sentOn: day(u.createdAt),
-					recipients: u.recipients,
-					opened: u.opened,
-					openRate: u.recipients
-						? Math.round((u.opened / u.recipients) * 100) / 100
-						: null,
-				})),
+				letters: posts
+					.filter((p) => p.kind === "letter")
+					.map((p) => ({
+						id: p.id,
+						title: p.name,
+						sentOn: day(p.sentAt),
+						recipients: p.recipients,
+						opened: p.opened,
+						openRate: p.recipients
+							? Math.round((p.opened / p.recipients) * 100) / 100
+							: null,
+					})),
 			},
 		};
 	},
@@ -458,7 +447,7 @@ export const getStats = define({
 export const searchRecords = define({
 	name: "search_records",
 	description:
-		"The admin's own search: a literal match on names, emails and titles first, then a semantic match, across people, organizations and updates. Use it when you have a fragment or a description rather than an exact name.",
+		"The admin's own search: a literal match on names, emails and titles first, then a semantic match, across people, organizations and writing. Use it when you have a fragment or a description rather than an exact name.",
 	schema: z.object({
 		query: z.string().min(1).max(200),
 		limit: z.number().int().min(1).max(30).optional().default(10),
@@ -565,9 +554,8 @@ export const READ_TOOLS: ReadTool[] = [
 	getContact,
 	listOrganizations,
 	getOrganization,
-	listUpdates,
-	getUpdate,
 	listPosts,
+	getPost,
 	listAccess,
 	listTags,
 	searchRecords,

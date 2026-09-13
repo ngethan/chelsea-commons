@@ -57,8 +57,10 @@ function createAuth() {
 
 		emailAndPassword: {
 			enabled: true,
-			// There is no way to ask for a reset: that needs a mail transport, and
-			// this app deliberately sends no mail. A password is set by an admin.
+			// Anybody on the roster can make an account at /sign-in?mode=create;
+			// `validateUserInfo` below runs for this path as well as Google. No
+			// verification and no reset: both need a mail transport, and this app
+			// deliberately sends no mail.
 			requireEmailVerification: false,
 			minPasswordLength: 8,
 		},
@@ -72,9 +74,10 @@ function createAuth() {
 
 		user: {
 			/**
-			 * The whole of "signups are disabled". Better Auth will happily
-			 * create an account for anybody holding a Google address, so the
-			 * roster is enforced here, before the user row exists.
+			 * The whole of "signups are by invitation". Better Auth will happily
+			 * create an account for anybody holding a Google address or a
+			 * password, so the roster is enforced here, before the user row
+			 * exists, for both.
 			 */
 			validateUserInfo: async ({ user }) => {
 				const email = typeof user.email === "string" ? user.email : "";

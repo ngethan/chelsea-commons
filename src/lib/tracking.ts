@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { db } from "@/db";
-import { link, linkEvent, update } from "@/db/schema";
+import { link, linkEvent, post } from "@/db/schema";
 import { and, eq, isNull } from "drizzle-orm";
 
 /** Unambiguous alphabet: no 0/O/1/l/I, so a ref survives being read aloud. */
@@ -44,9 +44,9 @@ function clientIp(request: Request) {
 export async function resolveRef(ref: string): Promise<string | null> {
 	if (!ref) return null;
 	const rows = await db()
-		.select({ slug: update.slug })
+		.select({ slug: post.slug })
 		.from(link)
-		.innerJoin(update, eq(update.id, link.updateId))
+		.innerJoin(post, eq(post.id, link.postId))
 		.where(and(eq(link.ref, ref), isNull(link.revokedAt)))
 		.limit(1);
 	return rows[0]?.slug ?? null;

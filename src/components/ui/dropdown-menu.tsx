@@ -114,11 +114,11 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 >(({ className, children, checked, ...props }, ref) => (
 	<DropdownMenuPrimitive.CheckboxItem
 		ref={ref}
-		className={cn(item, "pl-8", className)}
+		className={cn(item, "pr-8", className)}
 		checked={checked}
 		{...props}
 	>
-		<span className="absolute left-2 flex size-3.5 items-center justify-center">
+		<span className="absolute right-2 flex size-3.5 items-center justify-center">
 			<DropdownMenuPrimitive.ItemIndicator>
 				<Check className="size-3.5" />
 			</DropdownMenuPrimitive.ItemIndicator>
@@ -135,10 +135,10 @@ const DropdownMenuRadioItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
 	<DropdownMenuPrimitive.RadioItem
 		ref={ref}
-		className={cn(item, "pl-8", className)}
+		className={cn(item, "pr-8", className)}
 		{...props}
 	>
-		<span className="absolute left-2 flex size-3.5 items-center justify-center">
+		<span className="absolute right-2 flex size-3.5 items-center justify-center">
 			<DropdownMenuPrimitive.ItemIndicator>
 				<Circle className="size-2 fill-current" />
 			</DropdownMenuPrimitive.ItemIndicator>

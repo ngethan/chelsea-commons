@@ -1,4 +1,4 @@
-import { contact, link, update } from "@/db/schema";
+import { contact, link, post } from "@/db/schema";
 import {
 	type EnrichedOperation,
 	type Operation,
@@ -14,7 +14,7 @@ import type { ToolContext } from "./read-tools";
  * reasons it cannot be one.
  *
  * Two jobs, on purpose in one pass. First, catch what would fail on apply
- * (an id that is nobody, an address already on the list, an update that
+ * (an id that is nobody, an address already on the list, a post that
  * still has links out) and send it back to the model as an error, so the
  * person is never shown a card whose Apply button cannot work. Second,
  * fetch what each row looks like now, so the card can show the change as a
@@ -79,17 +79,9 @@ class Lookups {
 		);
 	}
 
-	private updatesPromise?: ReturnType<ToolContext["caller"]["updates"]["list"]>;
-	updates() {
-		this.updatesPromise ??= this.tc.caller.updates.list();
-		return this.updatesPromise;
-	}
-
-	private postsPromise?: ReturnType<
-		ToolContext["caller"]["updates"]["availablePosts"]
-	>;
+	private postsPromise?: ReturnType<ToolContext["caller"]["posts"]["list"]>;
 	posts() {
-		this.postsPromise ??= this.tc.caller.updates.availablePosts();
+		this.postsPromise ??= this.tc.caller.posts.list();
 		return this.postsPromise;
 	}
 
@@ -377,58 +369,55 @@ async function enrich(
 			};
 		}
 
-		case "create_update": {
-			const post = (await lookups.posts()).find(
-				(p) => p.slug === operation.slug,
-			);
-			if (!post) return `no post named "${operation.slug}" in content/blog`;
-			if (post.used) return `"${post.name}" is already an update`;
+		case "mark_as_letter": {
+			const row = (await lookups.posts()).find((p) => p.id === operation.id);
+			if (!row) return `no post has the id ${operation.id}`;
+			if (row.kind === "letter") return `"${row.name}" is already a letter`;
 			return {
 				operation,
-				label: post.name,
-				before: null,
+				label: row.name,
+				before: { kind: row.kind },
 				warnings:
-					post.visibility !== "public"
-						? [
-								"The post is not public, so a link to it only works for people who have it",
-							]
+					row.status !== "published"
+						? ["It is still a draft, so a link to it will not resolve yet"]
 						: [],
 			};
 		}
 
-		case "remove_update": {
-			const row = (await lookups.updates()).find((u) => u.id === operation.id);
-			if (!row) return `no update has the id ${operation.id}`;
+		case "unmark_as_letter": {
+			const row = (await lookups.posts()).find((p) => p.id === operation.id);
+			if (!row) return `no post has the id ${operation.id}`;
+			if (row.kind !== "letter") return `"${row.name}" is not a letter`;
 			if (row.recipients > 0)
-				return `"${row.title}" has ${row.recipients} links out; revoke them first, or leave it`;
+				return `"${row.name}" has ${row.recipients} links out; revoke them first, or leave it`;
 			return {
 				operation,
-				label: row.title,
-				before: { title: row.title },
+				label: row.name,
+				before: { kind: row.kind },
 				warnings: [],
 			};
 		}
 
 		case "create_links": {
-			const target = (await lookups.updates()).find(
-				(u) => u.id === operation.updateId,
+			const target = (await lookups.posts()).find(
+				(p) => p.id === operation.postId,
 			);
-			if (!target) return `no update has the id ${operation.updateId}`;
+			if (!target) return `no post has the id ${operation.postId}`;
 			const rows = await lookups.contacts();
 			const missing = operation.contactIds.filter(
 				(id) => !rows.some((r) => r.id === id),
 			);
 			if (missing.length)
 				return `no live contact has the id ${missing.slice(0, 3).join(", ")}${missing.length > 3 ? ` and ${missing.length - 3} more` : ""}`;
-			const { recipients } = await tc.caller.updates.byId({
-				id: operation.updateId,
+			const { recipients } = await tc.caller.posts.byId({
+				id: operation.postId,
 			});
 			const already = operation.contactIds.filter((id) =>
 				recipients.some((r) => r.contactId === id),
 			).length;
 			return {
 				operation,
-				label: target.title,
+				label: target.name,
 				before: null,
 				warnings: already
 					? [`${already} of them already have a link and keep it`]
@@ -443,21 +432,21 @@ async function enrich(
 					revokedAt: link.revokedAt,
 					contactName: contact.name,
 					contactEmail: contact.email,
-					updateTitle: update.title,
+					postName: post.name,
 				})
 				.from(link)
 				.innerJoin(contact, eq(contact.id, link.contactId))
-				.innerJoin(update, eq(update.id, link.updateId))
+				.innerJoin(post, eq(post.id, link.postId))
 				.where(eq(link.id, operation.id))
 				.limit(1);
 			if (!row) return `no link has the id ${operation.id}`;
 			if (row.revokedAt) return "that link is already revoked";
 			return {
 				operation,
-				label: `${row.contactName || row.contactEmail}, ${row.updateTitle}`,
+				label: `${row.contactName || row.contactEmail}, ${row.postName}`,
 				before: {
 					contact: row.contactName || row.contactEmail,
-					update: row.updateTitle,
+					post: row.postName,
 				},
 				warnings: [],
 			};
@@ -473,7 +462,7 @@ async function enrich(
 			const revoked = rows.find((r) => r.email.toLowerCase() === email);
 			return {
 				operation,
-				label: email,
+				label: operation.role ? `${email}, ${operation.role}` : email,
 				before: null,
 				warnings: revoked ? ["Was revoked before; this lets them back in"] : [],
 			};

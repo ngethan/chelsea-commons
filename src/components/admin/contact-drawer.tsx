@@ -202,7 +202,18 @@ export function ContactDrawer({
 
 	function submit() {
 		if (!draft) return;
-		save.mutate({ id, ...toInput(draft) });
+		const submitted = draft;
+		save.mutate(
+			{ id, ...toInput(submitted) },
+			{
+				// What was sent is now what the record looks like, so it becomes
+				// the baseline dirtiness is measured from. Only the seed moves:
+				// anything typed while the save was in flight stays unsaved, and
+				// the refetch that follows fills in the rest without touching it.
+				onSuccess: () =>
+					setForm((prev) => (prev ? { ...prev, seed: submitted } : prev)),
+			},
+		);
 	}
 
 	// The header reads from whichever copy is here first.
@@ -217,9 +228,9 @@ export function ContactDrawer({
 	return (
 		<Sheet open onOpenChange={(open) => !open && guard.requestClose()}>
 			<SheetContent onOpenAutoFocus={(e) => e.preventDefault()}>
-				<SheetHeader className="flex-row items-center gap-3">
-					{row && <PersonAvatar person={row} size="lg" />}
-					<div className="flex min-w-0 flex-col gap-2">
+				<SheetHeader className="flex-row items-center gap-4">
+					{row && <PersonAvatar person={row} size="xl" />}
+					<div className="flex min-w-0 flex-col gap-1.5">
 						<SheetTitle>{row?.name || row?.email || "Contact"}</SheetTitle>
 						<SheetDescription className="flex flex-wrap items-center gap-2">
 							{row ? (
@@ -325,7 +336,7 @@ export function ContactDrawer({
 							right={
 								<AddLink
 									contactId={id}
-									linkedUpdateIds={sent.map((entry) => entry.updateId)}
+									linkedPostIds={sent.map((entry) => entry.postId)}
 								/>
 							}
 						>
@@ -355,7 +366,7 @@ export function ContactDrawer({
 												className={entry.revokedAt ? "opacity-55" : ""}
 											>
 												<TableCell className="truncate text-[14px]">
-													{entry.updateTitle}
+													{entry.postName}
 												</TableCell>
 												<TableCell>
 													<Mono>{entry.ref}</Mono>
@@ -428,8 +439,7 @@ export function ContactDrawer({
 									title={
 										entry.kind === "click" ? (
 											<>
-												Opened{" "}
-												<span className="italic">{entry.updateTitle}</span>
+												Opened <span className="italic">{entry.postName}</span>
 												{entry.automated && (
 													<span className="ml-1.5 text-[11px] text-muted-foreground">
 														looks automated
@@ -561,28 +571,28 @@ function LogInteraction({ contactId }: { contactId: string }) {
 }
 
 /**
- * Mint a link for this person to one update, from the drawer. The other
- * direction (an update, many people) lives on the update's page; this is
+ * Mint a link for this person to one post, from the drawer. The other
+ * direction (a post, many people) lives on the post's page; this is
  * for the one person who was missed.
  */
 function AddLink({
 	contactId,
-	linkedUpdateIds,
+	linkedPostIds,
 }: {
 	contactId: string;
-	linkedUpdateIds: string[];
+	linkedPostIds: string[];
 }) {
 	const utils = trpc.useUtils();
 	const [open, setOpen] = useState(false);
-	const updates = trpc.updates.list.useQuery(undefined, { enabled: open });
+	const posts = trpc.posts.list.useQuery(undefined, { enabled: open });
 
 	const create = trpc.links.createForContacts.useMutation({
 		onSuccess: async (result, variables) => {
 			await Promise.all([
 				utils.links.byContact.invalidate({ contactId }),
 				utils.contacts.timeline.invalidate({ id: contactId }),
-				utils.updates.list.invalidate(),
-				utils.updates.byId.invalidate({ id: variables.updateId }),
+				utils.posts.list.invalidate(),
+				utils.posts.byId.invalidate({ id: variables.postId }),
 			]);
 			toast.success(result.created ? "Link created." : "They already had one.");
 			setOpen(false);
@@ -590,8 +600,10 @@ function AddLink({
 		onError: (err) => toast.error(err.message),
 	});
 
-	const linked = new Set(linkedUpdateIds);
-	const available = (updates.data ?? []).filter((u) => !linked.has(u.id));
+	const linked = new Set(linkedPostIds);
+	const available = (posts.data ?? []).filter(
+		(p) => p.status === "published" && !linked.has(p.id),
+	);
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
@@ -603,31 +615,31 @@ function AddLink({
 			</PopoverTrigger>
 			<PopoverContent align="end" className="w-[320px] p-0">
 				<Command loop>
-					<CommandInput placeholder="Which update" className="text-[13px]" />
+					<CommandInput placeholder="Which post" className="text-[13px]" />
 					<CommandList className="max-h-[260px]">
 						<CommandEmpty>
-							{updates.isLoading
+							{posts.isLoading
 								? "Loading"
 								: available.length === 0
-									? "They have a link to every update."
+									? "They have a link to everything."
 									: "Nothing matches."}
 						</CommandEmpty>
 						<CommandGroup>
-							{available.map((update) => (
+							{available.map((row) => (
 								<CommandItem
-									key={update.id}
-									value={`${update.title} ${update.slug}`}
+									key={row.id}
+									value={`${row.name} ${row.slug}`}
 									disabled={create.isPending}
 									onSelect={() =>
 										create.mutate({
-											updateId: update.id,
+											postId: row.id,
 											contactIds: [contactId],
 										})
 									}
 								>
-									<span className="truncate">{update.title}</span>
+									<span className="truncate">{row.name}</span>
 									<span className="ml-auto truncate pl-3 font-mono text-[11px] text-muted-foreground">
-										{update.slug}
+										{row.slug}
 									</span>
 								</CommandItem>
 							))}

@@ -4,6 +4,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { STATUS_LABEL, normalizeStatus } from "@/lib/status";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
 import type * as React from "react";
 
 /**
@@ -23,27 +25,79 @@ export function Page({ className, ...props }: React.ComponentProps<"div">) {
 	);
 }
 
+/** A step in the trail. No `to` is the page being read: text, not a link. */
+export type Crumb = { label: string; to?: string };
+
 export function PageHead({
 	title,
+	crumbs,
 	meta,
 	toolbar,
 	actions,
+	loading,
 }: {
 	title: string;
+	/**
+	 * The trail above the title, for a page that lives under another: an
+	 * update under Updates. Ends with the page being read, as plain text.
+	 */
+	crumbs?: Crumb[];
 	/** Something small and factual under the title: a slug, a path. */
 	meta?: React.ReactNode;
 	/** The search-or-filter row, under the title on its own rule. */
 	toolbar?: React.ReactNode;
 	actions?: React.ReactNode;
+	/**
+	 * A record still loading. The title and the last crumb are the record's
+	 * own words, and a page that says "Untitled" for half a second before it
+	 * says the real name has told the reader something untrue. This shows
+	 * their shape instead, the way a list shows `RowsSkeleton`.
+	 */
+	loading?: boolean;
 }) {
 	return (
 		<div className="shrink-0 border-b border-border">
 			<div className="flex items-end justify-between gap-4 px-4 pt-10 pb-7 md:px-8">
 				<div className="flex min-w-0 items-center gap-3">
 					<div className="min-w-0">
-						<h1 className="truncate text-[32px] font-medium leading-none tracking-[-0.02em]">
-							{title}
-						</h1>
+						{crumbs && crumbs.length > 0 && (
+							<nav
+								aria-label="Breadcrumb"
+								className="mb-3 flex items-center gap-1 text-[13px] text-muted-foreground"
+							>
+								{crumbs.map((crumb, i) => (
+									<span
+										key={crumb.to ?? crumb.label}
+										className="flex min-w-0 items-center gap-1"
+									>
+										{i > 0 && (
+											<ChevronRight className="size-3.5 shrink-0 text-muted-foreground/60" />
+										)}
+										{crumb.to ? (
+											<Link
+												to={crumb.to}
+												className="rounded-md px-1 py-0.5 -mx-1 no-underline transition-colors hover:bg-hover-muted hover:text-foreground"
+											>
+												{crumb.label}
+											</Link>
+										) : loading ? (
+											<Skeleton className="h-3.5 w-28" />
+										) : (
+											<span className="truncate text-foreground">
+												{crumb.label}
+											</span>
+										)}
+									</span>
+								))}
+							</nav>
+						)}
+						{loading ? (
+							<Skeleton className="h-8 w-[22rem] max-w-full" />
+						) : (
+							<h1 className="truncate text-[32px] font-medium leading-none tracking-[-0.02em]">
+								{title}
+							</h1>
+						)}
 						{meta && (
 							<div className="mt-2.5 text-[13px] text-muted-foreground">
 								{meta}
@@ -89,6 +143,12 @@ export function PageBody({ className, ...props }: React.ComponentProps<"div">) {
  * cells instead. Rendered as a bare `<table>` rather than through `Table`,
  * whose overflow wrapper would become the scroll container and defeat the
  * sticking.
+ *
+ * `table-fixed` so a column is the width its head says (`ColumnHead`, whose
+ * rules can be dragged) and the first column (`FillHead`), which has none,
+ * takes the rest. Under auto layout a long cell would push its column
+ * wider than the grip had set it. What does not fit a cell is cut with an
+ * ellipsis rather than wrapped, so a narrow column costs width, not height.
  */
 export function ListTable({
 	className,
@@ -97,16 +157,19 @@ export function ListTable({
 	return (
 		<table
 			className={cn(
-				"w-full border-separate border-spacing-0 text-[13.5px]",
+				"w-full table-fixed border-separate border-spacing-0 text-[13.5px]",
+				"[&_td]:overflow-hidden [&_td]:text-ellipsis [&_td]:whitespace-nowrap",
 				"[&_thead]:sticky [&_thead]:top-0 [&_thead]:z-10 [&_thead]:bg-background",
 				"[&_th]:border-b [&_th]:border-border [&_td]:border-b [&_td]:border-border",
 				"[&_td:not(:last-child)]:border-r [&_th:not(:last-child)]:border-r",
 				"[&_td]:py-3.5 [&_th]:h-10",
 				"[&_td:first-child:not([data-tick])]:pl-4 [&_th:first-child:not([data-tick])]:pl-4 md:[&_td:first-child:not([data-tick])]:pl-8 md:[&_th:first-child:not([data-tick])]:pl-8",
 				"[&_td:last-child]:pr-4 [&_th:last-child]:pr-4 md:[&_td:last-child]:pr-8 md:[&_th:last-child]:pr-8",
-				// A selection column: fixed width, box centred, so its centre sits
-				// on the gutter line the title starts from.
-				"[&_[data-tick]]:w-[64px] [&_[data-tick]]:px-0 [&_[data-tick]>*]:mx-auto",
+				// A selection column: the 16px box centred in a fixed 48px (40 on a
+				// phone), the same on every table that has one. Narrower than the
+				// gutter would allow, because it is a control and not text: it
+				// does not need to start where the title does.
+				"[&_[data-tick]]:w-10 [&_[data-tick]]:px-0 md:[&_[data-tick]]:w-12 [&_[data-tick]>*]:mx-auto",
 				className,
 			)}
 			{...props}
@@ -327,26 +390,149 @@ export function Empty({ children }: { children: React.ReactNode }) {
 	);
 }
 
-/** Placeholder rows while a list loads, so the table does not jump in. */
+/**
+ * What a cell will hold once it loads. The skeleton draws that shape at
+ * that height, so the table does not change height or rhythm when the
+ * rows arrive: a face is a circle, a checkbox is a square, a name with a
+ * line under it is two lines, and every one-line cell is a 20px line box,
+ * which is what 13.5px text takes.
+ */
+export type SkeletonCell =
+	| "tick"
+	| "person"
+	| "lines"
+	| "text"
+	| "mono"
+	| "number"
+	| "date"
+	| "faces"
+	| "pills"
+	| "none";
+
+type SkeletonCellSpec =
+	| SkeletonCell
+	| {
+			kind: SkeletonCell;
+			/** The real cell's responsive classes, so the columns match at every width. */
+			className?: string;
+	  };
+
+/** A width that varies row to row without being random, so it does not flicker. */
+const vary = (r: number, c: number, from: number, span: number) =>
+	`${from + ((r * 7 + c * 13) % span)}%`;
+
+/** Two grey lines: a name, and the smaller line under it. */
+function TwoLines({ r, c }: { r: number; c: number }) {
+	return (
+		<div className="flex min-w-0 flex-1 flex-col justify-center gap-2">
+			<Skeleton className="h-3.5" style={{ width: vary(r, c, 35, 30) }} />
+			<Skeleton className="h-3" style={{ width: vary(r, c + 1, 25, 30) }} />
+		</div>
+	);
+}
+
+function SkeletonShape({
+	kind,
+	r,
+	c,
+}: {
+	kind: SkeletonCell;
+	r: number;
+	c: number;
+}) {
+	switch (kind) {
+		case "tick":
+			// The box the checkbox will be: same size, radius and edge, no fill.
+			return (
+				<div className="size-4 animate-pulse rounded-[3px] border-[1.5px] border-input-focus/60" />
+			);
+		case "person":
+			return (
+				<div className="flex h-9 items-center gap-2.5">
+					<Skeleton className="size-9 shrink-0 rounded-full" />
+					<TwoLines r={r} c={c} />
+				</div>
+			);
+		case "lines":
+			return (
+				<div className="flex h-9 items-center">
+					<TwoLines r={r} c={c} />
+				</div>
+			);
+		case "text":
+			return (
+				<div className="flex h-5 items-center">
+					<Skeleton className="h-3.5" style={{ width: vary(r, c, 30, 45) }} />
+				</div>
+			);
+		case "mono":
+			return (
+				<div className="flex h-5 items-center">
+					<Skeleton className="h-3" style={{ width: vary(r, c, 40, 35) }} />
+				</div>
+			);
+		case "number":
+			return (
+				<div className="flex h-5 items-center justify-end">
+					<Skeleton className="h-3.5 w-6" />
+				</div>
+			);
+		case "date":
+			return (
+				<div className="flex h-5 items-center justify-end">
+					<Skeleton className="h-3.5 w-14" />
+				</div>
+			);
+		case "faces":
+			return (
+				<div className="flex h-5 items-center">
+					{Array.from({ length: 2 + (r % 2) }, (_, i) => (
+						<Skeleton
+							key={i}
+							className="size-5 rounded-full ring-2 ring-background"
+							style={{ marginLeft: i ? -6 : 0 }}
+						/>
+					))}
+				</div>
+			);
+		case "pills":
+			return (
+				<div className="flex h-5 items-center gap-1">
+					<Skeleton className="h-5 w-12 rounded-full" />
+					{r % 3 !== 0 && <Skeleton className="h-5 w-16 rounded-full" />}
+				</div>
+			);
+		case "none":
+			return <div className="h-5" />;
+	}
+}
+
+/**
+ * Placeholder rows while a list loads. Hand it the row's cells in order,
+ * each the kind of thing that will be there, with the real cell's
+ * responsive classes where it has them.
+ */
 export function RowsSkeleton({
 	rows = 6,
-	cols = 3,
+	cells,
 }: {
 	rows?: number;
-	cols?: number;
+	cells: SkeletonCellSpec[];
 }) {
+	const specs = cells.map((cell) =>
+		typeof cell === "string" ? { kind: cell, className: undefined } : cell,
+	);
 	return (
 		<>
 			{Array.from({ length: rows }, (_, r) => (
 				<TableRow key={r} className="hover:bg-transparent">
-					{Array.from({ length: cols }, (_, c) => (
-						<TableCell key={c}>
-							<Skeleton
-								className="h-3.5"
-								style={{
-									width: `${c === 0 ? 55 : 30 + ((r * 7 + c * 13) % 40)}%`,
-								}}
-							/>
+					{specs.map((cell, c) => (
+						<TableCell
+							key={c}
+							data-tick={cell.kind === "tick" ? true : undefined}
+							className={cell.className}
+						>
+							<SkeletonShape kind={cell.kind} r={r} c={c} />
 						</TableCell>
 					))}
 				</TableRow>

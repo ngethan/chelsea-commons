@@ -108,8 +108,8 @@ export function DuplicatesSheet({
 									<TableBody>
 										{group.contacts.map((c) => (
 											<TableRow key={c.id} className="hover:bg-transparent">
-												<TableCell className="w-[56px] pr-0 align-middle">
-													<PersonAvatar person={c} />
+												<TableCell className="w-[64px] pr-0 align-middle">
+													<PersonAvatar person={c} size="md" />
 												</TableCell>
 												<TableCell className="align-middle">
 													<button

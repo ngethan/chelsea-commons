@@ -14,6 +14,7 @@ const IDS = {
 	acme: "33333333-3333-4333-8333-333333333333",
 	globex: "44444444-4444-4444-8444-444444444444",
 	letter: "55555555-5555-4555-8555-555555555555",
+	draft: "88888888-8888-4888-8888-888888888888",
 	me: "66666666-6666-4666-8666-666666666666",
 	them: "77777777-7777-4777-8777-777777777777",
 	nobody: "99999999-9999-4999-8999-999999999999",
@@ -91,32 +92,29 @@ function fakeContext(
 				},
 			],
 		},
-		updates: {
+		posts: {
 			list: async () => [
 				{
 					id: IDS.letter,
 					slug: "summer",
-					title: "Summer letter",
+					name: "Summer letter",
+					kind: "letter",
+					status: "published",
 					recipients: 1,
 					opened: 0,
 				},
-			],
-			availablePosts: async () => [
 				{
-					slug: "summer",
-					name: "Summer letter",
-					used: true,
-					visibility: "public",
-				},
-				{
+					id: IDS.draft,
 					slug: "fall",
 					name: "Fall letter",
-					used: false,
-					visibility: "private",
+					kind: "post",
+					status: "draft",
+					recipients: 0,
+					opened: 0,
 				},
 			],
 			byId: async () => ({
-				update: { id: IDS.letter },
+				post: { id: IDS.letter },
 				recipients: [{ contactId: IDS.jane }],
 			}),
 		},
@@ -259,27 +257,27 @@ describe("validateProposal", () => {
 		if (out.ok) expect(out.proposal.destructive).toBe(true);
 	});
 
-	it("will not delete an update that has links out", async () => {
-		const out = await propose([{ op: "remove_update", id: IDS.letter }]);
+	it("will not unmark a letter that has links out", async () => {
+		const out = await propose([{ op: "unmark_as_letter", id: IDS.letter }]);
 		expect(out.ok).toBe(false);
 		if (!out.ok) expect(out.errors[0]).toMatch(/links out/);
 	});
 
-	it("only makes an update from a post that is not one yet", async () => {
-		expect((await propose([{ op: "create_update", slug: "summer" }])).ok).toBe(
+	it("only marks a post that is not a letter yet, and says if it is a draft", async () => {
+		expect((await propose([{ op: "mark_as_letter", id: IDS.letter }])).ok).toBe(
 			false,
 		);
-		const out = await propose([{ op: "create_update", slug: "fall" }]);
+		const out = await propose([{ op: "mark_as_letter", id: IDS.draft }]);
 		expect(out.ok).toBe(true);
 		if (out.ok)
-			expect(out.proposal.operations[0].warnings[0]).toMatch(/not public/);
+			expect(out.proposal.operations[0].warnings[0]).toMatch(/still a draft/);
 	});
 
 	it("notes who already has a link when minting more", async () => {
 		const out = await propose([
 			{
 				op: "create_links",
-				updateId: IDS.letter,
+				postId: IDS.letter,
 				contactIds: [IDS.jane, IDS.sam],
 			},
 		]);

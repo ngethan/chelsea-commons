@@ -17,7 +17,12 @@ describe.skipIf(process.env.LIVE_AI !== "1")("live", () => {
 	it("answers a read-only question", { timeout: 240_000 }, async () => {
 		const [u] = await db().select().from(user).limit(1);
 		if (!u) throw new Error("no user row to act as");
-		const ctx = { headers: new Headers(), user: u, db: db() };
+		const ctx = {
+			headers: new Headers(),
+			user: u,
+			role: "admin" as const,
+			db: db(),
+		};
 		const tc = { ctx, caller: createCoreCaller(ctx) };
 		const prompt =
 			process.env.LIVE_PROMPT ?? "How are we doing? Keep it short.";

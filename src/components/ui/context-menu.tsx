@@ -152,10 +152,10 @@ function ContextMenuCheckboxItem({
 		<ContextMenuPrimitive.CheckboxItem
 			data-slot="context-menu-checkbox-item"
 			checked={checked}
-			className={cn(item, "pl-8", className)}
+			className={cn(item, "pr-8", className)}
 			{...props}
 		>
-			<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+			<span className="pointer-events-none absolute right-2 flex size-3.5 items-center justify-center">
 				<ContextMenuPrimitive.ItemIndicator>
 					<CheckIcon className="size-3.5" />
 				</ContextMenuPrimitive.ItemIndicator>
@@ -173,10 +173,10 @@ function ContextMenuRadioItem({
 	return (
 		<ContextMenuPrimitive.RadioItem
 			data-slot="context-menu-radio-item"
-			className={cn(item, "pl-8", className)}
+			className={cn(item, "pr-8", className)}
 			{...props}
 		>
-			<span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
+			<span className="pointer-events-none absolute right-2 flex size-3.5 items-center justify-center">
 				<ContextMenuPrimitive.ItemIndicator>
 					<CircleIcon className="size-2 fill-current" />
 				</ContextMenuPrimitive.ItemIndicator>

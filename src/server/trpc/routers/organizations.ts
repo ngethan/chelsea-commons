@@ -1,3 +1,4 @@
+import type { Db } from "@/db";
 import { contact, organization } from "@/db/schema";
 import {
 	indexContacts,
@@ -5,7 +6,7 @@ import {
 	reindexQuietly,
 } from "@/server/search";
 import { TRPCError } from "@trpc/server";
-import { and, asc, count, eq, isNull } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { fieldChanges, logActivity } from "../activity";
 import { createTRPCRouter, protectedProcedure } from "../init";
@@ -158,28 +159,47 @@ export const organizationsRouter = createTRPCRouter({
 	remove: protectedProcedure
 		.input(z.object({ id: z.uuid() }))
 		.mutation(async ({ ctx, input }) => {
-			// Contacts survive: `organization_id` is `on delete set null`, so
-			// removing an organization loosens people rather than deleting them.
-			const members = await ctx.db
-				.select({ id: contact.id })
-				.from(contact)
-				.where(eq(contact.organizationId, input.id));
-
-			await ctx.db.delete(organization).where(eq(organization.id, input.id));
-
-			await logActivity({
-				actorUserId: ctx.user.id,
-				entityType: "organization",
-				entityId: input.id,
-				verb: "deleted",
-			});
-
-			if (members.length) {
-				await reindexQuietly(() =>
-					indexContacts({ ids: members.map((m) => m.id) }),
-				);
-			}
-
+			await removeOrganizations(ctx, [input.id]);
 			return { deleted: true };
 		}),
+
+	/** The ticked rows on the list, in one call. */
+	removeMany: protectedProcedure
+		.input(z.object({ ids: z.array(z.uuid()).min(1).max(500) }))
+		.mutation(async ({ ctx, input }) => {
+			await removeOrganizations(ctx, input.ids);
+			return { deleted: input.ids.length };
+		}),
 });
+
+/**
+ * Contacts survive: `organization_id` is `on delete set null`, so removing
+ * an organization loosens people rather than deleting them. They are
+ * reindexed afterwards because the organization's name was in their text.
+ */
+async function removeOrganizations(
+	ctx: { db: Db; user: { id: string } },
+	ids: string[],
+) {
+	const members = await ctx.db
+		.select({ id: contact.id })
+		.from(contact)
+		.where(inArray(contact.organizationId, ids));
+
+	await ctx.db.delete(organization).where(inArray(organization.id, ids));
+
+	await logActivity(
+		ids.map((id) => ({
+			actorUserId: ctx.user.id,
+			entityType: "organization" as const,
+			entityId: id,
+			verb: "deleted",
+		})),
+	);
+
+	if (members.length) {
+		await reindexQuietly(() =>
+			indexContacts({ ids: members.map((m) => m.id) }),
+		);
+	}
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
 	Command,
 	CommandEmpty,
@@ -15,7 +16,14 @@ import {
 } from "@/components/ui/popover";
 import { SelectContent, SelectItem } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Check, ChevronDown, ChevronsUpDown, Plus } from "lucide-react";
+import {
+	Check,
+	ChevronDown,
+	ChevronsUpDown,
+	Eye,
+	EyeOff,
+	Plus,
+} from "lucide-react";
 import { Select as SelectPrimitive } from "radix-ui";
 import type * as React from "react";
 import { useId, useState } from "react";
@@ -52,6 +60,8 @@ type FloatingInputProps = Omit<
 	label: string;
 	error?: string | null;
 	className?: string;
+	/** Something at the trailing edge, inside the box: an eye, a unit. */
+	trailing?: React.ReactNode;
 };
 
 export function FloatingInput({
@@ -59,6 +69,7 @@ export function FloatingInput({
 	error,
 	className,
 	id,
+	trailing,
 	...props
 }: FloatingInputProps) {
 	const generated = useId();
@@ -74,11 +85,16 @@ export function FloatingInput({
 					placeholder=" "
 					aria-invalid={!!error || undefined}
 					aria-describedby={error ? errorId : undefined}
-					className={control}
+					className={cn(control, trailing && "pr-12")}
 				/>
 				<label htmlFor={inputId} className="fl-label">
 					{label}
 				</label>
+				{trailing && (
+					<div className="absolute inset-y-0 right-2 flex items-center">
+						{trailing}
+					</div>
+				)}
 			</div>
 			{error && (
 				<p id={errorId} role="alert" className="text-[12px] text-destructive">
@@ -86,6 +102,45 @@ export function FloatingInput({
 				</p>
 			)}
 		</div>
+	);
+}
+
+type FloatingPasswordProps = Omit<FloatingInputProps, "type" | "trailing"> & {
+	/** Hand the eye to the parent, so two fields can show and hide together. */
+	shown?: boolean;
+	onShownChange?: (shown: boolean) => void;
+};
+
+/**
+ * A password field with an eye at its trailing edge. Uncontrolled by
+ * default; pass `shown` and `onShownChange` to run several from one eye.
+ */
+export function FloatingPassword({
+	shown,
+	onShownChange,
+	...props
+}: FloatingPasswordProps) {
+	const [own, setOwn] = useState(false);
+	const visible = shown ?? own;
+	const toggle = () => (onShownChange ?? setOwn)(!visible);
+
+	return (
+		<FloatingInput
+			{...props}
+			type={visible ? "text" : "password"}
+			trailing={
+				<Button
+					type="button"
+					variant="icon"
+					size="icon-xs"
+					aria-label={visible ? "Hide password" : "Show password"}
+					aria-pressed={visible}
+					onClick={toggle}
+				>
+					{visible ? <EyeOff /> : <Eye />}
+				</Button>
+			}
+		/>
 	);
 }
 
@@ -152,12 +207,14 @@ export function FloatingSelect({
 	onChange,
 	options,
 	className,
+	disabled,
 }: {
 	label: string;
 	value: string;
 	onChange: (value: string) => void;
 	options: FieldOption[];
 	className?: string;
+	disabled?: boolean;
 }) {
 	const [open, setOpen] = useState(false);
 	const selected = options.find((o) => o.value === value);
@@ -168,6 +225,7 @@ export function FloatingSelect({
 			onValueChange={onChange}
 			open={open}
 			onOpenChange={setOpen}
+			disabled={disabled}
 		>
 			<SelectPrimitive.Trigger
 				data-open={open}
@@ -297,13 +355,13 @@ export function FloatingCombobox({
 									onSelect={() => pick(null)}
 									className="text-muted-foreground"
 								>
+									<span className="min-w-0 flex-1 truncate">{clearLabel}</span>
 									<Check
 										className={cn(
-											"size-3.5",
+											"size-3.5 shrink-0",
 											value === null ? "opacity-100" : "opacity-0",
 										)}
 									/>
-									{clearLabel}
 								</CommandItem>
 							)}
 							{options.map((option) => (
@@ -312,18 +370,20 @@ export function FloatingCombobox({
 									value={`${option.label} ${option.hint ?? ""} ${option.value}`}
 									onSelect={() => pick(option.value)}
 								>
-									<Check
-										className={cn(
-											"size-3.5",
-											option.value === value ? "opacity-100" : "opacity-0",
-										)}
-									/>
-									<span className="truncate">{option.label}</span>
+									<span className="min-w-0 flex-1 truncate">
+										{option.label}
+									</span>
 									{option.hint && (
-										<span className="ml-auto truncate pl-3 font-mono text-[11px] text-muted-foreground">
+										<span className="truncate pl-3 font-mono text-[11px] text-muted-foreground">
 											{option.hint}
 										</span>
 									)}
+									<Check
+										className={cn(
+											"size-3.5 shrink-0",
+											option.value === value ? "opacity-100" : "opacity-0",
+										)}
+									/>
 								</CommandItem>
 							))}
 						</CommandGroup>

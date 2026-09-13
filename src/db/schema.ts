@@ -1,3 +1,5 @@
+import type { PostKind, PostStatus, PostVisibility } from "@/lib/post-state";
+import type { Role } from "@/lib/roles";
 import { relations, sql } from "drizzle-orm";
 import {
 	bigserial,
@@ -133,6 +135,12 @@ export const invitedUser = pgTable(
 		invitedBy: text("invited_by").references(() => user.id, {
 			onDelete: "set null",
 		}),
+		/**
+		 * One of `ROLES` in `src/lib/roles.ts`. It lives on the invite rather
+		 * than the user because the invite exists first, and because it is
+		 * the row an admin edits: the user row belongs to Better Auth.
+		 */
+		role: text("role").$type<Role>().notNull().default("member"),
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.notNull()
 			.defaultNow(),
@@ -331,34 +339,101 @@ export const duplicateDismissal = pgTable(
  * Updates and tracked links
  * -------------------------------------------------------------------------- */
 
+/* -------------------------------------------------------------------------- *
+ * Writing
+ * -------------------------------------------------------------------------- */
+
 /**
- * One investor update. The text itself stays a markdown file in
- * `content/blog`; this row is what recipients and clicks hang off, and it
- * exists before anybody has clicked anything.
+ * One piece of writing: a blog post at `/writing/<slug>`, or a letter sent to
+ * named people, which is the same row with `kind` set and links minted off it.
  *
- * `title` is a snapshot rather than a lookup so renaming a markdown file later
- * does not silently rewrite what you sent.
+ * `doc` is a ProseMirror document, not markdown. The editor and the public
+ * renderer both walk that tree, so there is no serialization step between
+ * writing something and reading it, and nothing to round-trip through.
+ *
+ * `status`, `visibility` and `kind` are three questions, not one; the argument
+ * for keeping them apart is in `src/lib/post-state.ts`. All three default to
+ * the closed answer, the way the frontmatter parser this replaces did: a post
+ * nobody has published is not readable, and a post nobody has listed is not
+ * listed.
  */
-export const update = pgTable(
-	"update",
+export const post = pgTable(
+	"post",
 	{
 		id: uuid("id").primaryKey().defaultRandom(),
+		/**
+		 * Follows the title while the post is a draft and freezes on publish.
+		 * It is the URL, and the URL is in somebody's inbox: renaming the post
+		 * later moves the title everywhere and leaves this alone.
+		 */
 		slug: text("slug").notNull().unique(),
-		title: text("title").notNull(),
+		name: text("name").notNull(),
+		/** The index blurb and the meta description. Falls back to the opening prose. */
+		description: text("description"),
+		/** The small caps line under a letter's title. */
+		subtitle: text("subtitle"),
+		doc: jsonb("doc").notNull(),
+		status: text("status").$type<PostStatus>().notNull().default("draft"),
+		visibility: text("visibility")
+			.$type<PostVisibility>()
+			.notNull()
+			.default("private"),
+		kind: text("kind").$type<PostKind>().notNull().default("post"),
+		/** Null while a draft. Editable afterwards, so a date got wrong can be fixed. */
+		publishedAt: timestamp("published_at", { withTimezone: true }),
+		/**
+		 * Overrides the rendered date when set. The letters are dated "Sep 2026"
+		 * as often as "Sep 10, 2026", and which one a post wants is a choice
+		 * about the writing rather than a fact about the timestamp.
+		 */
+		dateLabel: text("date_label"),
 		createdBy: text("created_by").references(() => user.id, {
 			onDelete: "set null",
 		}),
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.notNull()
 			.defaultNow(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
 		...embeddingColumns,
 	},
 	(t) => [
-		index("update_embedding_idx").using(
+		index("post_embedding_idx").using(
 			"hnsw",
 			t.embedding.op("vector_cosine_ops"),
 		),
+		/** The list orders by this, and `/writing` orders by `published_at`. */
+		index("post_updated_idx").on(t.updatedAt.desc()),
 	],
+);
+
+/**
+ * The document as it stood before something hard to undo. Written on publish
+ * and nowhere else: autosave is continuous and cheap to lose a second of,
+ * publishing is the moment the text stops being yours alone.
+ *
+ * A handful of rows per post rather than one per keystroke, which is why this
+ * can hold the whole document instead of a diff.
+ */
+export const postRevision = pgTable(
+	"post_revision",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+		postId: uuid("post_id")
+			.notNull()
+			.references(() => post.id, { onDelete: "cascade" }),
+		/** The name at the time, so a restored revision restores its title too. */
+		name: text("name").notNull(),
+		doc: jsonb("doc").notNull(),
+		createdBy: text("created_by").references(() => user.id, {
+			onDelete: "set null",
+		}),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+	},
+	(t) => [index("post_revision_post_idx").on(t.postId, t.createdAt.desc())],
 );
 
 export const link = pgTable(
@@ -369,9 +444,14 @@ export const link = pgTable(
 		contactId: uuid("contact_id")
 			.notNull()
 			.references(() => contact.id, { onDelete: "cascade" }),
-		updateId: uuid("update_id")
+		/**
+		 * `restrict`, not `cascade`: a post somebody has been sent cannot be
+		 * deleted out from under the clicks it collected. The admin turns the
+		 * refusal into a sentence rather than offering the delete at all.
+		 */
+		postId: uuid("post_id")
 			.notNull()
-			.references(() => update.id, { onDelete: "cascade" }),
+			.references(() => post.id, { onDelete: "restrict" }),
 		createdBy: text("created_by").references(() => user.id, {
 			onDelete: "set null",
 		}),
@@ -382,12 +462,12 @@ export const link = pgTable(
 	},
 	(t) => [
 		/**
-		 * One ref per person per update. Two refs would split one reader's
+		 * One ref per person per post. Two refs would split one reader's
 		 * history in half, and the halves look like ordinary numbers, so
 		 * nothing would ever tell you it had happened.
 		 */
-		uniqueIndex("one_link_per_contact_per_update").on(t.contactId, t.updateId),
-		index("link_update_idx").on(t.updateId),
+		uniqueIndex("one_link_per_contact_per_post").on(t.contactId, t.postId),
+		index("link_post_idx").on(t.postId),
 	],
 );
 
@@ -507,8 +587,13 @@ export const interactionRelations = relations(interaction, ({ one }) => ({
 	}),
 }));
 
-export const updateRelations = relations(update, ({ many }) => ({
+export const postRelations = relations(post, ({ many }) => ({
 	links: many(link),
+	revisions: many(postRevision),
+}));
+
+export const postRevisionRelations = relations(postRevision, ({ one }) => ({
+	post: one(post, { fields: [postRevision.postId], references: [post.id] }),
 }));
 
 export const linkRelations = relations(link, ({ one, many }) => ({
@@ -516,9 +601,9 @@ export const linkRelations = relations(link, ({ one, many }) => ({
 		fields: [link.contactId],
 		references: [contact.id],
 	}),
-	update: one(update, {
-		fields: [link.updateId],
-		references: [update.id],
+	post: one(post, {
+		fields: [link.postId],
+		references: [post.id],
 	}),
 	events: many(linkEvent),
 }));
