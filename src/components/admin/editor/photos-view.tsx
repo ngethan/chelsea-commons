@@ -2,16 +2,26 @@ import { Button } from "@/components/ui/button";
 import { type Photo, parsePhotos, photoColumns } from "@/lib/photos";
 import { toast } from "@/lib/toast";
 import { NodeViewWrapper, type ReactNodeViewProps } from "@tiptap/react";
+import { upload } from "@vercel/blob/client";
 import { ImagePlus, Trash2, X } from "lucide-react";
 import { useRef, useState } from "react";
 
-async function upload(file: File): Promise<string> {
-	const body = new FormData();
-	body.append("file", file);
-	const response = await fetch("/api/upload", { method: "POST", body });
-	const result = await response.json().catch(() => ({}));
-	if (!response.ok) throw new Error(result.error ?? "Upload failed.");
-	return result.url as string;
+/**
+ * Straight from the browser to Blob, with `/api/upload` only saying whether
+ * this person may and on what terms. A serverless function's request body is
+ * capped at 4.5MB, so sending the bytes through one would refuse most photos
+ * taken on a phone.
+ *
+ * `multipart` past 5MB: the file goes up in parts, in parallel, and a part
+ * that fails is retried rather than the whole upload starting again.
+ */
+async function send(file: File): Promise<string> {
+	const blob = await upload(`writing/${file.name}`, file, {
+		access: "public",
+		handleUploadUrl: "/api/upload",
+		multipart: file.size > 5_000_000,
+	});
+	return blob.url;
 }
 
 /**
@@ -40,7 +50,7 @@ export function PhotosView({
 		setBusy((n) => n + chosen.length);
 		for (const file of chosen) {
 			try {
-				const url = await upload(file);
+				const url = await send(file);
 				set([...parsePhotos(node.attrs.photos), { src: url, alt: "" }]);
 			} catch (err) {
 				toast.error(err instanceof Error ? err.message : "Upload failed.");

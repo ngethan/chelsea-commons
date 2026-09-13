@@ -40,6 +40,12 @@ export function optimized(src: string, width: number): string {
  * carrying three different width descriptors is a lie the browser believes.
  */
 export function optimizable(src: string): boolean {
+	// `/_vercel/image` is the platform's, not the app's. In dev nothing serves
+	// that path, so the request falls through to the catch-all route and the
+	// image tag is handed the HTML app shell: every photo in every post breaks
+	// on localhost. The blob URL is a public CDN URL and loads anywhere, so
+	// that is what dev gets, unresized.
+	if (import.meta.env.DEV) return false;
 	return src.includes(".public.blob.vercel-storage.com");
 }
 
