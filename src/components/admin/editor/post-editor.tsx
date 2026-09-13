@@ -1,6 +1,7 @@
 import { EMPTY_DOC } from "@/lib/post-doc";
 import { cn } from "@/lib/utils";
 import DragHandle from "@tiptap/extension-drag-handle-react";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { GripVertical } from "lucide-react";
@@ -40,6 +41,10 @@ export function PostEditor({
 				heading: { levels: [1, 2, 3, 4] },
 				link: { openOnClick: false, autolink: true },
 			}),
+			TaskList,
+			// Nested to-dos, because a task with sub-tasks is the reason
+			// anybody reaches for one.
+			TaskItem.configure({ nested: true }),
 			Photos,
 		],
 		content: (doc as object) ?? EMPTY_DOC,
@@ -67,6 +72,13 @@ export function PostEditor({
 					// the line it belongs to. Kept in step with `listItem` in
 					// post-body.tsx.
 					"[&_li>p]:my-0 [&_li]:leading-[1.75]",
+					// To-dos: no marker, and the box sits on the line rather than
+					// above it. Kept in step with `taskItem` in post-body.tsx.
+					"[&_ul[data-type=taskList]]:my-5 [&_ul[data-type=taskList]]:list-none [&_ul[data-type=taskList]]:space-y-1.5 [&_ul[data-type=taskList]]:pl-0",
+					"[&_li[data-checked=true]>div]:text-muted-foreground/60 [&_li[data-checked=true]>div]:line-through",
+					"[&_li[data-type=taskItem]]:flex [&_li[data-type=taskItem]]:items-start [&_li[data-type=taskItem]]:gap-2.5",
+					"[&_li[data-type=taskItem]>label]:mt-[0.42rem] [&_li[data-type=taskItem]>label]:flex [&_li[data-type=taskItem]>label]:shrink-0",
+					"[&_li[data-type=taskItem]_input]:size-[0.95rem] [&_li[data-type=taskItem]_input]:cursor-pointer [&_li[data-type=taskItem]_input]:accent-primary",
 					"[&_li>ul]:mt-1.5 [&_li>ul]:mb-0 [&_li>ol]:mt-1.5 [&_li>ol]:mb-0",
 					"[&_blockquote]:my-8 [&_blockquote]:border-border [&_blockquote]:border-l-2 [&_blockquote]:pl-6 [&_blockquote]:font-serif [&_blockquote]:text-2xl [&_blockquote]:text-foreground [&_blockquote]:leading-snug",
 					"[&_hr]:my-8 [&_hr]:border-foreground/20",

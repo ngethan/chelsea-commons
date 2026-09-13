@@ -67,8 +67,11 @@ export function SelectionMenu({ editor }: { editor: Editor }) {
 	return (
 		<BubbleMenu
 			editor={editor}
-			options={{ placement: "top", offset: 8 }}
-			className="flex items-center gap-0.5 rounded-md border border-border bg-popover p-1 shadow-md"
+			// `fixed`, for the same reason the slash menu is: the editor sits in
+			// the page's scroll container, and an absolutely positioned bar is
+			// clipped at its edge rather than floating over the page head.
+			options={{ placement: "top", offset: 8, strategy: "fixed" }}
+			className="z-(--z-modal) flex items-center gap-0.5 rounded-md border border-border bg-popover p-1 shadow-md"
 		>
 			{editing ? (
 				<div className="flex items-center gap-1 px-1">

@@ -199,6 +199,55 @@ function Node({
 				</ol>
 			);
 
+		case "taskList":
+			// No marker and no indent: the box is the marker.
+			return (
+				<ul
+					className={`${depth > 0 ? "mt-1.5" : "my-5"} list-none space-y-1.5 pl-0`}
+				>
+					{children(node, depth + 1)}
+				</ul>
+			);
+
+		case "taskItem": {
+			// A reader cannot tick anything. This is a document, not an app, and
+			// a box that moves under the pointer but changes nothing anybody
+			// else will see is a promise the page cannot keep.
+			const checked = node.attrs?.checked === true;
+			return (
+				<li className="flex items-start gap-2.5 leading-[1.75]">
+					<span
+						aria-hidden="true"
+						className={`mt-[0.42rem] flex size-[0.95rem] shrink-0 items-center justify-center rounded-[3px] border ${
+							checked
+								? "border-foreground/50 bg-foreground/50"
+								: "border-foreground/30"
+						}`}
+					>
+						{checked && (
+							<svg
+								viewBox="0 0 12 12"
+								className="size-2.5 text-background"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2.5"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							>
+								<title>Done</title>
+								<path d="M2.5 6.5 5 9l4.5-5.5" />
+							</svg>
+						)}
+					</span>
+					<div
+						className={`min-w-0 [&>p]:my-0 ${checked ? "text-muted-foreground/60 line-through" : ""}`}
+					>
+						{children(node, depth)}
+					</div>
+				</li>
+			);
+		}
+
 		case "listItem":
 			// Two things a list item has to undo, both of them a class that is
 			// right at the top level and wrong inside one.
