@@ -17,8 +17,6 @@ export const Route = createFileRoute("/build")({
 
 const STREAM = "CHELSEACOMMONS";
 const WORD = "BUILD";
-/** Cells the word is not over stay blank, so only BUILD reads. */
-const FAINT = 0;
 /** Sub-samples per cell edge; 3x3 gives a soft edge at this coarse a grid. */
 const SUB = 3;
 /** The pointer reveals the name underneath, never as dark as the word. */
@@ -295,6 +293,8 @@ function LetterField() {
 			for (let r = 0; r < rows; r++) {
 				for (let c = 0; c < cols; c++) {
 					let hit = 0;
+					let depth = 0;
+					let samples = 0;
 					for (let j = 0; j < SUB; j++) {
 						for (let i = 0; i < SUB; i++) {
 							const px = c * cellW + ((i + 0.5) / SUB) * cellW - originX;
@@ -311,6 +311,8 @@ function LetterField() {
 							const v = X * vx + Y * vy + Z * vz + bh / 2;
 							if (u < 0 || v < 0 || u >= bw || v >= bh) continue;
 							hit += alpha[(v | 0) * bw + (u | 0)];
+							depth += Z;
+							samples++;
 						}
 					}
 					const cov = hit / (SUB * SUB * 255);
@@ -318,10 +320,29 @@ function LetterField() {
 					// mostly covered goes to full ink: a firm edge reads better here
 					// than a linear one.
 					const edge = Math.min(1, Math.max(0, (cov - 0.12) / 0.45));
-					const a = Math.max(edge, glow[r * cols + c]);
-					if (a <= 0.01) continue;
-					ctx.globalAlpha = FAINT + (1 - FAINT) * a;
 					const sprite = sprites[(r * cols + c) % STREAM.length];
+					const reveal = glow[r * cols + c];
+					if (edge > 0) {
+						// Depth: the part of the plane nearer the camera draws its
+						// letters bigger and darker, the far part smaller and lighter.
+						// `near` is 1 on the plane's centre line, above 1 towards us.
+						const near = -camZ / (depth / samples - camZ);
+						const size = 1 + (near - 1) * 2.4;
+						const tone = Math.min(1, Math.max(0.3, 1 + (near - 1) * 3.2));
+						ctx.globalAlpha = Math.max(edge * tone, reveal);
+						const w = cellW * size;
+						const h = cellH * size;
+						ctx.drawImage(
+							sprite,
+							c * cellW + (cellW - w) / 2,
+							r * cellH + (cellH - h) / 2,
+							w,
+							h,
+						);
+						continue;
+					}
+					if (reveal <= 0.01) continue;
+					ctx.globalAlpha = reveal;
 					ctx.drawImage(sprite, c * cellW, r * cellH, cellW, cellH);
 				}
 			}
