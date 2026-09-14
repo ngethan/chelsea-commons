@@ -1,5 +1,7 @@
 "use client";
 
+import { isEditingProse } from "@/lib/editing";
+
 import { type VariantProps, cva } from "class-variance-authority";
 import { PanelLeft } from "lucide-react";
 import { Slot } from "radix-ui";
@@ -106,6 +108,8 @@ const SidebarProvider = React.forwardRef<
 		// Adds a keyboard shortcut to toggle the sidebar.
 		React.useEffect(() => {
 			const handleKeyDown = (event: KeyboardEvent) => {
+				// cmd-B is bold inside a document being written.
+				if (isEditingProse(event.target)) return;
 				if (
 					event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
 					(event.metaKey || event.ctrlKey)

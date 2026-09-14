@@ -23,10 +23,11 @@ screen without reading this file.
 ## Shape
 
 - Square in the page: buttons, inputs, selects and their lists, comboboxes,
-  the search-or-filter box and its panel, tables, kbd, in-page cards,
-  sheets, alert dialogs, toasts. The one exception is the checkbox, which
-  has a 3px radius, no fill, and a heavier, brighter edge than a field: a
-  16px outline needs all three to read as a box on a row.
+  the search-or-filter box and its panel, tables, in-page cards, sheets,
+  alert dialogs, toasts. Two small things carry a 3px radius: the checkbox,
+  which also has no fill and a heavier, brighter edge than a field, because
+  a 16px outline needs all three to read as a box on a row; and `Kbd`,
+  because a key cap is a rounded thing.
 - **Badges, chips and tabs are pills** (`rounded-full`), the way Ramp's are:
   they are labels that sit on a row, not controls that sit in the page. A
   filter chip is two-tone: icon and label on the pill, the value in a darker

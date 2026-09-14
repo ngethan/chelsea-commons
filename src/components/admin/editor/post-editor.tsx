@@ -2,6 +2,7 @@ import { EMPTY_DOC } from "@/lib/post-doc";
 import { cn } from "@/lib/utils";
 import DragHandle from "@tiptap/extension-drag-handle-react";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
+import { Color, TextStyle } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { GripVertical } from "lucide-react";
@@ -41,6 +42,10 @@ export function PostEditor({
 				heading: { levels: [1, 2, 3, 4] },
 				link: { openOnClick: false, autolink: true },
 			}),
+			// `TextStyle` is the span `Color` writes into. Colour is a mark like
+			// any other here, so it survives a copy, a paste and an undo.
+			TextStyle,
+			Color,
 			TaskList,
 			// Nested to-dos, because a task with sub-tasks is the reason
 			// anybody reaches for one.
@@ -54,7 +59,7 @@ export function PostEditor({
 					"prose-none max-w-none outline-none",
 					"[&_p]:my-5 [&_p]:text-[1.0625rem] [&_p]:leading-[1.75]",
 					"[&_h1]:mt-10 [&_h1]:mb-4 [&_h1]:font-serif [&_h1]:text-3xl [&_h1]:text-foreground [&_h1]:leading-snug",
-					"[&_h2]:mt-14 [&_h2]:mb-5 [&_h2]:border-border [&_h2]:border-t [&_h2]:pt-8 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:text-foreground [&_h2]:leading-snug",
+					"[&_h2]:mt-14 [&_h2]:mb-5 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:text-foreground [&_h2]:leading-snug",
 					"[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:font-semibold [&_h3]:text-foreground [&_h3]:text-xl",
 					"[&_h4]:mt-6 [&_h4]:mb-2 [&_h4]:font-semibold [&_h4]:text-foreground [&_h4]:text-lg",
 					"[&_ul]:my-5 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5",
@@ -107,7 +112,7 @@ export function PostEditor({
 	if (!editor) return null;
 
 	return (
-		<div className={cn("relative text-muted-foreground", className)}>
+		<div className={cn("relative text-foreground", className)}>
 			{/* The grip rides the block under the pointer. Reordering is the
 			    thing people reached for the assistant to do, and it is a drag. */}
 			{/* The handle's box is one line tall (1.0625rem of text at 1.75

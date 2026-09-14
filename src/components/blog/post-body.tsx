@@ -32,7 +32,7 @@ const BULLETS = ["list-disc", "list-[circle]", "list-[square]"];
 
 const HEADING = [
 	"mt-10 mb-4 scroll-mt-24 font-serif text-3xl text-foreground leading-snug",
-	"mt-14 mb-5 scroll-mt-24 border-border border-t pt-8 font-serif text-2xl text-foreground leading-snug md:text-[1.75rem]",
+	"mt-14 mb-5 scroll-mt-24 font-serif text-2xl text-foreground leading-snug md:text-[1.75rem]",
 	"mt-8 mb-3 font-semibold text-foreground text-xl",
 	"mt-6 mb-2 font-semibold text-foreground text-lg",
 	"mt-6 mb-2 font-semibold text-base text-foreground",
@@ -55,13 +55,20 @@ function withMarks(node: PostNode, children: React.ReactNode): React.ReactNode {
 	).marks;
 	if (!marks?.length) return children;
 
+	// Bold prose is set in `--semi-foreground`, which is a default rather than
+	// a decision: an author who picked a colour for this text meant it, and an
+	// inline colour on the `strong` inside the coloured span would quietly win.
+	const coloured = marks.some(
+		(mark) => mark.type === "textStyle" && mark.attrs?.color,
+	);
+
 	return marks.reduceRight<React.ReactNode>((inner, mark) => {
 		switch (mark.type) {
 			case "bold":
 				return (
 					<strong
 						className="font-semibold"
-						style={{ color: "var(--semi-foreground)" }}
+						style={coloured ? undefined : { color: "var(--semi-foreground)" }}
 					>
 						{inner}
 					</strong>
@@ -72,6 +79,17 @@ function withMarks(node: PostNode, children: React.ReactNode): React.ReactNode {
 				return <s>{inner}</s>;
 			case "underline":
 				return <u>{inner}</u>;
+			// Colour is written as a CSS variable, not a hex value, so a letter
+			// set in "muted" reads as muted on the cream page as well as in the
+			// dark editor it was written in.
+			case "textStyle": {
+				const color = mark.attrs?.color;
+				return color ? (
+					<span style={{ color: String(color) }}>{inner}</span>
+				) : (
+					inner
+				);
+			}
 			case "code":
 				return (
 					<code className="bg-foreground/5 px-1.5 py-0.5 font-mono text-[0.9em]">
@@ -295,7 +313,7 @@ function Node({
 export function PostBody({ doc }: { doc: unknown }) {
 	const root = (doc ?? { type: "doc", content: [] }) as PostDoc;
 	return (
-		<div className="text-muted-foreground [&>:first-child]:mt-0">
+		<div className="text-foreground [&>:first-child]:mt-0">
 			{children(root as PostNode)}
 		</div>
 	);

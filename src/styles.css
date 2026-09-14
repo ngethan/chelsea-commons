@@ -366,6 +366,23 @@ main.admin-main a:not(.no-underline):not(.link-static):hover {
 	--z-modal: 70;
 	--z-splash: 80;
 	--z-grain: 90;
+
+	/*
+	 * What an author can colour a word.
+	 *
+	 * Their own tokens rather than the UI palette's, because the two grounds
+	 * disagree: `--primary` is the orange accent in the admin and the near-black
+	 * ink on the cream page, so a word set to "accent" while writing published
+	 * as ordinary body text. A name has to mean the same thing in both places,
+	 * which means each place defines its own value for it.
+	 *
+	 * Tuned down here for paper. Signal Red stays what DESIGN.md reserves it
+	 * for, and none of these go near it.
+	 */
+	--prose-muted: #6b6a62;
+	--prose-accent: oklch(0.52 0.13 40);
+	--prose-success: oklch(0.48 0.13 150);
+	--prose-warning: oklch(0.5 0.105 70);
 }
 
 /* --- The admin's palette ---------------------------------------------------
@@ -441,6 +458,12 @@ main.admin-main a:not(.no-underline):not(.link-static):hover {
 		oklch(0 0 0 / 0.35);
 	--shadow-lg: 0px 8px 24px -4px oklch(0 0 0 / 0.45), 0px 4px 6px -3px
 		oklch(0 0 0 / 0.35);
+
+	/* The same four names, at the lightness the dark ground needs. */
+	--prose-muted: oklch(0.7118 0.0129 286.0665);
+	--prose-accent: oklch(0.7193 0.1317 39.95);
+	--prose-success: oklch(0.76 0.09 145);
+	--prose-warning: oklch(0.828 0.145 84);
 }
 
 .dark * {

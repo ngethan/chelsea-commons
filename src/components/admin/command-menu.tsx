@@ -10,6 +10,7 @@ import {
 	CommandList,
 } from "@/components/ui/command";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { isEditingProse } from "@/lib/editing";
 import { canManageUsers } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 import type { SearchHit, SearchKind } from "@/server/search";
@@ -376,6 +377,8 @@ export function useCommandShortcut(onOpen: () => void) {
 	useEffect(() => {
 		function onKeyDown(event: KeyboardEvent) {
 			if (event.key !== "k" || !(event.metaKey || event.ctrlKey)) return;
+			// cmd-K makes a link out of selected prose before it opens this.
+			if (isEditingProse(event.target)) return;
 			// Otherwise the browser's own find-in-page or address bar takes it.
 			event.preventDefault();
 			onOpen();
