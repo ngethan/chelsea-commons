@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WritingRouteImport } from './routes/writing'
 import { Route as V2RouteImport } from './routes/v2'
 import { Route as TestRouteImport } from './routes/test'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as RsvpRouteImport } from './routes/rsvp'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MicrographicsRouteImport } from './routes/micrographics'
 import { Route as Fall2026RouteImport } from './routes/fall2026'
 import { Route as EventsRouteImport } from './routes/events'
@@ -60,6 +62,11 @@ const TestRoute = TestRouteImport.update({
   path: '/test',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
@@ -68,6 +75,11 @@ const SignInRoute = SignInRouteImport.update({
 const RsvpRoute = RsvpRouteImport.update({
   id: '/rsvp',
   path: '/rsvp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MicrographicsRoute = MicrographicsRouteImport.update({
@@ -235,8 +247,10 @@ export interface FileRoutesByFullPath {
   '/events': typeof EventsRoute
   '/fall2026': typeof Fall2026Route
   '/micrographics': typeof MicrographicsRoute
+  '/privacy': typeof PrivacyRoute
   '/rsvp': typeof RsvpRoute
   '/sign-in': typeof SignInRoute
+  '/terms': typeof TermsRoute
   '/test': typeof TestRoute
   '/v2': typeof V2Route
   '/writing': typeof WritingRouteWithChildren
@@ -271,8 +285,10 @@ export interface FileRoutesByTo {
   '/events': typeof EventsRoute
   '/fall2026': typeof Fall2026Route
   '/micrographics': typeof MicrographicsRoute
+  '/privacy': typeof PrivacyRoute
   '/rsvp': typeof RsvpRoute
   '/sign-in': typeof SignInRoute
+  '/terms': typeof TermsRoute
   '/test': typeof TestRoute
   '/v2': typeof V2Route
   '/admin/contacts': typeof AdminContactsRoute
@@ -307,8 +323,10 @@ export interface FileRoutesById {
   '/events': typeof EventsRoute
   '/fall2026': typeof Fall2026Route
   '/micrographics': typeof MicrographicsRoute
+  '/privacy': typeof PrivacyRoute
   '/rsvp': typeof RsvpRoute
   '/sign-in': typeof SignInRoute
+  '/terms': typeof TermsRoute
   '/test': typeof TestRoute
   '/v2': typeof V2Route
   '/writing': typeof WritingRouteWithChildren
@@ -346,8 +364,10 @@ export interface FileRouteTypes {
     | '/events'
     | '/fall2026'
     | '/micrographics'
+    | '/privacy'
     | '/rsvp'
     | '/sign-in'
+    | '/terms'
     | '/test'
     | '/v2'
     | '/writing'
@@ -382,8 +402,10 @@ export interface FileRouteTypes {
     | '/events'
     | '/fall2026'
     | '/micrographics'
+    | '/privacy'
     | '/rsvp'
     | '/sign-in'
+    | '/terms'
     | '/test'
     | '/v2'
     | '/admin/contacts'
@@ -417,8 +439,10 @@ export interface FileRouteTypes {
     | '/events'
     | '/fall2026'
     | '/micrographics'
+    | '/privacy'
     | '/rsvp'
     | '/sign-in'
+    | '/terms'
     | '/test'
     | '/v2'
     | '/writing'
@@ -455,8 +479,10 @@ export interface RootRouteChildren {
   EventsRoute: typeof EventsRoute
   Fall2026Route: typeof Fall2026Route
   MicrographicsRoute: typeof MicrographicsRoute
+  PrivacyRoute: typeof PrivacyRoute
   RsvpRoute: typeof RsvpRoute
   SignInRoute: typeof SignInRoute
+  TermsRoute: typeof TermsRoute
   TestRoute: typeof TestRoute
   V2Route: typeof V2Route
   WritingRoute: typeof WritingRouteWithChildren
@@ -494,6 +520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sign-in': {
       id: '/sign-in'
       path: '/sign-in'
@@ -506,6 +539,13 @@ declare module '@tanstack/react-router' {
       path: '/rsvp'
       fullPath: '/rsvp'
       preLoaderRoute: typeof RsvpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/micrographics': {
@@ -792,8 +832,10 @@ const rootRouteChildren: RootRouteChildren = {
   EventsRoute: EventsRoute,
   Fall2026Route: Fall2026Route,
   MicrographicsRoute: MicrographicsRoute,
+  PrivacyRoute: PrivacyRoute,
   RsvpRoute: RsvpRoute,
   SignInRoute: SignInRoute,
+  TermsRoute: TermsRoute,
   TestRoute: TestRoute,
   V2Route: V2Route,
   WritingRoute: WritingRouteWithChildren,

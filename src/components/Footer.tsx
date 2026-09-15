@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { FitText } from "./FitText";
 
 export function Footer() {
@@ -51,6 +52,18 @@ export function Footer() {
 						<p>Chelsea, New York, NY</p>
 					</div>
 					<div className="flex items-center gap-6 text-sm text-muted-foreground">
+						<Link
+							to="/privacy"
+							className="hover:text-foreground transition-colors no-underline"
+						>
+							Privacy
+						</Link>
+						<Link
+							to="/terms"
+							className="hover:text-foreground transition-colors no-underline"
+						>
+							Terms
+						</Link>
 						<a
 							href="https://www.linkedin.com/company/the-chelsea-commons/"
 							target="_blank"
