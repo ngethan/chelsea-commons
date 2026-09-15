@@ -192,7 +192,7 @@ function LetterField() {
 			canvas.style.width = `${width}px`;
 			canvas.style.height = `${height}px`;
 			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-			word = renderWord(width * 0.72, serif, cellW / 2);
+			word = renderWord(width * 0.82, serif, cellW / 2);
 			glow = new Float32Array(cols * rows);
 			grain = Float32Array.from({ length: cols * rows }, () => Math.random());
 			grit = Float32Array.from({ length: cols * rows }, () => Math.random());
@@ -283,7 +283,7 @@ function LetterField() {
 		 */
 		const draw = (t: number) => {
 			if (document.hidden || !word) return;
-			const yaw = reduce ? 0 : 0.5 * Math.sin(t * 0.00045);
+			const yaw = reduce ? 0 : 0.28 * Math.sin(t * 0.00045);
 			const pitch = reduce ? 0 : 0.22 * Math.sin(t * 0.00031 + 1.3);
 			const roll = reduce ? 0 : 0.14 * Math.sin(t * 0.00026 + 2.6);
 			const cy = Math.cos(yaw);
