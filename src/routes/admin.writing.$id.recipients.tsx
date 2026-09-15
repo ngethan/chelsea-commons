@@ -3,6 +3,7 @@ import {
 	FillHead,
 	useColumnWidths,
 } from "@/components/admin/column-sizing";
+import { LinkDrawer } from "@/components/admin/link-drawer";
 import {
 	Empty,
 	ListTable,
@@ -13,6 +14,7 @@ import {
 	Tinted,
 } from "@/components/admin/primitives";
 import { RowMenu } from "@/components/admin/row-menu";
+import { useDrawerParam } from "@/components/admin/use-drawer-param";
 import { ConfirmButton, ConfirmDialog } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,8 +27,9 @@ import {
 import { toast } from "@/lib/toast";
 import { trpc } from "@/trpc/client";
 import { createFileRoute } from "@tanstack/react-router";
-import { Copy, Link2Off, Mail, UserRound } from "lucide-react";
+import { Copy, History, Link2Off, Mail, UserRound } from "lucide-react";
 import { useState } from "react";
+import { z } from "zod";
 
 /**
  * The table, and nothing around it. Copy all, Add people and the picker they
@@ -34,6 +37,8 @@ import { useState } from "react";
  * the query they read.
  */
 export const Route = createFileRoute("/admin/writing/$id/recipients")({
+	/** `link`: the row whose drawer is open. The parent owns `sheet` and `pick`. */
+	validateSearch: z.object({ link: z.string().optional() }),
 	component: Recipients,
 });
 
@@ -66,6 +71,7 @@ function Recipients() {
 	});
 	const utils = trpc.useUtils();
 	const detail = trpc.posts.byId.useQuery({ id });
+	const drawer = useDrawerParam("link");
 	const [revoking, setRevoking] = useState<string | null>(null);
 
 	const revoke = trpc.links.revoke.useMutation({
@@ -132,6 +138,11 @@ function Recipients() {
 									key={row.id}
 									actions={[
 										{
+											label: "History",
+											icon: History,
+											onSelect: () => drawer.open(row.id),
+										},
+										{
 											label: "Open in Mail",
 											icon: Mail,
 											disabled: !live || !row.contactEmail,
@@ -162,7 +173,12 @@ function Recipients() {
 										},
 									]}
 								>
-									<TableRow className={live ? "" : "opacity-55"}>
+									<TableRow
+										className={
+											live ? "cursor-pointer" : "cursor-pointer opacity-55"
+										}
+										onClick={() => drawer.open(row.id)}
+									>
 										<TableCell>
 											<div className="truncate">
 												{row.contactName || row.contactEmail || "Unnamed"}
@@ -182,7 +198,10 @@ function Recipients() {
 										<TableCell className="hidden text-right text-muted-foreground tabular-nums md:table-cell">
 											{when(row.firstClickAt)}
 										</TableCell>
-										<TableCell className="text-right">
+										<TableCell
+											className="text-right"
+											onClick={(e) => e.stopPropagation()}
+										>
 											{live ? (
 												<div className="flex items-center justify-end gap-0.5">
 													{row.contactEmail && (
@@ -243,6 +262,10 @@ function Recipients() {
 			<TableFoot shown={rows.length} total={rows.length} noun="recipients">
 				<span>{opened} opened</span>
 			</TableFoot>
+
+			{drawer.value && (
+				<LinkDrawer id={drawer.value} postId={id} onClose={drawer.close} />
+			)}
 
 			<ConfirmDialog
 				open={revoking !== null}

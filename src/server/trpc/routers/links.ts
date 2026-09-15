@@ -1,4 +1,4 @@
-import { contact, link, linkEvent, post } from "@/db/schema";
+import { contact, link, linkEvent, post, user } from "@/db/schema";
 import { isAutomatedClick } from "@/lib/bots";
 import { newRef } from "@/lib/tracking";
 import { TRPCError } from "@trpc/server";
@@ -117,6 +117,93 @@ export const linksRouter = createTRPCRouter({
 			}
 
 			return rows.map((row) => ({ ...row, clicks: clicks.get(row.ref) ?? 0 }));
+		}),
+
+	/**
+	 * One link's whole life, for its drawer: when it was issued and by whom,
+	 * when it was revoked, and every hit on it in order, each marked with
+	 * whether the heuristic would count it. Nothing is filtered out here;
+	 * the drawer is where the evidence behind a number is meant to be seen.
+	 */
+	history: protectedProcedure
+		.input(z.object({ id: z.uuid() }))
+		.query(async ({ ctx, input }) => {
+			const [row] = await ctx.db
+				.select({
+					id: link.id,
+					ref: link.ref,
+					createdAt: link.createdAt,
+					revokedAt: link.revokedAt,
+					issuedBy: user.name,
+					contactId: contact.id,
+					contactName: contact.name,
+					contactEmail: contact.email,
+					postName: post.name,
+				})
+				.from(link)
+				.innerJoin(contact, eq(contact.id, link.contactId))
+				.innerJoin(post, eq(post.id, link.postId))
+				.leftJoin(user, eq(user.id, link.createdBy))
+				.where(eq(link.id, input.id))
+				.limit(1);
+
+			if (!row) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "No such link." });
+			}
+
+			const events = await ctx.db
+				.select({
+					id: linkEvent.id,
+					at: linkEvent.createdAt,
+					userAgent: linkEvent.userAgent,
+				})
+				.from(linkEvent)
+				.where(eq(linkEvent.ref, row.ref))
+				.orderBy(desc(linkEvent.createdAt));
+
+			return {
+				...row,
+				opens: events.map((event) => ({
+					...event,
+					automated: isAutomatedClick(event.userAgent),
+				})),
+			};
+		}),
+
+	/**
+	 * Forgets one hit. For the person who opened their own test link, or the
+	 * scanner the heuristic missed: the count on the recipients page is read
+	 * from these rows, so this is the only way to correct it. Anybody who can
+	 * log or remove an interaction can do this too; the contact's history
+	 * keeps a note of it.
+	 */
+	removeOpen: protectedProcedure
+		.input(z.object({ id: z.number().int() }))
+		.mutation(async ({ ctx, input }) => {
+			const [event] = await ctx.db
+				.delete(linkEvent)
+				.where(eq(linkEvent.id, input.id))
+				.returning({ ref: linkEvent.ref, at: linkEvent.createdAt });
+
+			if (!event) return { removed: false };
+
+			const [owner] = await ctx.db
+				.select({ contactId: link.contactId })
+				.from(link)
+				.where(eq(link.ref, event.ref))
+				.limit(1);
+
+			if (owner) {
+				await logActivity({
+					actorUserId: ctx.user.id,
+					entityType: "contact",
+					entityId: owner.contactId,
+					verb: "removed an open",
+					oldValue: event.at.toISOString(),
+				});
+			}
+
+			return { removed: true };
 		}),
 
 	/**
