@@ -20,7 +20,7 @@ import {
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
-import { type Role, canManageUsers } from "@/lib/roles";
+import type { Role } from "@/lib/roles";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
 	Building2,
@@ -38,22 +38,12 @@ import { useCallback, useState } from "react";
  * than no number.
  */
 const NAV = [
-	{ to: "/admin/contacts", label: "Contacts", icon: Users, show: () => true },
-	{
-		to: "/admin/organizations",
-		label: "Organizations",
-		icon: Building2,
-		show: () => true,
-	},
-	{ to: "/admin/writing", label: "Writing", icon: FileText, show: () => true },
-	// Settings holds nothing but the roster for now, so it is only offered
-	// to the people who can open that.
-	{
-		to: "/admin/settings",
-		label: "Settings",
-		icon: Settings,
-		show: canManageUsers,
-	},
+	{ to: "/admin/contacts", label: "Contacts", icon: Users },
+	{ to: "/admin/organizations", label: "Organizations", icon: Building2 },
+	{ to: "/admin/writing", label: "Writing", icon: FileText },
+	// Everybody has integrations of their own in here, so everybody gets
+	// the door; the roster inside it still only opens for owners and admins.
+	{ to: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
 
 /**
@@ -132,7 +122,7 @@ export function AdminShell({
 					<SidebarContent>
 						<SidebarGroup className="p-2">
 							<SidebarMenu>
-								{NAV.filter((item) => item.show(user.role)).map((item) => (
+								{NAV.map((item) => (
 									<SidebarMenuItem key={item.to}>
 										<SidebarMenuButton
 											asChild

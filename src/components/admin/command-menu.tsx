@@ -52,7 +52,7 @@ const NAV = [
 	{ label: "Contacts", to: "/admin/contacts", icon: Users },
 	{ label: "Organizations", to: "/admin/organizations", icon: Building2 },
 	{ label: "Writing", to: "/admin/writing", icon: FileText },
-	{ label: "Settings", to: "/admin/settings", icon: Settings, manage: true },
+	{ label: "Settings", to: "/admin/settings", icon: Settings },
 ] as const;
 
 const ACTIONS = [

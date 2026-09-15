@@ -64,9 +64,9 @@ screen without reading this file.
 - Password fields are `FloatingPassword`: one eye at the trailing edge, and
   a form with two of them (new and confirm) runs both from one eye.
 - Settings is one page with sections, and every section renders
-  `SettingsHead`: the one title, the section's own control (Invite) as its
-  action, and pills in the toolbar once there is more than one section to
-  choose between. With one section (Users, today) there are no pills.
+  `SettingsHead`: the one title, the section's own control (Invite, Connect)
+  as its action, and pills in the toolbar once the reader has more than one
+  section to choose between. A member sees only Integrations, so no pills.
 - **Counts live in `TableFoot` and nowhere else.** Not in titles, not in
   tabs, not in section headings.
 - The toolbar is `FilterBar`: a real text field that narrows the list as you

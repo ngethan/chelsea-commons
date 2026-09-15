@@ -501,6 +501,44 @@ export const linkEvent = pgTable(
  * `entityId` is text rather than a uuid so one table covers every entity
  * without a column per foreign key, and rows survive their subject.
  */
+/**
+ * A Google grant somebody in the house made for one integration, kept apart
+ * from Better Auth's `account` row on purpose. Signing in with Google
+ * rewrites that row's tokens and scope every time, so a mailbox grant held
+ * there would be overwritten by the next sign-in. This row is written only
+ * by the integration's own callback, and read only by its sync.
+ *
+ * `scopes` is what Google actually granted, which is compared with what the
+ * integration asks for today: widen the list in `src/server/integrations`
+ * and every existing row shows as needing a reconnect.
+ */
+export const integration = pgTable(
+	"integration",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		/** `gmail` today; see `INTEGRATIONS`. */
+		provider: text("provider").notNull(),
+		/** The address of the account that granted, which need not be the sign-in address. */
+		email: text("email").notNull(),
+		scopes: text("scopes").array().notNull().default([]),
+		refreshToken: text("refresh_token").notNull(),
+		accessToken: text("access_token"),
+		accessTokenExpiresAt: timestamp("access_token_expires_at", {
+			withTimezone: true,
+		}),
+		connectedAt: timestamp("connected_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow(),
+	},
+	(t) => [uniqueIndex("one_integration_per_user").on(t.userId, t.provider)],
+);
+
 export const activity = pgTable(
 	"activity",
 	{

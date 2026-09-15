@@ -32,6 +32,22 @@ async function isInvited(email: string): Promise<boolean> {
 	return rows.length > 0;
 }
 
+/**
+ * The origin this deployment answers on, which is what every OAuth redirect
+ * URI is built from: Better Auth's Google callback and the integrations'
+ * own. One function so the two cannot disagree, since Google refuses a
+ * redirect URI it was not told about, character for character.
+ */
+export function appBaseUrl(): string {
+	return (
+		process.env.BETTER_AUTH_URL ??
+		(process.env.VERCEL_URL
+			? `https://${process.env.VERCEL_URL}`
+			: undefined) ??
+		"http://localhost:3000"
+	);
+}
+
 function createAuth() {
 	const secret = process.env.BETTER_AUTH_SECRET;
 	if (!secret && process.env.NODE_ENV === "production") {
@@ -48,12 +64,7 @@ function createAuth() {
 			transaction: false,
 		}),
 		secret: secret ?? "chelsea-commons-dev-secret-not-for-production",
-		baseURL:
-			process.env.BETTER_AUTH_URL ??
-			(process.env.VERCEL_URL
-				? `https://${process.env.VERCEL_URL}`
-				: undefined) ??
-			"http://localhost:3000",
+		baseURL: appBaseUrl(),
 
 		emailAndPassword: {
 			enabled: true,

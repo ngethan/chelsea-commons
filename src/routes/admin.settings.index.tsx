@@ -1,8 +1,16 @@
+import { canManageUsers } from "@/lib/roles";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-/** One section for now, so the settings page is that section. */
+/**
+ * Two sections. The roster is the first for anybody who can open it; for
+ * everybody else, settings begins at their own integrations.
+ */
 export const Route = createFileRoute("/admin/settings/")({
-	beforeLoad: () => {
-		throw redirect({ to: "/admin/settings/users" });
+	beforeLoad: ({ context }) => {
+		throw redirect({
+			to: canManageUsers(context.user?.role)
+				? "/admin/settings/users"
+				: "/admin/settings/integrations",
+		});
 	},
 });

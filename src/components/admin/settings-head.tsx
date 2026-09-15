@@ -5,13 +5,19 @@ import { Link, useRouteContext } from "@tanstack/react-router";
 import type * as React from "react";
 
 /**
- * The settings are one page with sections. Today there is one, Users, so
- * the head is the title and the section's own control (Invite); the pills
- * under the title appear the day a second section does, the way a filter
- * row sits under a list's.
+ * The settings are one page with sections: the roster, for those who can
+ * open it, and each person's own integrations. The head is the title and
+ * the section's own control (Invite, Connect); the pills under the title
+ * choose the section, the way a filter row sits under a list's, and only
+ * show when the reader has more than one to choose between.
  */
 const SECTIONS = [
 	{ label: "Users", to: "/admin/settings/users", show: canManageUsers },
+	{
+		label: "Integrations",
+		to: "/admin/settings/integrations",
+		show: () => true,
+	},
 ] as const;
 
 export function SettingsHead({ actions }: { actions?: React.ReactNode }) {

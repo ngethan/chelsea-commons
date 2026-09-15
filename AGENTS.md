@@ -53,12 +53,27 @@ reset either).
   check". Nobody can revoke or re-role their own row, which is what keeps at
   least one owner in the house. Migration 0007 made everybody already on the
   roster an admin and 0008 made the first owner.
-- **Settings is the roster, for now.** `/admin/settings` redirects to
-  `/admin/settings/users`, and the rail only offers Settings to owners and
-  admins. The tag registry and the search index have procedures
-  (`tags.rename`, `tags.remove`, `search.reindex`) but no screen at the
-  moment; the General section that held them was taken out and is in the
-  history if it is wanted back.
+- **Settings is the roster and each person's integrations.** `/admin/settings`
+  redirects to Users for owners and admins and to Integrations for everybody
+  else; the rail offers Settings to all. The tag registry and the search
+  index have procedures (`tags.rename`, `tags.remove`, `search.reindex`) but
+  no screen at the moment; the General section that held them was taken out
+  and is in the history if it is wanted back.
+- **Integrations are Google grants, one row per person per product**, in
+  `integration`, and deliberately not in Better Auth's `account` row: a
+  Google sign-in rewrites that row's tokens and scope, so a mailbox grant
+  kept there would not survive the next sign-in. The flow is the app's own
+  (`/api/integrations/<provider>/start` and `.../callback`, both behind the
+  session), asking with `access_type=offline` and `prompt=consent` so a
+  refresh token comes back every time. `INTEGRATIONS` in
+  `src/server/integrations/google.ts` is the registry of products and the
+  scopes each asks for; widening a list makes every existing row read
+  "Reconnect" (`missingScopes`). `accessTokenFor(userId, provider)` is what
+  anything reading on a person's behalf calls: it refreshes and writes back.
+  Disconnect revokes at Google and deletes the row. Only Gmail today, and
+  nothing reads the mailbox yet: the grant is the first half of touch sync.
+  The callback URI (`<base>/api/integrations/gmail/callback`) has to be
+  registered in the Google Cloud console beside Better Auth's, per origin.
 
 - **Server calls are tRPC.** Routers live in `src/server/trpc/routers`, and
   `src/server/trpc/root.ts` is the one place every endpoint is visible.

@@ -17,6 +17,7 @@ import { Route as RsvpRouteImport } from './routes/rsvp'
 import { Route as MicrographicsRouteImport } from './routes/micrographics'
 import { Route as Fall2026RouteImport } from './routes/fall2026'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as BuildRouteImport } from './routes/build'
 import { Route as BlankRouteImport } from './routes/blank'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
@@ -37,7 +38,10 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 import { Route as ApiAiChatRouteImport } from './routes/api.ai.chat'
 import { Route as AdminWritingIdRouteImport } from './routes/admin.writing.$id'
 import { Route as AdminSettingsUsersRouteImport } from './routes/admin.settings.users'
+import { Route as AdminSettingsIntegrationsRouteImport } from './routes/admin.settings.integrations'
 import { Route as AdminWritingIdIndexRouteImport } from './routes/admin.writing.$id.index'
+import { Route as ApiIntegrationsProviderStartRouteImport } from './routes/api.integrations.$provider.start'
+import { Route as ApiIntegrationsProviderCallbackRouteImport } from './routes/api.integrations.$provider.callback'
 import { Route as AdminWritingIdPreviewRouteImport } from './routes/admin_.writing.$id.preview'
 import { Route as AdminWritingIdRecipientsRouteImport } from './routes/admin.writing.$id.recipients'
 
@@ -79,6 +83,11 @@ const Fall2026Route = Fall2026RouteImport.update({
 const EventsRoute = EventsRouteImport.update({
   id: '/events',
   path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildRoute = BuildRouteImport.update({
+  id: '/build',
+  path: '/build',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlankRoute = BlankRouteImport.update({
@@ -181,11 +190,29 @@ const AdminSettingsUsersRoute = AdminSettingsUsersRouteImport.update({
   path: '/settings/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSettingsIntegrationsRoute =
+  AdminSettingsIntegrationsRouteImport.update({
+    id: '/settings/integrations',
+    path: '/settings/integrations',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminWritingIdIndexRoute = AdminWritingIdIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminWritingIdRoute,
 } as any)
+const ApiIntegrationsProviderStartRoute =
+  ApiIntegrationsProviderStartRouteImport.update({
+    id: '/api/integrations/$provider/start',
+    path: '/api/integrations/$provider/start',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsProviderCallbackRoute =
+  ApiIntegrationsProviderCallbackRouteImport.update({
+    id: '/api/integrations/$provider/callback',
+    path: '/api/integrations/$provider/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminWritingIdPreviewRoute = AdminWritingIdPreviewRouteImport.update({
   id: '/admin_/writing/$id/preview',
   path: '/admin/writing/$id/preview',
@@ -204,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/blank': typeof BlankRoute
+  '/build': typeof BuildRoute
   '/events': typeof EventsRoute
   '/fall2026': typeof Fall2026Route
   '/micrographics': typeof MicrographicsRoute
@@ -220,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/writing/$slug': typeof WritingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/writing/': typeof WritingIndexRoute
+  '/admin/settings/integrations': typeof AdminSettingsIntegrationsRoute
   '/admin/settings/users': typeof AdminSettingsUsersRoute
   '/admin/writing/$id': typeof AdminWritingIdRouteWithChildren
   '/api/ai/chat': typeof ApiAiChatRoute
@@ -229,6 +258,8 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/writing/$id/recipients': typeof AdminWritingIdRecipientsRoute
   '/admin/writing/$id/preview': typeof AdminWritingIdPreviewRoute
+  '/api/integrations/$provider/callback': typeof ApiIntegrationsProviderCallbackRoute
+  '/api/integrations/$provider/start': typeof ApiIntegrationsProviderStartRoute
   '/admin/writing/$id/': typeof AdminWritingIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -236,6 +267,7 @@ export interface FileRoutesByTo {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/blank': typeof BlankRoute
+  '/build': typeof BuildRoute
   '/events': typeof EventsRoute
   '/fall2026': typeof Fall2026Route
   '/micrographics': typeof MicrographicsRoute
@@ -251,6 +283,7 @@ export interface FileRoutesByTo {
   '/writing/$slug': typeof WritingSlugRoute
   '/admin': typeof AdminIndexRoute
   '/writing': typeof WritingIndexRoute
+  '/admin/settings/integrations': typeof AdminSettingsIntegrationsRoute
   '/admin/settings/users': typeof AdminSettingsUsersRoute
   '/api/ai/chat': typeof ApiAiChatRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -259,6 +292,8 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsIndexRoute
   '/admin/writing/$id/recipients': typeof AdminWritingIdRecipientsRoute
   '/admin/writing/$id/preview': typeof AdminWritingIdPreviewRoute
+  '/api/integrations/$provider/callback': typeof ApiIntegrationsProviderCallbackRoute
+  '/api/integrations/$provider/start': typeof ApiIntegrationsProviderStartRoute
   '/admin/writing/$id': typeof AdminWritingIdIndexRoute
 }
 export interface FileRoutesById {
@@ -268,6 +303,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
   '/blank': typeof BlankRoute
+  '/build': typeof BuildRoute
   '/events': typeof EventsRoute
   '/fall2026': typeof Fall2026Route
   '/micrographics': typeof MicrographicsRoute
@@ -284,6 +320,7 @@ export interface FileRoutesById {
   '/writing/$slug': typeof WritingSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/writing/': typeof WritingIndexRoute
+  '/admin/settings/integrations': typeof AdminSettingsIntegrationsRoute
   '/admin/settings/users': typeof AdminSettingsUsersRoute
   '/admin/writing/$id': typeof AdminWritingIdRouteWithChildren
   '/api/ai/chat': typeof ApiAiChatRoute
@@ -293,6 +330,8 @@ export interface FileRoutesById {
   '/admin/settings/': typeof AdminSettingsIndexRoute
   '/admin/writing/$id/recipients': typeof AdminWritingIdRecipientsRoute
   '/admin_/writing/$id/preview': typeof AdminWritingIdPreviewRoute
+  '/api/integrations/$provider/callback': typeof ApiIntegrationsProviderCallbackRoute
+  '/api/integrations/$provider/start': typeof ApiIntegrationsProviderStartRoute
   '/admin/writing/$id/': typeof AdminWritingIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -303,6 +342,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/blank'
+    | '/build'
     | '/events'
     | '/fall2026'
     | '/micrographics'
@@ -319,6 +359,7 @@ export interface FileRouteTypes {
     | '/writing/$slug'
     | '/admin/'
     | '/writing/'
+    | '/admin/settings/integrations'
     | '/admin/settings/users'
     | '/admin/writing/$id'
     | '/api/ai/chat'
@@ -328,6 +369,8 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/writing/$id/recipients'
     | '/admin/writing/$id/preview'
+    | '/api/integrations/$provider/callback'
+    | '/api/integrations/$provider/start'
     | '/admin/writing/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -335,6 +378,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/blank'
+    | '/build'
     | '/events'
     | '/fall2026'
     | '/micrographics'
@@ -350,6 +394,7 @@ export interface FileRouteTypes {
     | '/writing/$slug'
     | '/admin'
     | '/writing'
+    | '/admin/settings/integrations'
     | '/admin/settings/users'
     | '/api/ai/chat'
     | '/api/auth/$'
@@ -358,6 +403,8 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/writing/$id/recipients'
     | '/admin/writing/$id/preview'
+    | '/api/integrations/$provider/callback'
+    | '/api/integrations/$provider/start'
     | '/admin/writing/$id'
   id:
     | '__root__'
@@ -366,6 +413,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/admin'
     | '/blank'
+    | '/build'
     | '/events'
     | '/fall2026'
     | '/micrographics'
@@ -382,6 +430,7 @@ export interface FileRouteTypes {
     | '/writing/$slug'
     | '/admin/'
     | '/writing/'
+    | '/admin/settings/integrations'
     | '/admin/settings/users'
     | '/admin/writing/$id'
     | '/api/ai/chat'
@@ -391,6 +440,8 @@ export interface FileRouteTypes {
     | '/admin/settings/'
     | '/admin/writing/$id/recipients'
     | '/admin_/writing/$id/preview'
+    | '/api/integrations/$provider/callback'
+    | '/api/integrations/$provider/start'
     | '/admin/writing/$id/'
   fileRoutesById: FileRoutesById
 }
@@ -400,6 +451,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
   BlankRoute: typeof BlankRoute
+  BuildRoute: typeof BuildRoute
   EventsRoute: typeof EventsRoute
   Fall2026Route: typeof Fall2026Route
   MicrographicsRoute: typeof MicrographicsRoute
@@ -415,6 +467,8 @@ export interface RootRouteChildren {
   ApiCronSyncEventsRoute: typeof ApiCronSyncEventsRoute
   ApiTrpcSplatRoute: typeof ApiTrpcSplatRoute
   AdminWritingIdPreviewRoute: typeof AdminWritingIdPreviewRoute
+  ApiIntegrationsProviderCallbackRoute: typeof ApiIntegrationsProviderCallbackRoute
+  ApiIntegrationsProviderStartRoute: typeof ApiIntegrationsProviderStartRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -473,6 +527,13 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/events'
       preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/build': {
+      id: '/build'
+      path: '/build'
+      fullPath: '/build'
+      preLoaderRoute: typeof BuildRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blank': {
@@ -615,12 +676,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/settings/integrations': {
+      id: '/admin/settings/integrations'
+      path: '/settings/integrations'
+      fullPath: '/admin/settings/integrations'
+      preLoaderRoute: typeof AdminSettingsIntegrationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/writing/$id/': {
       id: '/admin/writing/$id/'
       path: '/'
       fullPath: '/admin/writing/$id/'
       preLoaderRoute: typeof AdminWritingIdIndexRouteImport
       parentRoute: typeof AdminWritingIdRoute
+    }
+    '/api/integrations/$provider/start': {
+      id: '/api/integrations/$provider/start'
+      path: '/api/integrations/$provider/start'
+      fullPath: '/api/integrations/$provider/start'
+      preLoaderRoute: typeof ApiIntegrationsProviderStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/$provider/callback': {
+      id: '/api/integrations/$provider/callback'
+      path: '/api/integrations/$provider/callback'
+      fullPath: '/api/integrations/$provider/callback'
+      preLoaderRoute: typeof ApiIntegrationsProviderCallbackRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin_/writing/$id/preview': {
       id: '/admin_/writing/$id/preview'
@@ -670,6 +752,7 @@ interface AdminRouteChildren {
   AdminOrganizationsRoute: typeof AdminOrganizationsRoute
   AdminWritingRoute: typeof AdminWritingRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminSettingsIntegrationsRoute: typeof AdminSettingsIntegrationsRoute
   AdminSettingsUsersRoute: typeof AdminSettingsUsersRoute
   AdminSettingsIndexRoute: typeof AdminSettingsIndexRoute
 }
@@ -679,6 +762,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminOrganizationsRoute: AdminOrganizationsRoute,
   AdminWritingRoute: AdminWritingRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
+  AdminSettingsIntegrationsRoute: AdminSettingsIntegrationsRoute,
   AdminSettingsUsersRoute: AdminSettingsUsersRoute,
   AdminSettingsIndexRoute: AdminSettingsIndexRoute,
 }
@@ -704,6 +788,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
   BlankRoute: BlankRoute,
+  BuildRoute: BuildRoute,
   EventsRoute: EventsRoute,
   Fall2026Route: Fall2026Route,
   MicrographicsRoute: MicrographicsRoute,
@@ -719,6 +804,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCronSyncEventsRoute: ApiCronSyncEventsRoute,
   ApiTrpcSplatRoute: ApiTrpcSplatRoute,
   AdminWritingIdPreviewRoute: AdminWritingIdPreviewRoute,
+  ApiIntegrationsProviderCallbackRoute: ApiIntegrationsProviderCallbackRoute,
+  ApiIntegrationsProviderStartRoute: ApiIntegrationsProviderStartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
