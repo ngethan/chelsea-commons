@@ -133,7 +133,7 @@ function LetterField() {
 			const dpr = window.devicePixelRatio || 1;
 			width = window.innerWidth;
 			height = window.innerHeight;
-			cellW = width < 640 ? 9 : 12;
+			cellW = width < 640 ? 7 : 9;
 			cellH = Math.round(cellW * 1.25);
 			cols = Math.ceil(width / cellW);
 			rows = Math.ceil(height / cellH);
