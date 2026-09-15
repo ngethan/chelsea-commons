@@ -94,6 +94,9 @@ export const buildSeoTags = ({
 	return {
 		title,
 		meta: [
+			// The document title. `head` has no top-level `title` of its own:
+			// the router reads it from `meta`, and the deepest route's wins.
+			{ title },
 			{
 				name: "description",
 				content: description,

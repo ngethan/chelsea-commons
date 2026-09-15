@@ -152,7 +152,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			style={{ backgroundColor: ground }}
 		>
 			<head>
-				<title>{siteConfig.name}</title>
 				<HeadContent />
 				<SpeedInsights />
 				<Analytics />

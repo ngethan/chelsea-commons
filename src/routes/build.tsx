@@ -5,7 +5,7 @@ import { buildSeoTags } from "../site-config";
 export const Route = createFileRoute("/build")({
 	head: () => {
 		const seo = buildSeoTags({
-			title: "Build - Chelsea Commons",
+			title: "Chelsea Capital",
 			description:
 				"We are first believers in the most ambitious students across the world.",
 			path: "/build",

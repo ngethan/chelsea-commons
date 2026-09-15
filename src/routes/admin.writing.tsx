@@ -67,6 +67,7 @@ const FILTER_LABEL: Record<Filter, string> = {
 };
 
 export const Route = createFileRoute("/admin/writing")({
+	head: () => ({ meta: [{ title: "Admin | Writing" }] }),
 	validateSearch: z.object({ show: z.enum(FILTERS).optional() }),
 	component: Writing,
 });

@@ -52,6 +52,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 
 export const Route = createFileRoute("/admin/organizations")({
+	head: () => ({ meta: [{ title: "Admin | Organizations" }] }),
 	validateSearch: z.object({
 		org: z.string().optional(),
 		sheet: z.enum(["new"]).optional(),

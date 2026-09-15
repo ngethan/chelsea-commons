@@ -87,6 +87,7 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/admin/contacts")({
+	head: () => ({ meta: [{ title: "Admin | Contacts" }] }),
 	validateSearch: searchSchema,
 	component: Contacts,
 });

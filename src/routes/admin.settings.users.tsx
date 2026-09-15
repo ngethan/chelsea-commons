@@ -97,6 +97,7 @@ const day = (value: Date | string) =>
 	});
 
 export const Route = createFileRoute("/admin/settings/users")({
+	head: () => ({ meta: [{ title: "Admin | Settings" }] }),
 	validateSearch: z.object({
 		sheet: z.enum(["invite"]).optional(),
 		user: z.string().optional(),

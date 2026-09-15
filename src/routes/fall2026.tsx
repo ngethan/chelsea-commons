@@ -9,7 +9,7 @@ import { buildSeoTags } from "../site-config";
 export const Route = createFileRoute("/fall2026")({
 	head: () => {
 		const seo = buildSeoTags({
-			title: "Fall 2026 - Chelsea Commons",
+			title: "Fall 2026",
 			description:
 				"Chelsea Commons is in six cities this fall: New York, Boston, San Francisco, Los Angeles, Austin, and Atlanta.",
 			path: "/fall2026",
