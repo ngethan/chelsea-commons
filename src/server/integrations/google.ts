@@ -71,13 +71,14 @@ export function redirectUri(provider: Provider): string {
  * Where the browser goes to grant. `access_type=offline` and
  * `prompt=consent` together are what make Google return a refresh token,
  * and it returns one only on a consent screen, so the screen is forced
- * every time rather than only the first. `login_hint` preselects the
- * account they signed in with; they can still pick another.
+ * every time rather than only the first. `select_account` puts the
+ * account chooser first: the mailbox worth connecting is often not the
+ * one they signed in with, and without it Google jumps straight to the
+ * browser's default account, which may be the one the app is not open to.
  */
 export function authorizationUrl(opts: {
 	provider: Provider;
 	state: string;
-	loginHint?: string;
 }): string {
 	const { clientId } = credentials();
 	const url = new URL(AUTH_URL);
@@ -86,10 +87,9 @@ export function authorizationUrl(opts: {
 	url.searchParams.set("response_type", "code");
 	url.searchParams.set("scope", INTEGRATIONS[opts.provider].scopes.join(" "));
 	url.searchParams.set("access_type", "offline");
-	url.searchParams.set("prompt", "consent");
+	url.searchParams.set("prompt", "select_account consent");
 	url.searchParams.set("include_granted_scopes", "true");
 	url.searchParams.set("state", opts.state);
-	if (opts.loginHint) url.searchParams.set("login_hint", opts.loginHint);
 	return url.toString();
 }
 

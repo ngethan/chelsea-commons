@@ -21,11 +21,7 @@ export const Route = createFileRoute("/api/integrations/$provider/start")({
 				}
 
 				const state = newState();
-				const url = authorizationUrl({
-					provider: params.provider,
-					state,
-					loginHint: ctx.user.email,
-				});
+				const url = authorizationUrl({ provider: params.provider, state });
 				return new Response(null, {
 					status: 302,
 					headers: {

@@ -21,9 +21,7 @@ afterEach(() => {
 
 describe("authorizationUrl", () => {
 	it("asks for a refresh token every time, with the integration's scopes", () => {
-		const url = new URL(
-			authorizationUrl({ provider: "gmail", state: "abc", loginHint: "a@b.c" }),
-		);
+		const url = new URL(authorizationUrl({ provider: "gmail", state: "abc" }));
 		expect(url.origin + url.pathname).toBe(
 			"https://accounts.google.com/o/oauth2/v2/auth",
 		);
@@ -36,9 +34,10 @@ describe("authorizationUrl", () => {
 		);
 		// Without both, Google returns no refresh token and the grant dies in an hour.
 		expect(url.searchParams.get("access_type")).toBe("offline");
-		expect(url.searchParams.get("prompt")).toBe("consent");
+		// The chooser first, so the default account is not assumed.
+		expect(url.searchParams.get("prompt")).toBe("select_account consent");
 		expect(url.searchParams.get("state")).toBe("abc");
-		expect(url.searchParams.get("login_hint")).toBe("a@b.c");
+		expect(url.searchParams.has("login_hint")).toBe(false);
 	});
 
 	it("refuses to build one without credentials", () => {

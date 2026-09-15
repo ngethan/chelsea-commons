@@ -1,9 +1,4 @@
 import {
-	ColumnHead,
-	FillHead,
-	useColumnWidths,
-} from "@/components/admin/column-sizing";
-import {
 	ListTable,
 	Mono,
 	Page,
@@ -30,15 +25,17 @@ import {
 	Table,
 	TableBody,
 	TableCell,
+	TableHead,
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/lib/toast";
+import { cn } from "@/lib/utils";
 import type { AppRouter } from "@/server/trpc/root";
 import { trpc } from "@/trpc/client";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import type { inferRouterOutputs } from "@trpc/server";
-import { Mail, Plug, Unplug } from "lucide-react";
+import { Plug, Unplug } from "lucide-react";
 import { useEffect } from "react";
 import { z } from "zod";
 
@@ -48,6 +45,7 @@ import { z } from "zod";
  * with `connected` or `error` in the URL, which is toasted once and cleared.
  */
 export const Route = createFileRoute("/admin/settings/integrations")({
+	head: () => ({ meta: [{ title: "Admin | Settings" }] }),
 	validateSearch: z.object({
 		sheet: z.string().optional(),
 		connected: z.string().optional(),
@@ -58,7 +56,31 @@ export const Route = createFileRoute("/admin/settings/integrations")({
 
 type Row = inferRouterOutputs<AppRouter>["integrations"]["list"][number];
 
-const ICON = { gmail: Mail } as const;
+const LOGO = { gmail: "/integrations/gmail.svg" } as const;
+
+/** The one control column: 160px, its content centred, the gutter overridden. */
+const ACTION_COL = "w-40 px-0! text-center";
+
+/**
+ * The product's own mark in a circle, at the sizes a face takes in the same
+ * places (`PersonAvatar` md beside a two-line row, xl in a drawer head).
+ */
+function Logo({ row, size }: { row: Row; size: "md" | "xl" }) {
+	return (
+		<span
+			className={cn(
+				"flex shrink-0 items-center justify-center rounded-full border border-border bg-secondary",
+				size === "md" ? "size-9" : "size-14",
+			)}
+		>
+			<img
+				src={LOGO[row.provider]}
+				alt=""
+				className={size === "md" ? "w-4" : "w-6"}
+			/>
+		</span>
+	);
+}
 
 function messageFor(code: string): string {
 	if (code === "access_denied") return "Nothing was connected.";
@@ -84,6 +106,26 @@ function State({ row }: { row: Row }) {
 	return <Tinted tone="success">Connected</Tinted>;
 }
 
+/** Disconnect, shared by the row, the row menu and the drawer. */
+function useDisconnect(onDone?: () => void) {
+	const utils = trpc.useUtils();
+	return trpc.integrations.disconnect.useMutation({
+		onSuccess: async () => {
+			await utils.integrations.list.invalidate();
+			toast.success("Disconnected.");
+			onDone?.();
+		},
+		onError: (err) => toast.error(err.message),
+	});
+}
+
+const disconnectCopy = (label: string) => ({
+	title: `Disconnect ${label}?`,
+	description:
+		"This app stops being able to read the account, and the grant is revoked at Google.",
+	action: "Disconnect",
+});
+
 function IntegrationsPage() {
 	const { connected, error } = Route.useSearch();
 	const navigate = useNavigate();
@@ -91,10 +133,7 @@ function IntegrationsPage() {
 	const list = trpc.integrations.list.useQuery();
 	const rows = list.data ?? [];
 	const live = rows.filter((row) => row.connectedAt && !row.stale);
-	const cols = useColumnWidths("integrations", {
-		state: 140,
-		connected: 140,
-	});
+	const disconnect = useDisconnect();
 
 	useEffect(() => {
 		if (!connected && !error) return;
@@ -107,108 +146,86 @@ function IntegrationsPage() {
 		navigate({ to: ".", search: {}, replace: true });
 	}, [connected, error, rows, navigate]);
 
-	const unconnected = rows.find((row) => !row.connectedAt);
-
 	return (
 		<Page>
-			<SettingsHead
-				actions={
-					unconnected ? (
-						<Button onClick={() => connect(unconnected.provider)}>
-							Connect {unconnected.label}
-						</Button>
-					) : undefined
-				}
-			/>
+			<SettingsHead />
 
 			<PageScroll>
 				<ListTable>
 					<TableHeader>
 						<TableRow>
-							<FillHead cols={cols}>Integration</FillHead>
-							<ColumnHead cols={cols} id="state">
-								State
-							</ColumnHead>
-							<ColumnHead
-								cols={cols}
-								id="connected"
-								last
-								className="hidden text-right md:table-cell"
-							>
-								Connected
-							</ColumnHead>
+							<TableHead>Integration</TableHead>
+							{/* Fixed and centred: a control, not text, so no grip and no gutter. */}
+							<TableHead className={ACTION_COL}>Action</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{list.isLoading && (
-							<RowsSkeleton
-								rows={1}
-								cells={[
-									"person",
-									"text",
-									{ kind: "date", className: "hidden md:table-cell" },
-								]}
-							/>
+							<RowsSkeleton rows={1} cells={["person", "text"]} />
 						)}
-						{rows.map((row) => {
-							const Icon = ICON[row.provider];
-							return (
-								<RowMenu
-									key={row.provider}
-									actions={[
-										{
-											label: row.connectedAt ? "Reconnect" : "Connect",
-											icon: Plug,
-											onSelect: () => connect(row.provider),
-										},
-										"separator",
-										{
-											label: "Disconnect",
-											icon: Unplug,
-											disabled: !row.connectedAt,
-											onSelect: () => sheet.open(row.provider),
-										},
-									]}
+						{rows.map((row) => (
+							<RowMenu
+								key={row.provider}
+								actions={[
+									{
+										label: row.connectedAt ? "Reconnect" : "Connect",
+										icon: Plug,
+										onSelect: () => connect(row.provider),
+									},
+									"separator",
+									{
+										label: "Disconnect",
+										icon: Unplug,
+										disabled: !row.connectedAt,
+										onSelect: () => sheet.open(row.provider),
+									},
+								]}
+							>
+								<TableRow
+									className="cursor-pointer"
+									onClick={() => sheet.open(row.provider)}
 								>
-									<TableRow
-										className="cursor-pointer"
-										onClick={() => sheet.open(row.provider)}
-									>
-										<TableCell>
-											<div className="flex items-center gap-2.5">
-												<span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-muted-foreground">
-													<Icon className="size-4" />
-												</span>
-												<div className="min-w-0">
-													<div className="truncate font-medium">
-														{row.label}
-													</div>
-													{row.email && (
-														<Mono className="mt-0.5 block truncate text-[12px]">
-															{row.email}
-														</Mono>
-													)}
-												</div>
+									<TableCell>
+										<div className="flex items-center gap-2.5">
+											<Logo row={row} size="md" />
+											<div className="min-w-0">
+												<div className="truncate font-medium">{row.label}</div>
+												{row.email && (
+													<Mono className="mt-0.5 block truncate text-[12px]">
+														{row.email}
+													</Mono>
+												)}
 											</div>
-										</TableCell>
-										<TableCell>
-											<State row={row} />
-										</TableCell>
-										<TableCell className="hidden text-right text-muted-foreground tabular-nums md:table-cell">
-											{row.connectedAt
-												? new Date(row.connectedAt).toLocaleDateString(
-														"en-US",
-														{
-															month: "short",
-															day: "numeric",
-														},
-													)
-												: ""}
-										</TableCell>
-									</TableRow>
-								</RowMenu>
-							);
-						})}
+										</div>
+									</TableCell>
+									<TableCell
+										className={ACTION_COL}
+										onClick={(e) => e.stopPropagation()}
+									>
+										{row.connectedAt ? (
+											<ConfirmButton
+												{...disconnectCopy(row.label)}
+												onConfirm={() =>
+													disconnect.mutate({ provider: row.provider })
+												}
+											>
+												<Button
+													size="sm"
+													variant="outline"
+													disabled={disconnect.isPending}
+												>
+													Disconnect
+												</Button>
+											</ConfirmButton>
+										) : (
+											<Button size="sm" onClick={() => connect(row.provider)}>
+												Connect
+											</Button>
+										)}
+									</TableCell>
+								</TableRow>
+							</RowMenu>
+						))}
 					</TableBody>
 				</ListTable>
 			</PageScroll>
@@ -239,28 +256,13 @@ function IntegrationSheet({
 	row: Row | undefined;
 	onClose: () => void;
 }) {
-	const utils = trpc.useUtils();
-	const disconnect = trpc.integrations.disconnect.useMutation({
-		onSuccess: async () => {
-			await utils.integrations.list.invalidate();
-			toast.success("Disconnected.");
-			onClose();
-		},
-		onError: (err) => toast.error(err.message),
-	});
+	const disconnect = useDisconnect(onClose);
 
 	return (
 		<Sheet open onOpenChange={(open) => !open && onClose()}>
 			<SheetContent className="max-w-[520px]">
 				<SheetHeader className="flex-row items-center gap-4">
-					{row && (
-						<span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-secondary text-muted-foreground">
-							{(() => {
-								const Icon = ICON[row.provider];
-								return <Icon className="size-5" />;
-							})()}
-						</span>
-					)}
+					{row && <Logo row={row} size="xl" />}
 					<div className="flex min-w-0 flex-col gap-1.5">
 						<SheetTitle className="truncate">{row?.label ?? ""}</SheetTitle>
 						<SheetDescription className="flex items-center gap-2">
@@ -281,14 +283,6 @@ function IntegrationSheet({
 								<TableBody>
 									<TableRow className="hover:bg-transparent">
 										<TableCell className="w-[140px] pl-4 text-muted-foreground">
-											State
-										</TableCell>
-										<TableCell>
-											<State row={row} />
-										</TableCell>
-									</TableRow>
-									<TableRow className="hover:bg-transparent">
-										<TableCell className="pl-4 text-muted-foreground">
 											Account
 										</TableCell>
 										<TableCell>
@@ -323,9 +317,7 @@ function IntegrationSheet({
 				<SheetFooter>
 					{row?.connectedAt && (
 						<ConfirmButton
-							title={`Disconnect ${row.label}?`}
-							description="This app stops being able to read the account, and the grant is revoked at Google."
-							action="Disconnect"
+							{...disconnectCopy(row.label)}
 							onConfirm={() => disconnect.mutate({ provider: row.provider })}
 						>
 							<Button
