@@ -17,13 +17,20 @@ export const Route = createFileRoute("/build")({
 
 const STREAM = "CHELSEACOMMONS";
 const WORD = "BUILD";
-/** Sub-samples per cell edge; 3x3 gives a soft edge at this coarse a grid. */
-const SUB = 3;
+/** Frames per second for the turn. It is slow; 30 is indistinguishable. */
+const FPS = 30;
 /** The pointer reveals the name underneath, never as dark as the word. */
 const REVEAL = 0.7;
 const GLOW_RADIUS = 60;
 const RIPPLE_MS = 700;
 const RIPPLE_BAND = 22;
+
+const CORNERS: [number, number][] = [
+	[-1, -1],
+	[1, -1],
+	[1, 1],
+	[-1, 1],
+];
 
 type Ripple = {
 	x: number;
@@ -44,7 +51,49 @@ type WordBitmap = {
  * looks up cells against this through a rotation, so the text is never
  * re-rendered; only the mapping moves.
  */
-function renderWord(targetWidth: number, font: string): WordBitmap | null {
+/**
+ * Box-blurs an alpha plane by `radius` in place, separably. A cell then reads
+ * one blurred value instead of averaging nine samples, and gets the same soft
+ * edge: the blur is that average, done once instead of every frame.
+ */
+function blurAlpha(
+	alpha: Uint8ClampedArray,
+	width: number,
+	height: number,
+	radius: number,
+) {
+	const r = Math.max(1, Math.round(radius));
+	const tmp = new Float32Array(alpha.length);
+	const n = 2 * r + 1;
+	for (let y = 0; y < height; y++) {
+		let sum = 0;
+		for (let x = -r; x <= r; x++)
+			sum += alpha[y * width + Math.min(width - 1, Math.max(0, x))];
+		for (let x = 0; x < width; x++) {
+			tmp[y * width + x] = sum / n;
+			const out = Math.max(0, x - r);
+			const inn = Math.min(width - 1, x + r + 1);
+			sum += alpha[y * width + inn] - alpha[y * width + out];
+		}
+	}
+	for (let x = 0; x < width; x++) {
+		let sum = 0;
+		for (let y = -r; y <= r; y++)
+			sum += tmp[Math.min(height - 1, Math.max(0, y)) * width + x];
+		for (let y = 0; y < height; y++) {
+			alpha[y * width + x] = sum / n;
+			const out = Math.max(0, y - r);
+			const inn = Math.min(height - 1, y + r + 1);
+			sum += tmp[inn * width + x] - tmp[out * width + x];
+		}
+	}
+}
+
+function renderWord(
+	targetWidth: number,
+	font: string,
+	blur: number,
+): WordBitmap | null {
 	// The serif italic is the site's identity voice; this is the one word on
 	// the page, so it gets it. Bold, so the strokes survive the grid.
 	const off = document.createElement("canvas");
@@ -65,6 +114,7 @@ function renderWord(targetWidth: number, font: string): WordBitmap | null {
 	const { data } = ctx.getImageData(0, 0, off.width, off.height);
 	const alpha = new Uint8ClampedArray(off.width * off.height);
 	for (let i = 0; i < alpha.length; i++) alpha[i] = data[i * 4 + 3];
+	blurAlpha(alpha, off.width, off.height, blur);
 	return { alpha, width: off.width, height: off.height };
 }
 
@@ -142,7 +192,7 @@ function LetterField() {
 			canvas.style.width = `${width}px`;
 			canvas.style.height = `${height}px`;
 			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-			word = renderWord(width * 0.72, serif);
+			word = renderWord(width * 0.72, serif, cellW / 2);
 			glow = new Float32Array(cols * rows);
 			grain = Float32Array.from({ length: cols * rows }, () => Math.random());
 			grit = Float32Array.from({ length: cols * rows }, () => Math.random());
@@ -289,70 +339,107 @@ function LetterField() {
 				);
 			}
 
+			// Only cells under the word's projected rectangle are ray-tested.
+			// Project the four corners of the plane and take their bounds.
+			let minX = Number.POSITIVE_INFINITY;
+			let minY = Number.POSITIVE_INFINITY;
+			let maxX = Number.NEGATIVE_INFINITY;
+			let maxY = Number.NEGATIVE_INFINITY;
+			for (const [cu, cv] of CORNERS) {
+				const u = (cu * bw) / 2;
+				const v = (cv * bh) / 2;
+				const X = u * ux + v * vx;
+				const Y = u * uy + v * vy;
+				const Z = u * uz + v * vz;
+				const k = -camZ / (Z - camZ);
+				minX = Math.min(minX, X * k + originX);
+				maxX = Math.max(maxX, X * k + originX);
+				minY = Math.min(minY, Y * k + originY);
+				maxY = Math.max(maxY, Y * k + originY);
+			}
+			const c0 = Math.max(0, Math.floor(minX / cellW) - 1);
+			const c1 = Math.min(cols - 1, Math.ceil(maxX / cellW) + 1);
+			const r0 = Math.max(0, Math.floor(minY / cellH) - 1);
+			const r1 = Math.min(rows - 1, Math.ceil(maxY / cellH) + 1);
+
 			ctx.clearRect(0, 0, width, height);
-			for (let r = 0; r < rows; r++) {
-				for (let c = 0; c < cols; c++) {
-					let hit = 0;
-					let depth = 0;
-					let samples = 0;
-					for (let j = 0; j < SUB; j++) {
-						for (let i = 0; i < SUB; i++) {
-							const px = c * cellW + ((i + 0.5) / SUB) * cellW - originX;
-							const py = r * cellH + ((j + 0.5) / SUB) * cellH - originY;
-							// Ray from camera (0,0,camZ) through (px,py,0).
-							const d = px * nx + py * ny - camZ * nz;
-							if (Math.abs(d) < 1e-6) continue;
-							const tt = -denomC / d;
-							if (tt <= 0) continue;
-							const X = px * tt;
-							const Y = py * tt;
-							const Z = camZ + (0 - camZ) * tt;
-							const u = X * ux + Y * uy + Z * uz + bw / 2;
-							const v = X * vx + Y * vy + Z * vz + bh / 2;
-							if (u < 0 || v < 0 || u >= bw || v >= bh) continue;
-							hit += alpha[(v | 0) * bw + (u | 0)];
-							depth += Z;
-							samples++;
-						}
-					}
-					const cov = hit / (SUB * SUB * 255);
+
+			// The word: one ray per cell, reading the pre-blurred bitmap.
+			for (let r = r0; r <= r1; r++) {
+				for (let c = c0; c <= c1; c++) {
+					const px = c * cellW + cellW / 2 - originX;
+					const py = r * cellH + cellH / 2 - originY;
+					// Ray from camera (0,0,camZ) through (px,py,0).
+					const d = px * nx + py * ny - camZ * nz;
+					if (Math.abs(d) < 1e-6) continue;
+					const tt = -denomC / d;
+					if (tt <= 0) continue;
+					const X = px * tt;
+					const Y = py * tt;
+					const Z = camZ + (0 - camZ) * tt;
+					const u = X * ux + Y * uy + Z * uz + bw / 2;
+					const v = X * vx + Y * vy + Z * vz + bh / 2;
+					if (u < 0 || v < 0 || u >= bw || v >= bh) continue;
+					const cov = alpha[(v | 0) * bw + (u | 0)] / 255;
 					// A cell that only just touches a stroke stays off, and one that is
 					// mostly covered goes to full ink: a firm edge reads better here
 					// than a linear one.
 					const edge = Math.min(1, Math.max(0, (cov - 0.12) / 0.45));
-					const sprite = sprites[(r * cols + c) % STREAM.length];
-					const reveal = glow[r * cols + c];
-					if (edge > 0) {
-						// Depth: the part of the plane nearer the camera draws its
-						// letters bigger and darker, the far part smaller and lighter.
-						// `near` is 1 on the plane's centre line, above 1 towards us.
-						const near = -camZ / (depth / samples - camZ);
-						const size = 1 + (near - 1) * 2.4;
-						const tone = Math.min(1, Math.max(0.3, 1 + (near - 1) * 3.2));
-						ctx.globalAlpha = Math.max(edge * tone, reveal);
-						const w = cellW * size;
-						const h = cellH * size;
-						ctx.drawImage(
-							sprite,
-							c * cellW + (cellW - w) / 2,
-							r * cellH + (cellH - h) / 2,
-							w,
-							h,
-						);
-						continue;
-					}
-					if (reveal <= 0.01) continue;
-					ctx.globalAlpha = reveal;
-					ctx.drawImage(sprite, c * cellW, r * cellH, cellW, cellH);
+					if (edge <= 0) continue;
+					const i = r * cols + c;
+					// Depth: the part of the plane nearer the camera draws its
+					// letters bigger and darker, the far part smaller and lighter.
+					// `near` is 1 on the plane's centre line, above 1 towards us.
+					const near = -camZ / (Z - camZ);
+					const size = 1 + (near - 1) * 2.4;
+					const tone = Math.min(1, Math.max(0.3, 1 + (near - 1) * 3.2));
+					ctx.globalAlpha = Math.max(edge * tone, glow[i]);
+					const w = cellW * size;
+					const h = cellH * size;
+					ctx.drawImage(
+						sprites[i % STREAM.length],
+						c * cellW + (cellW - w) / 2,
+						r * cellH + (cellH - h) / 2,
+						w,
+						h,
+					);
+					// Drawn at full strength already; the reveal pass skips it.
+					glow[i] = 0;
 				}
+			}
+
+			// The reveal: only the cells a splash touched are non-zero.
+			for (let i = 0; i < glow.length; i++) {
+				const reveal = glow[i];
+				if (reveal <= 0.01) continue;
+				ctx.globalAlpha = reveal;
+				const c = i % cols;
+				const r = (i - c) / cols;
+				ctx.drawImage(
+					sprites[i % STREAM.length],
+					c * cellW,
+					r * cellH,
+					cellW,
+					cellH,
+				);
 			}
 			ctx.globalAlpha = 1;
 		};
 
+		let lastDraw = Number.NEGATIVE_INFINITY;
+		let staticDrawn = false;
 		const loop = (t: number) => {
 			if (disposed) return;
-			draw(t);
 			frame = window.requestAnimationFrame(loop);
+			if (t - lastDraw < 1000 / FPS - 2) return;
+			// With reduced motion and no splash alive nothing changes between
+			// frames, so the still frame is drawn once and then left alone.
+			const idle =
+				reduce && ripples.length === 0 && t - lastMove > GLOW_HOLD_MS;
+			if (idle && staticDrawn) return;
+			staticDrawn = idle;
+			lastDraw = t;
+			draw(t);
 		};
 
 		document.fonts.ready.then(() => {
