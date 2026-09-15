@@ -1,8 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-// Only used by the hiring banner below, which is commented out.
-// import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { EventPhotos } from "../components/EventPhotos";
@@ -187,37 +186,31 @@ function FAQSection() {
 function App() {
 	return (
 		<div className="relative z-10">
-			{/* Hiring banner, currently off. To bring it back, uncomment this and
-			    add its h-10 (2.5rem) back to the hero height calc below
-			    (5.75rem -> 8.25rem, md 5.25rem -> 7.75rem).
-			<a
-				href="https://docs.google.com/forms/d/e/1FAIpQLSfNJhLNeFaaZYuFippkNdNFGp4wd_rNt2NHIMQ-R_G51ubgzw/viewform"
-				target="_blank"
-				rel="noopener noreferrer"
-				className="block bg-foreground text-background"
-			>
+			{/* Announcement banner. Its h-10 (2.5rem) is counted in the hero
+			    height calc below; take it out of there if this goes away again. */}
+			<Link to="/fall2026" className="block bg-foreground text-background">
 				<div className="h-10 px-6 md:px-12 flex items-center justify-center gap-2 md:gap-4 text-center">
 					<span aria-hidden="true" className="text-xs">
 						{"✳︎"}
 					</span>
 					<span className="font-mono font-medium uppercase tracking-[0.18em] text-[11px] md:text-[13px] whitespace-nowrap">
-						We're hiring{" "}
-						<span className="hidden md:inline">Chelsea Commons Fellows</span>
-						<span className="md:hidden">fellows</span>.
+						<span className="hidden md:inline">
+							Chelsea Commons is coming to six cities this fall.
+						</span>
+						<span className="md:hidden">Six cities this fall.</span>
 					</span>
 					<span className="font-mono font-medium uppercase tracking-[0.18em] text-[11px] md:text-[13px] whitespace-nowrap underline underline-offset-4 hover:opacity-70 transition-opacity inline-flex items-center gap-1.5">
-						Apply here
+						More info
 						<ArrowRight aria-hidden="true" className="size-3.5" />
 					</span>
 				</div>
-			</a>
-			*/}
+			</Link>
 
 			<Navbar />
 
 			<main>
 				{/* Full-viewport hero, minus the sticky navbar's height */}
-				<section className="relative flex flex-col h-[calc(var(--stable-vh,100svh)-5.75rem)] md:h-[calc(var(--stable-vh,100svh)-5.25rem)] min-h-[34rem] overflow-hidden">
+				<section className="relative flex flex-col h-[calc(var(--stable-vh,100svh)-8.25rem)] md:h-[calc(var(--stable-vh,100svh)-7.75rem)] min-h-[34rem] overflow-hidden">
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
